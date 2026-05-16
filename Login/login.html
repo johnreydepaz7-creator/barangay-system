@@ -126,7 +126,7 @@
       </div>
 
       <button class="btn-primary" onclick="proceedToGoogleDrive()" style="width:100%;">
-        Continue →
+        Register Punong Barangay →
       </button>
     </div>
 
@@ -602,7 +602,8 @@
   // Stored registration data during two-step process
   let pendingPunongData = null;
 
-  // Step 1: Proceed to Google Drive connection
+  // Step 1: Register directly and show the QR code success screen.
+  // Google Drive connection was removed from the Punong Barangay registration flow.
   function proceedToGoogleDrive() {
     const lastName = document.getElementById('punongLastName').value.trim();
     const firstName = document.getElementById('punongFirstName').value.trim();
@@ -615,7 +616,6 @@
       return;
     }
 
-    // Store the data for later submission
     pendingPunongData = {
       lastName,
       firstName,
@@ -624,38 +624,19 @@
       role: 'Punong Barangay'
     };
 
-    // Move to Google Drive step
+    // Hide the form and submit immediately. The next screen will be the success/QR code screen.
     document.getElementById('punongForm').style.display = 'none';
-    document.getElementById('punongGoogleStep').style.display = 'block';
+    document.getElementById('punongGoogleStep').style.display = 'none';
+    document.getElementById('ponongSuccess').style.display = 'none';
     document.getElementById('punongAlert').textContent = '';
     document.getElementById('punongGoogleAlert').textContent = '';
+
+    submitPunongRegistrationWithDrive();
   }
 
-  // Initialize Google Drive API
+  // Google Drive setup is no longer required during Punong Barangay registration.
   function initGoogleDriveAPI() {
-    if (typeof gapi === 'undefined') {
-      setTimeout(initGoogleDriveAPI, 500);
-      return;
-    }
-    
-    if (PunongGDrive.ready) return;
-
-    gapi.load('client', () => {
-      gapi.client.init({
-        apiKey: GDRIVE_CONFIG.API_KEY,
-        discoveryDocs: [
-          'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
-        ],
-      }).then(() => {
-        PunongGDrive.ready = true;
-        const saved = sessionStorage.getItem('gdrive_token');
-        if (saved) {
-          PunongGDrive.accessToken = saved;
-          PunongGDrive.signedIn = true;
-          gapi.client.setToken({ access_token: saved });
-        }
-      }).catch(e => console.warn('Drive init:', e));
-    });
+    return;
   }
 
   // Initiate Google Drive authentication
@@ -718,7 +699,8 @@
   async function submitPunongRegistrationWithDrive() {
     if (!pendingPunongData) return;
 
-    const submitBtn = document.querySelector('[onclick="initiateGoogleDriveAuth()"]') || 
+    const submitBtn = document.querySelector('[onclick="proceedToGoogleDrive()"]') ||
+                      document.querySelector('[onclick="initiateGoogleDriveAuth()"]') ||
                       document.querySelector('[onclick="skipGoogleDrive()"]');
     if (submitBtn) {
       submitBtn.disabled = true;
@@ -729,7 +711,7 @@
       // Include Google Drive token if available
       const registrationData = {
         ...pendingPunongData,
-        googleDriveToken: PunongGDrive.accessToken || null
+        googleDriveToken: null
       };
 
       const response = await fetch('/api/accounts/register', {
@@ -796,7 +778,7 @@
       if (submitBtn) {
         submitBtn.disabled = false;
         if (submitBtn.textContent === 'Registering...') {
-          submitBtn.textContent = '🔗 Connect Google Drive';
+          submitBtn.textContent = 'Register Punong Barangay →';
         }
       }
     }
