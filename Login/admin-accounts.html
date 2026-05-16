@@ -27,9 +27,12 @@
     .qrcode-modal-content {
       background: white;
       border-radius: 12px;
-      padding: 30px;
+      padding: 42px 30px 24px;
       text-align: center;
-      max-width: 350px;
+      width: min(92vw, 390px);
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
     .qrcode-modal-content h3 {
@@ -48,15 +51,38 @@
       border-radius: 8px;
       margin: 15px 0;
     }
-    #encodedText {
-      margin-top: 15px;
-      font-size: 11px;
-      word-break: break-all;
-      color: var(--text-muted);
-      padding: 10px;
-      background: var(--surface-2);
-      border-radius: 6px;
-      font-family: monospace;
+    #encodedText,
+    .encoded-text,
+    .qr-encoded-text,
+    .qrcode-encoded-text {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      max-height: 0 !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .modal-x-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-x-close:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: #111827;
     }
     .modal-close-btn {
       margin-top: 15px;
@@ -143,6 +169,14 @@
   const badgeClass={'Punong Barangay':'pb'};
   function getBadge(role){return badgeClass[role]||'staff';}
 
+  function closeQRCodeModal() {
+    const modal = document.getElementById('qrcodeModal');
+    if (modal) {
+      modal.classList.remove('show');
+      modal.innerHTML = '';
+    }
+  }
+
   function showQRCode(firstName, middleName, lastName, phone) {
     // Combine: firstName + middleName + lastName + "|" + phone + "|" + SECRET
     const fullName = (firstName + ' ' + middleName + ' ' + lastName).trim();
@@ -153,11 +187,10 @@
     const modal = document.getElementById('qrcodeModal');
     modal.innerHTML = `
       <div class="qrcode-modal-content">
+        <button class="modal-x-close" type="button" aria-label="Close QR Code" onclick="closeQRCodeModal()">&times;</button>
         <h3>QR Code for ${fullName}</h3>
         <p>Share this QR code with the staff member for login</p>
         <div id="qrcode" style="display:inline-block; padding:10px; background:white; border-radius:8px;"></div>
-        <div id="encodedText" style="font-size:11px; word-break:break-all; color:var(--text-muted); padding:10px; background:var(--surface-2); border-radius:6px; font-family:monospace; margin-top:12px;">Encoded: ${encoded}</div>
-        <button class="modal-close-btn" onclick="document.getElementById('qrcodeModal').classList.remove('show')">Close</button>
       </div>
     `;
 
@@ -176,6 +209,14 @@
     // Show modal
     modal.classList.add('show');
   }
+
+  document.getElementById('qrcodeModal').addEventListener('click', function(e) {
+    if (e.target === this) closeQRCodeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeQRCodeModal();
+  });
 
   function renderTable(data){
     const tbody=document.getElementById('accountsTbody');

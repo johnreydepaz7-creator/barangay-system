@@ -93,7 +93,7 @@
     <div class="modal-body" style="text-align:center; padding:30px;">
       <p style="margin-bottom:20px; color:#666;">Share this QR code with the new Punong Barangay to simplify login</p>
       <div id="qrcodeDisplay" style="display:inline-block; padding:15px; background:white; border-radius:8px;"></div>
-      <div id="encodedDisplay" style="margin-top:15px; font-size:11px; color:#666; word-break:break-all; font-family:monospace; background:#f5f5f5; padding:10px; border-radius:6px; max-height:80px; overflow-y:auto;"></div>
+      <div id="encodedDisplay" style="display:none !important;"></div>
       <button class="btn-primary" onclick="acknowledgeQRCode()" style="margin-top:20px; width:100%;">Understood, Proceed</button>
     </div>
   </div>
@@ -266,7 +266,11 @@
               } else {
                 document.getElementById('qrcodeDisplay').textContent = 'QR code generation failed';
               }
-              document.getElementById('encodedDisplay').textContent = 'Encoded: ' + encoded;
+              const encodedDisplay = document.getElementById('encodedDisplay');
+              if (encodedDisplay) {
+                encodedDisplay.textContent = '';
+                encodedDisplay.style.display = 'none';
+              }
               document.getElementById('qrCodeModal').style.display = 'flex';
               pendingLogout = true;
             })

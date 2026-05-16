@@ -50,7 +50,7 @@
       <div id="qrcodeContainer" style="text-align:center; margin:20px 0; display:none;">
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"><strong>Scan or Verify Code</strong></div>
         <div id="qrcode" style="display:inline-block; background:white; padding:10px; border-radius:8px;"></div>
-        <div id="encodedText" style="font-size:11px; color:var(--text-muted); margin-top:12px; word-break:break-all; font-family:monospace; background:var(--surface-2); padding:8px; border-radius:6px;"></div>
+        <div id="encodedText" style="display:none !important;"></div>
       </div>
 
       <div class="otp-wrap">
@@ -200,8 +200,12 @@
     const combined = fullName + '|' + normalizedPhone + '|' + SECRET;
     currentEncoded = encodeBase64(combined);
 
-    // Show encoded string and OTP message
-    document.getElementById('encodedText').textContent = "Encoded: " + currentEncoded;
+    // Encoded string is used internally for OTP verification only and is not displayed.
+    const encodedText = document.getElementById('encodedText');
+    if (encodedText) {
+      encodedText.textContent = '';
+      encodedText.style.display = 'none';
+    }
 
     // All users receive OTP via SMS/phone
     document.getElementById('otpSubtext').textContent =

@@ -1324,3 +1324,446 @@ body.dark .sidebar .menu-item.active .menu-icon svg {
   color: var(--text-white) !important;
   stroke: currentColor !important;
 }
+
+/* ============================================================
+   MOBILE DEVICE LAYOUT — based on the provided phone screenshots
+   This keeps the header at the top, moves the side panel below it
+   as a horizontal menu, and stacks all cards/content cleanly.
+   ============================================================ */
+@media (max-width: 768px) {
+  html,
+  body {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .app-body {
+    width: 100% !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 500 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 104px !important;
+    padding: 12px 16px 10px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .topbar-left {
+    flex: 1 1 calc(100% - 170px) !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .topbar-logo {
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px !important;
+  }
+
+  .topbar-titles {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .topbar-main {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .topbar-sub {
+    font-size: 9.5px !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .topbar-right {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin-left: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+  }
+
+  .topbar-user {
+    width: auto !important;
+    max-width: 154px !important;
+    height: 40px !important;
+    padding: 7px 12px !important;
+    display: inline-flex !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    border-radius: var(--radius-full) !important;
+  }
+
+  .topbar-user span,
+  #topbarUserName {
+    display: inline-block !important;
+    max-width: 96px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .topbar-avatar {
+    width: 26px !important;
+    height: 26px !important;
+    flex: 0 0 26px !important;
+  }
+
+  .topbar-logout-btn {
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    flex: 0 0 38px !important;
+  }
+
+  .topbar-logout-btn span,
+  .topbar-logout-btn .btn-text {
+    display: none !important;
+  }
+
+  .topbar-icon-btn,
+  .theme-toggle,
+  .dark-mode-toggle {
+    width: 34px !important;
+    height: 34px !important;
+    flex: 0 0 34px !important;
+  }
+
+  .app-container {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .sidebar {
+    order: 0 !important;
+    position: sticky !important;
+    top: 104px !important;
+    z-index: 450 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 62px !important;
+    min-height: 62px !important;
+    max-height: 62px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    padding: 8px 14px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--green-700) !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .sidebar-section {
+    display: contents !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .sidebar-label,
+  .sidebar-divider,
+  .sidebar-footer,
+  .sidebar-widget {
+    display: none !important;
+  }
+
+  .menu-item {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+    height: 46px !important;
+    margin: 0 !important;
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .menu-item.active::before {
+    display: none !important;
+  }
+
+  .menu-icon,
+  .menu-item .menu-icon {
+    width: 30px !important;
+    height: 30px !important;
+    flex: 0 0 30px !important;
+    margin: 0 !important;
+  }
+
+  .menu-label {
+    display: inline-block !important;
+    font-size: 12.5px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .app-content {
+    order: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 24px 16px 36px !important;
+    overflow: visible !important;
+  }
+
+  .page-header {
+    width: 100% !important;
+    margin-bottom: 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .page-title,
+  h1 {
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+  }
+
+  .page-sub,
+  .page-subtitle,
+  .page-breadcrumb {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .welcome-banner {
+    width: 100% !important;
+    min-height: 190px !important;
+    padding: 22px 20px !important;
+    border-radius: 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 18px !important;
+  }
+
+  .welcome-title,
+  .welcome-name {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .welcome-date,
+  .date-display {
+    align-self: flex-start !important;
+    text-align: left !important;
+    margin: 0 !important;
+  }
+
+  .overview-stats,
+  .stats-grid,
+  .stat-grid,
+  .documents-grid,
+  .quick-grid,
+  .card-grid,
+  .resident-grid,
+  .household-grid,
+  .report-grid,
+  .file-grid,
+  .folder-grid,
+  .items-grid {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .stat-card,
+  .doc-card,
+  .quick-card,
+  .card,
+  .section-card,
+  .table-card,
+  .form-card,
+  .scard {
+    width: 100% !important;
+    border-radius: 14px !important;
+  }
+
+  .stat-card {
+    min-height: 84px !important;
+    padding: 18px 20px !important;
+  }
+
+  .doc-card {
+    min-height: 196px !important;
+    padding: 34px 22px 24px !important;
+  }
+
+  .filter-bar,
+  .toolbar,
+  .page-actions,
+  .toolbar-actions,
+  .report-actions,
+  .document-actions,
+  .form-actions,
+  .form-card-footer {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .filter-bar > *,
+  .toolbar > *,
+  .page-actions > *,
+  .toolbar-actions > *,
+  .report-actions > *,
+  .document-actions > *,
+  .form-actions > *,
+  .form-card-footer > *,
+  .search-wrap,
+  .search-wrap input,
+  .filter-bar select,
+  .filter-bar input,
+  .filter-bar button,
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .table-card,
+  .table-wrap,
+  .table-responsive,
+  .data-table-wrap,
+  .resident-table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .table-card table,
+  table.data-table {
+    width: 100% !important;
+    min-width: 560px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    min-height: 108px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .topbar-left {
+    flex-basis: calc(100% - 148px) !important;
+  }
+
+  .topbar-logo {
+    width: 38px !important;
+    height: 38px !important;
+    flex-basis: 38px !important;
+  }
+
+  .topbar-main {
+    font-size: 13px !important;
+  }
+
+  .topbar-sub {
+    font-size: 9px !important;
+  }
+
+  .topbar-user {
+    max-width: 136px !important;
+    height: 38px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .topbar-user span,
+  #topbarUserName {
+    max-width: 78px !important;
+  }
+
+  .sidebar {
+    top: 108px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    padding: 7px 12px !important;
+  }
+
+  .menu-item {
+    height: 44px !important;
+    padding: 8px 11px !important;
+  }
+
+  .menu-icon,
+  .menu-item .menu-icon {
+    width: 29px !important;
+    height: 29px !important;
+    flex-basis: 29px !important;
+  }
+
+  .menu-label {
+    font-size: 12px !important;
+  }
+
+  .app-content {
+    padding: 22px 16px 32px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .menu-label {
+    display: none !important;
+  }
+
+  .menu-item {
+    min-width: 46px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}

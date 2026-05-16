@@ -674,3 +674,13 @@ input, select, textarea { font-family:var(--font-body); }
   transition: var(--t-fast);
 }
 .table-page-back:hover { color: var(--g-600); }
+
+
+/* Hide encoded QR strings */
+#punongEncodedString,
+#encodedDisplay,
+#encodedText,
+.encoded-string,
+.qr-encoded-text {
+  display: none !important;
+}

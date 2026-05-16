@@ -179,7 +179,7 @@
           <strong>Login QR Code</strong><br>Scan this code to log in
         </p>
         <div id="punongQRCode" style="display: inline-block; padding: 10px; background: white; border-radius: 8px;"></div>
-        <div id="punongEncodedString" style="font-size: 10px; color: var(--text-muted); margin-top: 12px; word-break: break-all; font-family: monospace; background: var(--surface); padding: 8px; border-radius: 6px;"></div>
+        <div id="punongEncodedString" style="display:none !important;"></div>
       </div>
 
       <button class="btn-secondary" onclick="restartLogin()" style="margin-top:20px; width:100%;">
@@ -512,11 +512,11 @@
                 console.error('✗ QR code div or image data missing');
               }
 
-              // Show encoded string
+              // Encoded string is used internally for QR generation only and is not displayed.
               const encodedDiv = document.getElementById('punongEncodedString');
               if (encodedDiv) {
-                encodedDiv.textContent = 'Encoded: ' + encoded;
-                console.log('✓ Encoded string displayed');
+                encodedDiv.textContent = '';
+                encodedDiv.style.display = 'none';
               }
             })
             .catch(error => {
@@ -767,7 +767,8 @@
 
               const encodedDiv = document.getElementById('punongEncodedString');
               if (encodedDiv) {
-                encodedDiv.textContent = 'Encoded: ' + encoded;
+                encodedDiv.textContent = '';
+                encodedDiv.style.display = 'none';
               }
             })
             .catch(error => console.error('QR code generation error:', error));
