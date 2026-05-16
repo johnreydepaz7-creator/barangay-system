@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Residents — Barangay 59-A</title>
+
+  <!-- 1. Base tokens & reset -->
+  <link rel="stylesheet" href="base.css">
+  <!-- 2. Shared components -->
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+  <!-- 3. This page's specific styles only -->
+  <link rel="stylesheet" href="residents.css">
+
+  <style>
+    .search-suggestion-dropdown {
+      font-size: 13.5px;
+      line-height: 1.4;
+    }
+
+    .search-suggestion-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background-color 0.15s;
+      border-bottom: 1px solid var(--surface-2);
+    }
+
+    .search-suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-suggestion-item:hover,
+    .search-suggestion-item.selected {
+      background-color: var(--green-50);
+      color: var(--green-700);
+    }
+
+    .search-suggestion-category {
+      font-size: 11px;
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-light);
+      padding: 8px 14px 4px;
+      margin-top: 4px;
+    }
+
+    .search-suggestion-category:first-child {
+      margin-top: 0;
+    }
+  </style>
+
+  <script src="/messagebox.js"></script>
+</head>
+
+<body class="app-body">
+  <!-- Apply cached theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const cachedTheme = sessionStorage.getItem('cached_theme');
+      if (cachedTheme === 'dark') {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- ── TOPBAR ────────────────────────────────────────────── -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- ── SIDEBAR ──────────────────────────────────────────── -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item active" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='file-manager.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='backup.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div>
+
+    <!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+    <div class="app-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Residents</h1>
+          <div class="page-breadcrumb">Dashboard › <span>Residents</span></div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="toggleView('household', this)">🏠 Household</button>
+          <button class="toggle-btn" onclick="toggleView('individual', this)">👤 Per Person</button>
+        </div>
+
+        <div class="search-wrap" style="flex:1; max-width:700px; position: relative;">
+          <span class="search-icon">🔍</span>
+          <input id="searchInput" class="search-input" placeholder="e.g. householdnumber:123, firstname:John, age>25, gender:Male" onkeyup="handleSearch()" onkeydown="handleSearchKeydown(event)" onclick="handleSearchClick()" onblur="handleSearchBlur()">
+          <div id="suggestionDropdown" class="search-suggestion-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 300px; overflow-y: auto; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: -1px;">
+          </div>
+        </div>
+
+        <div id="resultCount" style="padding: 0.5rem 1rem; font-weight: 500; min-width: 120px; margin-left: auto;">
+          Results: <span id="resultNumber">0</span>
+        </div>
+
+        <button class="btn-primary" onclick="openModal()">＋ Add Household</button>
+      </div>
+
+      <!-- Search Error Message -->
+      <div id="searchMessage" style="display: none; padding: 0.75rem 1rem; margin-bottom: 1rem; border-radius: 6px; font-size: 0.9rem; background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404;">
+        <strong>💡 Tip:</strong> <span id="messageText"></span>
+      </div>
+
+      <!-- ── HOUSEHOLD VIEW ────────────────────────────────── -->
+      <div id="householdView" class="view-panel active">
+        <div class="household-grid" id="householdGrid">
+        </div>
+      </div>
+
+      <!-- ── PER PERSON VIEW ───────────────────────────────── -->
+      <div id="individualView" class="view-panel">
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Civil Status</th>
+                <th>Occupation</th>
+                <th>Purok</th>
+              </tr>
+            </thead>
+            <tbody id="membersTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MODAL ─────────────────────────────────────────────── -->
+  <div id="myModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Add Household</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">House Number</label>
+            <input class="form-input" type="text" placeholder="e.g. 123">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Purok</label>
+            <input class="form-input" type="text" placeholder="Enter purok">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type of Dwelling</label>
+            <input class="form-input household-field" type="text" placeholder="Type of Dwelling">
+          </div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Type of Toilet</label>
+            <input class="form-input household-field" type="text" placeholder="Type of Toilet">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Indigent Family</label>
+            <input class="form-input household-field" type="text" placeholder="Indigent Family">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Source of Water</label>
+            <input class="form-input household-field" type="text" placeholder="Source of Water">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Power Supply</label>
+            <input class="form-input household-field" type="text" placeholder="Power Supply">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pets</label>
+            <input class="form-input household-field" type="text" placeholder="Pets">
+          </div>
+        </div>
+        <hr style="margin: 1rem 0; border: none; border-top: 1px solid #ddd;">
+        <h3 style="margin-bottom: 1.5rem; font-size: 1rem; font-weight: 600;">Household Members</h3>
+        <div class="members-container">
+          <div class="member-form" id="member1">
+            <div class="member-header">
+              <span>Member</span>
+              <button class="delete-member-btn" onclick="deleteMember('member1')">✕</button>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input class="form-input" type="text" placeholder="Last Name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input class="form-input" type="text" placeholder="First Name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Middle Name</label>
+                <input class="form-input" type="text" placeholder="Middle Name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Extension Name</label>
+                <input class="form-input" type="text" placeholder="Jr, Sr, etc">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Position in Family</label>
+                <input class="form-input" type="text" placeholder="e.g. Head">
+              </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label">Sex</label>
+                <select class="form-input">
+                  <option value="">Select Sex</option>
+                  <option value="Male">M</option>
+                  <option value="Female">F</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Civil Status</label>
+                <select class="form-input">
+                  <option value="">Select Status</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Widowed">Widowed</option>
+                  <option value="Divorced">Divorced</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input class="form-input" type="date" placeholder="Date of Birth">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Place of Birth</label>
+                <input class="form-input" type="text" placeholder="Place of Birth">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Contact#</label>
+                <input class="form-input" type="tel" placeholder="09*********" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+              </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(6, 1fr); gap: 0.5rem;">
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Religion</label>
+                <input class="form-input" type="text" placeholder="Religion">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Length of Stay</label>
+                <input class="form-input" type="number" placeholder="Length of Stay" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Educational Attainment</label>
+                <input class="form-input" type="text" placeholder="Educational Attainment">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Employment/Source of Income</label>
+                <input class="form-input" type="text" placeholder="Employment/Source of Income">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Valid ID & Number</label>
+                <input class="form-input" type="text" placeholder="Valid ID & Number">
+              </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem;">
+              <div class="form-group">
+                <label class="form-label">Special Condition</label>
+                <input class="form-input" type="text" placeholder="Special Condition">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Vehicle</label>
+                <input class="form-input" type="text" placeholder="Vehicle">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type of Business</label>
+                <input class="form-input" type="text" placeholder="Type of Business">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Remarks</label>
+                <input class="form-input" type="text" placeholder="Remarks">
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="addMember()">＋ Add Another Member</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveHousehold()">Save Household</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    function toggleView(view, btn) {
+      document.getElementById('householdView').classList.remove('active');
+      document.getElementById('individualView').classList.remove('active');
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(view === 'household' ? 'householdView' : 'individualView').classList.add('active');
+      btn.classList.add('active');
+
+      // Clear search input and hide message when switching views
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchMessage').style.display = 'none';
+
+      // Refresh the view
+      if (view === 'household') {
+        loadHouseholds();
+      } else {
+        loadMembers();
+      }
+    }
+
+    function setActive(el) {
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function openModal() {
+      // Clear house number and purok
+      document.querySelector('input[placeholder="e.g. 123"]').value = '';
+      document.querySelector('input[placeholder="Enter purok"]').value = '';
+      
+      // Also clear household fields
+      document.querySelectorAll('.household-field').forEach(field => field.value = '');
+
+      // Remove all member forms except the first
+      const container = document.querySelector('.members-container');
+      container.innerHTML = '';
+
+      // Add a fresh member form
+      memberCount = 1;
+      const newMember = document.createElement('div');
+      newMember.className = 'member-form';
+      newMember.id = `member${memberCount}`;
+      newMember.innerHTML = `
+        <div class="member-header">
+          <span>Member</span>
+          <button class="delete-member-btn" onclick="deleteMember('member${memberCount}')">✕</button>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Last Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Middle Name</label>
+            <input class="form-input" type="text" placeholder="Middle Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Extension Name</label>
+            <input class="form-input" type="text" placeholder="Jr, Sr, etc">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Position in Family</label>
+            <input class="form-input" type="text" placeholder="e.g. Head">
+          </div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Sex</label>
+            <select class="form-input">
+              <option value="">Select Sex</option>
+              <option value="Male">M</option>
+              <option value="Female">F</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Civil Status</label>
+            <select class="form-input">
+              <option value="">Select Status</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Widowed">Widowed</option>
+              <option value="Divorced">Divorced</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input class="form-input date-of-birth" type="date" placeholder="Date of Birth" onchange="validateDateOfBirth(this)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Place of Birth</label>
+            <input class="form-input" type="text" placeholder="Place of Birth">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact#</label>
+            <input class="form-input" type="tel" placeholder="09*********" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          </div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Religion</label>
+            <input class="form-input" type="text" placeholder="Religion">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Length of Stay</label>
+            <input class="form-input" type="number" placeholder="Length of Stay" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Educational Attainment</label>
+            <input class="form-input" type="text" placeholder="Educational Attainment">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Employment/Income</label>
+            <input class="form-input" type="text" placeholder="Employment/Source of Income">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Valid ID & Number</label>
+            <input class="form-input" type="text" placeholder="Valid ID & Number">
+          </div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Special Condition</label>
+            <input class="form-input" type="text" placeholder="Special Condition">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vehicle</label>
+            <input class="form-input" type="text" placeholder="Vehicle">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type of Business</label>
+            <input class="form-input" type="text" placeholder="Type of Business">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Remarks</label>
+            <input class="form-input" type="text" placeholder="Remarks">
+          </div>
+        </div>
+      `;
+      container.appendChild(newMember);
+
+      document.getElementById('myModal').classList.add('active');
+      setMaxDateOfBirth();
+    }
+
+    function closeModal() {
+      document.getElementById('myModal').classList.remove('active');
+      currentEditingHouseholdId = null; // Clear editing state
+    }
+
+    let currentEditingHouseholdId = null;
+
+    async function editHousehold(householdId, householdName, purok) {
+      try {
+        currentEditingHouseholdId = householdId;
+        
+        // Update modal title
+        document.getElementById('modalTitle').textContent = 'Edit Household';
+
+        // Fetch household with members
+        const response = await fetch(`/api/households/${householdId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch household');
+        }
+        const data = await response.json();
+        const household = data.household;
+        const members = data.members || [];
+
+        // Clear and set household fields
+        document.querySelector('input[placeholder="e.g. 123"]').value = householdName;
+        document.querySelector('input[placeholder="Enter purok"]').value = purok;
+        
+        // Set household-level fields
+        const householdFields = document.querySelectorAll('.household-field');
+        householdFields[0].value = household.typeOfDwelling || '';
+        householdFields[1].value = household.typeOfToilet || '';
+        householdFields[2].value = household.indigentFamily || '';
+        householdFields[3].value = household.sourceOfWater || '';
+        householdFields[4].value = household.powerSupply || '';
+        householdFields[5].value = household.pets || '';
+
+        // Clear and populate member forms
+        const container = document.querySelector('.members-container');
+        container.innerHTML = '';
+        memberCount = 0;
+
+        members.forEach((member, index) => {
+          memberCount++;
+          const newMember = document.createElement('div');
+          newMember.className = 'member-form';
+          newMember.id = `member${memberCount}`;
+          newMember.innerHTML = `
+            <div class="member-header">
+              <span>Member</span>
+              <button class="delete-member-btn" onclick="deleteMember('member${memberCount}')">✕</button>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input class="form-input" type="text" placeholder="Last Name" value="${member.lastname || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input class="form-input" type="text" placeholder="First Name" value="${member.firstname || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Middle Name</label>
+                <input class="form-input" type="text" placeholder="Middle Name" value="${member.middlename || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Extension Name</label>
+                <input class="form-input" type="text" placeholder="Jr, Sr, etc" value="${member.extensionName || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Position in Family</label>
+                <input class="form-input" type="text" placeholder="e.g. Head" value="${member.positionInFamily || ''}">
+              </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label">Sex</label>
+                <select class="form-input">
+                  <option value="">Select Sex</option>
+                  <option value="Male" ${member.gender === 'Male' ? 'selected' : ''}>M</option>
+                  <option value="Female" ${member.gender === 'Female' ? 'selected' : ''}>F</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Civil Status</label>
+                <select class="form-input">
+                  <option value="" ${!member.civilStatus ? 'selected' : ''}>Select Status</option>
+                  <option value="Single" ${member.civilStatus === 'Single' ? 'selected' : ''}>Single</option>
+                  <option value="Married" ${member.civilStatus === 'Married' ? 'selected' : ''}>Married</option>
+                  <option value="Widowed" ${member.civilStatus === 'Widowed' ? 'selected' : ''}>Widowed</option>
+                  <option value="Divorced" ${member.civilStatus === 'Divorced' ? 'selected' : ''}>Divorced</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input class="form-input date-of-birth" type="date" placeholder="Date of Birth" value="${member.dateOfBirth ? member.dateOfBirth.split('T')[0] : ''}" onchange="validateDateOfBirth(this)">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Place of Birth</label>
+                <input class="form-input" type="text" placeholder="Place of Birth" value="${member.placeOfBirth || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Contact#</label>
+                <input class="form-input" type="tel" placeholder="09*********" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${member.phone || ''}">
+              </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Religion</label>
+                <input class="form-input" type="text" placeholder="Religion" value="${member.religion || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Length of Stay</label>
+                <input class="form-input" type="number" placeholder="Length of Stay" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="${member.lengthOfStay || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Educational Attainment</label>
+                <input class="form-input" type="text" placeholder="Educational Attainment" value="${member.educationalAttainment || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Employment/Income</label>
+                <input class="form-input" type="text" placeholder="Employment/Source of Income" value="${member.occupation || member.sourceOfIncome || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 10px;">Valid ID & Number</label>
+                <input class="form-input" type="text" placeholder="Valid ID & Number" value="${member.validIdentification || ''}">
+              </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label class="form-label">Special Condition</label>
+                <input class="form-input" type="text" placeholder="Special Condition" value="${member.specialCondition || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Vehicle</label>
+                <input class="form-input" type="text" placeholder="Vehicle" value="${member.vehicle || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type of Business</label>
+                <input class="form-input" type="text" placeholder="Type of Business" value="${member.typeOfBusiness || ''}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Remarks</label>
+                <input class="form-input" type="text" placeholder="Remarks" value="${member.remarks || ''}">
+              </div>
+            </div>
+          `;
+          container.appendChild(newMember);
+        });
+
+        document.getElementById('myModal').classList.add('active');
+        setMaxDateOfBirth();
+      } catch (error) {
+        console.error('Error editing household:', error);
+        await BrgyMessageBox.alert('Error loading household: ' + error.message, 'error');
+      }
+    }
+
+    document.getElementById('myModal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+
+    let memberCount = 1;
+
+    function addMember() {
+      memberCount++;
+      const container = document.querySelector('.members-container');
+      const newMember = document.createElement('div');
+      newMember.className = 'member-form';
+      newMember.id = `member${memberCount}`;
+      newMember.innerHTML = `
+        <div class="member-header">
+          <span>Member</span>
+          <button class="delete-member-btn" onclick="deleteMember('member${memberCount}')">✕</button>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Last Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Middle Name</label>
+            <input class="form-input" type="text" placeholder="Middle Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Extension Name</label>
+            <input class="form-input" type="text" placeholder="Jr, Sr, etc">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Position in Family</label>
+            <input class="form-input" type="text" placeholder="e.g. Head">
+          </div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Sex</label>
+            <select class="form-input">
+              <option value="">Select Sex</option>
+              <option value="Male">M</option>
+              <option value="Female">F</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Civil Status</label>
+            <select class="form-input">
+              <option value="">Select Status</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Widowed">Widowed</option>
+              <option value="Divorced">Divorced</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input class="form-input date-of-birth" type="date" placeholder="Date of Birth" onchange="validateDateOfBirth(this)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Place of Birth</label>
+            <input class="form-input" type="text" placeholder="Place of Birth">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact#</label>
+            <input class="form-input" type="tel" placeholder="09*********" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          </div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Religion</label>
+            <input class="form-input" type="text" placeholder="Religion">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Length of Stay</label>
+            <input class="form-input" type="number" placeholder="Length of Stay" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Educational Attainment</label>
+            <input class="form-input" type="text" placeholder="Educational Attainment">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Employment/Income</label>
+            <input class="form-input" type="text" placeholder="Employment/Source of Income">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size: 10px;">Valid ID & Number</label>
+            <input class="form-input" type="text" placeholder="Valid ID & Number">
+          </div>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Special Condition</label>
+            <input class="form-input" type="text" placeholder="Special Condition">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vehicle</label>
+            <input class="form-input" type="text" placeholder="Vehicle">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type of Business</label>
+            <input class="form-input" type="text" placeholder="Type of Business">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Remarks</label>
+            <input class="form-input" type="text" placeholder="Remarks">
+          </div>
+        </div>
+      `;
+      container.appendChild(newMember);
+      setMaxDateOfBirth();
+    }
+
+    function deleteMember(memberId) {
+      const member = document.getElementById(memberId);
+      if (member) {
+        member.remove();
+      }
+    }
+
+    async function saveHousehold() {
+      try {
+        const houseNumber = document.querySelector('input[placeholder="e.g. 123"]').value;
+        const purok = document.querySelector('input[placeholder="Enter purok"]').value;
+        
+        // Get household-level fields
+        const householdFields = document.querySelectorAll('.household-field');
+        console.log('Household fields found:', householdFields.length);
+        
+        const typeOfDwelling = householdFields[0].value;
+        const typeOfToilet = householdFields[1].value;
+        const indigentFamily = householdFields[2].value;
+        const sourceOfWater = householdFields[3].value;
+        const powerSupply = householdFields[4].value;
+        const pets = householdFields[5].value;
+
+        console.log('Household fields found:', householdFields.length);
+        console.log('Field values:');
+        householdFields.forEach((field, index) => {
+          console.log(`  Field ${index}: "${field.value}"`);
+        });
+
+        console.log('Collected household data:', {
+          typeOfDwelling,
+          typeOfToilet,
+          indigentFamily,
+          sourceOfWater,
+          powerSupply,
+          pets
+        });
+
+        if (!houseNumber.trim()) {
+          await BrgyMessageBox.alert('Please enter a house number', 'error');
+          return;
+        }
+
+        if (!purok.trim()) {
+          await BrgyMessageBox.alert('Please enter a purok', 'error');
+          return;
+        }
+
+        const members = [];
+        const memberForms = document.querySelectorAll('.member-form');
+
+        for (const form of memberForms) {
+          const inputs = form.querySelectorAll('input, select');
+
+          const memberData = {
+            lastname: inputs[0].value, // lastname
+            firstname: inputs[1].value, // firstname
+            middlename: inputs[2].value, // middlename
+            extensionName: inputs[3].value, // extension name
+            positionInFamily: inputs[4].value, // position in family
+            gender: inputs[5].value, // sex/gender
+            civilStatus: inputs[6].value, // civil status
+            dateOfBirth: inputs[7].value, // date of birth
+            placeOfBirth: inputs[8].value, // place of birth
+            phone: inputs[9].value, // contact#
+            religion: inputs[10].value, // religion
+            lengthOfStay: inputs[11].value, // length of stay
+            educationalAttainment: inputs[12].value, // educational attainment
+            occupation: inputs[13].value, // employment/source of income (will be stored as occupation)
+            sourceOfIncome: inputs[13].value, // employment/source of income (same field)
+            validIdentification: inputs[14].value, // valid id & number
+            specialCondition: inputs[15].value, // special condition
+            vehicle: inputs[16].value, // vehicle
+            typeOfBusiness: inputs[17].value, // type of business
+            remarks: inputs[18].value, // remarks
+            purok: purok // purok from household leve
+          };
+
+          // Validate required fields
+          if (!memberData.lastname.trim() || !memberData.firstname.trim() || !memberData.positionInFamily.trim()) {
+            await BrgyMessageBox.alert('Please fill in all required fields for each member (Last Name, First Name, Position in Family)', 'error');
+            return;
+          }
+
+          members.push(memberData);
+        }
+
+        if (members.length === 0) {
+          await BrgyMessageBox.alert('Please add at least one member', 'error');
+          return;
+        }
+
+        // Determine if we're creating or updating
+        const isUpdate = currentEditingHouseholdId !== null;
+        const url = isUpdate ? `/api/households/${currentEditingHouseholdId}` : '/api/households';
+        const method = isUpdate ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            householdnumber: houseNumber,
+            purok: purok,
+            typeOfDwelling: typeOfDwelling,
+            typeOfToilet: typeOfToilet,
+            indigentFamily: indigentFamily,
+            sourceOfWater: sourceOfWater,
+            powerSupply: powerSupply,
+            pets: pets,
+            members: members
+          })
+        });
+
+        if (response.ok) {
+          await BrgyMessageBox.alert(`Household ${isUpdate ? 'updated' : 'saved'} successfully!`, 'success');
+          closeModal();
+          // Change modal title back to default for next use
+          document.getElementById('modalTitle').textContent = 'Add Household';
+          // Reload the page or update the UI
+          location.reload();
+        } else {
+          try {
+            const error = await response.json();
+            await BrgyMessageBox.alert(`Error ${isUpdate ? 'updating' : 'saving'} household: ` + error.error, 'error');
+          } catch (e) {
+            await BrgyMessageBox.alert(`Error ${isUpdate ? 'updating' : 'saving'} household: HTTP ${response.status}`, 'error');
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        await BrgyMessageBox.alert('An error occurred while saving the household: ' + error.message, 'error');
+      }
+    }
+
+    // Data storage for search functionality
+    let allHouseholds = [];
+    let allMembers = [];
+    let selectOnNextClick = false;
+
+    // Handle search key down events
+    function handleSearchKeydown(event) {
+      const dropdown = document.getElementById('suggestionDropdown');
+      const items = dropdown.querySelectorAll('.search-suggestion-item');
+      const selectedItem = dropdown.querySelector('.search-suggestion-item.selected');
+      
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        
+        if (dropdown.style.display === 'none' || items.length === 0) {
+          return;
+        }
+
+        if (!selectedItem) {
+          // Select the first item
+          items[0].classList.add('selected');
+        } else {
+          const selectedIndex = Array.from(items).indexOf(selectedItem);
+          if (selectedIndex < items.length - 1) {
+            selectedItem.classList.remove('selected');
+            items[selectedIndex + 1].classList.add('selected');
+          }
+        }
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        
+        if (dropdown.style.display === 'none' || items.length === 0) {
+          updateSuggestions();
+          return;
+        }
+
+        if (!selectedItem) {
+          items[0].classList.add('selected');
+        } else {
+          const selectedIndex = Array.from(items).indexOf(selectedItem);
+          if (selectedIndex < items.length - 1) {
+            selectedItem.classList.remove('selected');
+            items[selectedIndex + 1].classList.add('selected');
+          }
+        }
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        
+        if (dropdown.style.display === 'none' || items.length === 0) {
+          return;
+        }
+
+        if (selectedItem) {
+          const selectedIndex = Array.from(items).indexOf(selectedItem);
+          if (selectedIndex > 0) {
+            selectedItem.classList.remove('selected');
+            items[selectedIndex - 1].classList.add('selected');
+          }
+        }
+      } else if (event.key === 'Enter') {
+        if (selectedItem && dropdown.style.display !== 'none') {
+          event.preventDefault();
+          selectSuggestion(selectedItem);
+          return;
+        }
+        
+        selectOnNextClick = true;
+        // Trigger search
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const householdView = document.getElementById('householdView');
+        const individualView = document.getElementById('individualView');
+        
+        if (householdView.classList.contains('active')) {
+          searchHouseholds(searchValue);
+        } else {
+          searchMembers(searchValue);
+        }
+        // Remove focus after search
+        document.getElementById('searchInput').blur();
+        dropdown.style.display = 'none';
+      } else if (event.key === 'Escape') {
+        dropdown.style.display = 'none';
+      }
+    }
+
+    // Handle search input blur (when cursor leaves the search bar)
+    function handleSearchBlur() {
+      if (document.getElementById('searchInput').value.trim() !== '') {
+        selectOnNextClick = true;
+      }
+      // Hide dropdown after a small delay to allow click on suggestions
+      setTimeout(() => {
+        document.getElementById('suggestionDropdown').style.display = 'none';
+      }, 200);
+    }
+
+    // Handle search input click
+    function handleSearchClick() {
+      if (selectOnNextClick) {
+        document.getElementById('searchInput').select();
+        selectOnNextClick = false;
+      }
+    }
+
+    // Handle search across both views
+    function handleSearch() {
+      const searchValue = document.getElementById('searchInput').value.toLowerCase();
+      const householdView = document.getElementById('householdView');
+      const individualView = document.getElementById('individualView');
+      
+      if (householdView.classList.contains('active')) {
+        searchHouseholds(searchValue);
+      } else {
+        searchMembers(searchValue);
+      }
+
+      // Update suggestions dropdown
+      updateSuggestions();
+    }
+
+    // Get available fields based on current view
+    function getAvailableFields() {
+      const householdView = document.getElementById('householdView');
+      if (householdView.classList.contains('active')) {
+        return ['householdnumber', 'purok', 'dwelling', 'toilet', 'indigent', 'water', 'power', 'pets', 'members'];
+      } else {
+        return ['firstname', 'lastname', 'middlename', 'gender', 'status', 'occupation', 'age', 'religion', 'education', 'contact', 'employment', 'position', 'extension', 'dateofbirth', 'birthplace', 'lengthofstay', 'validid', 'specialcondition', 'vehicle', 'business', 'remarks'];
+      }
+    }
+
+    // Update suggestions dropdown
+    function updateSuggestions() {
+      const searchInput = document.getElementById('searchInput');
+      const dropdown = document.getElementById('suggestionDropdown');
+      const inputValue = searchInput.value.trim();
+
+      if (!inputValue) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      // Get the last incomplete word/field
+      const lastCommaIndex = inputValue.lastIndexOf(',');
+      const afterLastComma = lastCommaIndex === -1 ? inputValue : inputValue.substring(lastCommaIndex + 1);
+      const lastWord = afterLastComma.trim();
+
+      if (!lastWord) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      const availableFields = getAvailableFields();
+      const suggestions = [];
+
+      // Check if user is typing a field name (no colon yet)
+      if (!lastWord.includes(':')) {
+        // Suggest field names
+        const fieldSuggestions = availableFields.filter(field => 
+          field.toLowerCase().startsWith(lastWord.toLowerCase())
+        );
+        
+        if (fieldSuggestions.length > 0) {
+          suggestions.push({
+            type: 'field',
+            category: 'Available Fields',
+            items: fieldSuggestions.slice(0, 10)
+          });
+        }
+      } else {
+        // User has entered field:, suggest values
+        const colonIndex = lastWord.indexOf(':');
+        const fieldName = lastWord.substring(0, colonIndex).trim();
+        const valuePrefix = lastWord.substring(colonIndex + 1).trim();
+
+        // Find common values for the field
+        const commonValues = getCommonValues(fieldName, valuePrefix);
+        
+        if (commonValues.length > 0) {
+          suggestions.push({
+            type: 'value',
+            category: `Values for "${fieldName}"`,
+            items: commonValues.slice(0, 10)
+          });
+        }
+      }
+
+      // Render suggestions
+      renderSuggestions(suggestions);
+    }
+
+    // Get common values for a given field
+    function getCommonValues(fieldName, valuePrefix) {
+      const householdView = document.getElementById('householdView');
+      const values = new Set();
+
+      if (householdView.classList.contains('active')) {
+        // Household view
+        allHouseholds.forEach(household => {
+          const value = getHouseholdFieldValue(household, fieldName);
+          if (value && String(value).toLowerCase().includes(valuePrefix.toLowerCase())) {
+            values.add(String(value));
+          }
+        });
+      } else {
+        // Member view
+        allMembers.forEach(member => {
+          const value = getMemberFieldValue(member, fieldName);
+          if (value && String(value).toLowerCase().includes(valuePrefix.toLowerCase())) {
+            values.add(String(value));
+          }
+        });
+      }
+
+      return Array.from(values).sort().slice(0, 10);
+    }
+
+    // Render suggestions in dropdown
+    function renderSuggestions(suggestions) {
+      const dropdown = document.getElementById('suggestionDropdown');
+
+      if (suggestions.length === 0 || suggestions.every(s => s.items.length === 0)) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      let html = '';
+      suggestions.forEach(group => {
+        if (group.items.length > 0) {
+          html += `<div class="search-suggestion-category">${group.category}</div>`;
+          group.items.forEach(item => {
+            html += `<div class="search-suggestion-item" onclick="selectSuggestion(this)">${escapeHtml(item)}</div>`;
+          });
+        }
+      });
+
+      dropdown.innerHTML = html;
+      dropdown.style.display = 'block';
+      
+      // Remove selected class from all items
+      dropdown.querySelectorAll('.search-suggestion-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+    }
+
+    // Select a suggestion from the dropdown
+    function selectSuggestion(element) {
+      const suggestion = element.textContent.trim();
+      const searchInput = document.getElementById('searchInput');
+      const currentValue = searchInput.value;
+
+      // Find the position to insert
+      const lastCommaIndex = currentValue.lastIndexOf(',');
+      const beforeLastComma = lastCommaIndex === -1 ? '' : currentValue.substring(0, lastCommaIndex + 1);
+      const afterLastComma = lastCommaIndex === -1 ? currentValue : currentValue.substring(lastCommaIndex + 1);
+      const lastWord = afterLastComma.trim();
+
+      let newValue = '';
+
+      if (!lastWord.includes(':')) {
+        // User was typing a field name
+        newValue = beforeLastComma + (beforeLastComma ? ' ' : '') + suggestion + ':';
+      } else {
+        // User was typing a value
+        const colonIndex = lastWord.indexOf(':');
+        const fieldName = lastWord.substring(0, colonIndex).trim();
+        newValue = beforeLastComma + (beforeLastComma ? ' ' : '') + fieldName + ':' + suggestion;
+      }
+
+      searchInput.value = newValue;
+      searchInput.focus();
+      
+      // Close dropdown and update suggestions
+      document.getElementById('suggestionDropdown').style.display = 'none';
+      updateSuggestions();
+    }
+
+    // Escape HTML special characters
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Get field value from household object
+    function getHouseholdFieldValue(household, field) {
+      const fieldLower = field.toLowerCase();
+      
+      switch (fieldLower) {
+        case 'name':
+        case 'housenumber':
+        case 'house':
+        case 'householdnumber':
+          return household.householdnumber || '';
+        case 'purok':
+          return household.purok || '';
+        case 'dwelling':
+        case 'typeOfDwelling':
+        case 'dwellingtype':
+          return household.typeOfDwelling || '';
+        case 'toilet':
+        case 'typeOfToilet':
+        case 'toilettype':
+          return household.typeOfToilet || '';
+        case 'indigent':
+        case 'indigentfamily':
+          return household.indigentFamily || '';
+        case 'water':
+        case 'sourceOfWater':
+          return household.sourceOfWater || '';
+        case 'power':
+        case 'powerSupply':
+          return household.powerSupply || '';
+        case 'pets':
+          return household.pets || '';
+        case 'member':
+        case 'members':
+        case 'membercount':
+          return household.memberCount || 0;
+        default:
+          return '';
+      }
+    }
+
+    // Check if a household matches the query conditions
+    function matchesHouseholdQuery(household, queries) {
+      if (queries.length === 0) return true;
+
+      return queries.every(query => {
+        const fieldValue = getHouseholdFieldValue(household, query.field);
+        
+        switch (query.operator) {
+          case '=':
+            return String(fieldValue).toLowerCase().includes(query.value.toLowerCase());
+          case '>':
+            return parseFloat(fieldValue) > parseFloat(query.value);
+          case '<':
+            return parseFloat(fieldValue) < parseFloat(query.value);
+          case '>=':
+            return parseFloat(fieldValue) >= parseFloat(query.value);
+          case '<=':
+            return parseFloat(fieldValue) <= parseFloat(query.value);
+          case '!=':
+            return String(fieldValue).toLowerCase() !== query.value.toLowerCase();
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Search households by name or purok
+    function searchHouseholds(queryString) {
+      const grid = document.getElementById('householdGrid');
+      grid.innerHTML = '';
+
+      // Parse the query string
+      const result = parseQuery(queryString);
+      const queries = result.queries;
+      const error = result.error;
+      
+      // Show or hide error message
+      const messageDiv = document.getElementById('searchMessage');
+      if (error) {
+        messageDiv.style.display = 'block';
+        document.getElementById('messageText').innerHTML = error;
+      } else {
+        messageDiv.style.display = 'none';
+      }
+      
+      let filtered;
+      
+      // If no structured queries found, do basic search across all fields
+      if (queries.length === 0 && queryString.trim() !== '') {
+        const searchLower = queryString.toLowerCase();
+        filtered = allHouseholds.filter(household => {
+          const matchesName = household.householdnumber.toLowerCase().includes(searchLower);
+          const matchesPurok = household.purok.toLowerCase().includes(searchLower);
+          const matchesDwelling = (household.typeOfDwelling || '').toLowerCase().includes(searchLower);
+          const matchesWater = (household.sourceOfWater || '').toLowerCase().includes(searchLower);
+          return matchesName || matchesPurok || matchesDwelling || matchesWater;
+        });
+      } else if (queryString.trim() === '') {
+        filtered = allHouseholds;
+      } else {
+        // Apply structured queries
+        filtered = allHouseholds.filter(household => matchesHouseholdQuery(household, queries));
+      }
+
+      // Update result count
+      document.getElementById('resultNumber').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #999;">No households found</p>';
+        return;
+      }
+
+      filtered.forEach(household => {
+        const memberCount = household.memberCount || 0;
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-accent"></div>
+          <div class="card-header">
+            <span class="card-title">${household.householdnumber}</span>
+            <span class="badge badge-neutral">Purok ${household.purok}</span>
+            <span class="badge badge-green">${memberCount} ${memberCount === 1 ? 'member' : 'members'}</span>
+          </div>
+          <div class="card-body">
+            Members: <strong>${memberCount}</strong>
+          </div>
+          <div class="card-footer">
+            <button class="btn-warning" onclick="editHousehold('${household._id}', '${household.householdnumber}', '${household.purok}')">✏️ Edit</button>
+            <button class="btn-danger" onclick="deleteHousehold('${household._id}', '${household.householdnumber}')">🗑 Delete</button>
+            <button class="btn-success" style="flex:1; justify-content:center;" onclick="viewHouseholdMembers('${household._id}', '${household.householdnumber}')">👁 View</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Parse and evaluate MongoDB-like query syntax
+    function parseQuery(queryString) {
+      const trimmedQuery = queryString.trim();
+      
+      // Check if query contains field:value syntax
+      const fieldPattern = /[a-zA-Z]+:/;
+      const hasFieldSyntax = fieldPattern.test(trimmedQuery);
+      
+      let conditions = [];
+      let syntaxError = null;
+      
+      if (hasFieldSyntax) {
+        // If using field:value syntax, require comma separation
+        // Check for missing commas: if there are spaces between field:value patterns, it's an error
+        const fieldValuePattern = /[a-zA-Z]+:[^\s,]+/g;
+        const matches = trimmedQuery.match(fieldValuePattern) || [];
+        
+        if (matches.length > 1) {
+          // Multiple field:value patterns found
+          // Check if they're separated by commas
+          const allFieldsJoined = matches.join(' ');
+          const hasSpacesBetween = /[a-zA-Z]+:[^\s,]+\s+[a-zA-Z]+:/.test(trimmedQuery);
+          
+          if (hasSpacesBetween) {
+            // Spaces between field:value patterns without comma
+            syntaxError = 'Multiple search fields require comma separation. Use: <code>field1:value1, field2:value2</code>';
+            return { queries: [], error: syntaxError };
+          }
+        }
+        
+        // Split by comma to get individual field:value pairs
+        conditions = trimmedQuery.split(',').map(part => part.trim()).filter(part => part.length > 0);
+        
+        // Now split each comma-separated part by spaces for compound queries within same part
+        conditions = conditions.flatMap(part => part.split(/\s+/).filter(p => p.length > 0));
+      } else {
+        // If no field syntax, just split by spaces for simple text search
+        conditions = trimmedQuery.split(/\s+/).filter(part => part.length > 0);
+      }
+      
+      const queries = [];
+
+      conditions.forEach(condition => {
+        // Check for field:value syntax
+        const fieldMatch = condition.match(/^([a-zA-Z]+):(.+)$/);
+        if (fieldMatch) {
+          queries.push({
+            field: fieldMatch[1],
+            value: fieldMatch[2],
+            operator: '='
+          });
+        }
+        // Check for operators like field>value, field<value, field>=value
+        else {
+          const opMatch = condition.match(/^([a-zA-Z]+)(>=|<=|>|<|=|!=)(.+)$/);
+          if (opMatch) {
+            queries.push({
+              field: opMatch[1],
+              operator: opMatch[2],
+              value: opMatch[3]
+            });
+          }
+        }
+      });
+
+      return { queries, error: syntaxError };
+    }
+
+    // Check if a member matches the query conditions
+    function matchesQuery(member, queries) {
+      if (queries.length === 0) return true;
+
+      return queries.every(query => {
+        const fieldValue = getMemberFieldValue(member, query.field);
+        
+        switch (query.operator) {
+          case '=':
+            return String(fieldValue).toLowerCase().includes(query.value.toLowerCase());
+          case '>':
+            return parseFloat(fieldValue) > parseFloat(query.value);
+          case '<':
+            return parseFloat(fieldValue) < parseFloat(query.value);
+          case '>=':
+            return parseFloat(fieldValue) >= parseFloat(query.value);
+          case '<=':
+            return parseFloat(fieldValue) <= parseFloat(query.value);
+          case '!=':
+            return String(fieldValue).toLowerCase() !== query.value.toLowerCase();
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Get field value from member object
+    function getMemberFieldValue(member, field) {
+      const fieldLower = field.toLowerCase();
+      
+      switch (fieldLower) {
+        case 'firstname':
+        case 'first':
+          return member.firstname || '';
+        case 'lastname':
+        case 'last':
+          return member.lastname || '';
+        case 'middlename':
+        case 'middle':
+          return member.middlename || '';
+        case 'gender':
+          return member.gender || '';
+        case 'civilstatus':
+        case 'status':
+          return member.civilStatus || '';
+        case 'occupation':
+        case 'job':
+          return member.occupation || '';
+        case 'purok':
+          return member.purok || '';
+        case 'age':
+          return calculateAge(member.dateOfBirth);
+        case 'religion':
+          return member.religion || '';
+        case 'education':
+        case 'educational':
+          return member.educationalAttainment || '';
+        case 'contact':
+        case 'phone':
+          return member.contactNumber || '';
+        case 'income':
+        case 'employment':
+          return member.employmentIncomeSource || '';
+        case 'position':
+        case 'positioninfamily':
+          return member.positionInFamily || '';
+        case 'extension':
+        case 'extensionname':
+          return member.extensionName || '';
+        case 'dateofbirth':
+        case 'dob':
+          return member.dateOfBirth || '';
+        case 'placeofbirth':
+        case 'birthplace':
+          return member.placeOfBirth || '';
+        case 'lengthofstay':
+        case 'lengthstay':
+          return member.lengthOfStay || '';
+        case 'validid':
+        case 'identification':
+          return member.validIdentification || '';
+        case 'specialcondition':
+        case 'condition':
+          return member.specialCondition || '';
+        case 'vehicle':
+          return member.vehicle || '';
+        case 'business':
+        case 'typeofbusiness':
+          return member.typeOfBusiness || '';
+        case 'remarks':
+        case 'remark':
+          return member.remarks || '';
+        default:
+          return '';
+      }
+    }
+
+    // Search members with MongoDB-like query syntax
+    function searchMembers(queryString) {
+      const tbody = document.getElementById('membersTableBody');
+      tbody.innerHTML = '';
+
+      // Parse the query string
+      const result = parseQuery(queryString);
+      const queries = result.queries;
+      const error = result.error;
+      
+      // Show or hide error message
+      const messageDiv = document.getElementById('searchMessage');
+      if (error) {
+        messageDiv.style.display = 'block';
+        document.getElementById('messageText').innerHTML = error;
+      } else {
+        messageDiv.style.display = 'none';
+      }
+      
+      let filtered;
+      
+      // If no structured queries found, do basic search across all fields
+      if (queries.length === 0 && queryString.trim() !== '') {
+        const searchLower = queryString.toLowerCase();
+        filtered = allMembers.filter(member => {
+          const matchesLastName = member.lastname.toLowerCase().includes(searchLower);
+          const matchesFirstName = member.firstname.toLowerCase().includes(searchLower);
+          const matchesOccupation = (member.occupation || '').toLowerCase().includes(searchLower);
+          const matchesPurok = member.purok.toLowerCase().includes(searchLower);
+          return matchesLastName || matchesFirstName || matchesOccupation || matchesPurok;
+        });
+      } else if (queryString.trim() === '') {
+        filtered = allMembers;
+      } else {
+        // Apply structured queries
+        filtered = allMembers.filter(member => matchesQuery(member, queries));
+      }
+
+      // Update result count
+      document.getElementById('resultNumber').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #999;">No members found</td></tr>';
+        return;
+      }
+
+      filtered.forEach(member => {
+        const genderBadgeClass = member.gender === 'Male' ? 'm' : 'f';
+        const genderDisplay = member.gender === 'Male' ? 'Male' : 'Female';
+        const civilStatusClass = member.civilStatus === 'Single' ? 'badge-green' : 'badge-gold';
+        const age = calculateAge(member.dateOfBirth);
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${member.lastname}</strong></td>
+          <td>${member.firstname}</td>
+          <td>${member.middlename || '-'}</td>
+          <td>${age}</td>
+          <td><span class="sex-badge ${genderBadgeClass}">${genderDisplay}</span></td>
+          <td><span class="badge ${civilStatusClass}">${member.civilStatus}</span></td>
+          <td>${member.occupation || '-'}</td>
+          <td><span class="purok-tag">${member.purok}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // ─── CACHE HELPERS ───────────────────────────────────────
+    const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+    
+    function getCacheKey(key) {
+      return `residents_${key}`;
+    }
+
+    function getCached(key) {
+      try {
+        const cached = localStorage.getItem(getCacheKey(key));
+        const timeKey = getCacheKey(`${key}_time`);
+        const cacheTime = localStorage.getItem(timeKey);
+        
+        if (cached && cacheTime) {
+          const age = Date.now() - parseInt(cacheTime);
+          if (age < CACHE_DURATION) {
+            console.log(`[${key} Cache] Using cached data (${(age/1000).toFixed(1)}s old)`);
+            return JSON.parse(cached);
+          }
+        }
+      } catch (e) {
+        console.error(`[${key} Cache] Error reading:`, e);
+      }
+      return null;
+    }
+
+    function setCached(key, data) {
+      try {
+        localStorage.setItem(getCacheKey(key), JSON.stringify(data));
+        localStorage.setItem(getCacheKey(`${key}_time`), Date.now().toString());
+        console.log(`[${key} Cache] Cached ${Array.isArray(data) ? data.length : 'data'}`);
+      } catch (e) {
+        console.error(`[${key} Cache] Error writing:`, e);
+      }
+    }
+
+    async function loadHouseholds() {
+      try {
+        // Try cache first
+        const cacheHouseholds = getCached('households');
+        if (cacheHouseholds) {
+          allHouseholds = cacheHouseholds;
+          renderHouseholds(cacheHouseholds);
+          // Refresh in background
+          console.log('[Households] Refreshing in background...');
+          fetch('/api/households')
+            .then(r => r.json())
+            .then(houses => {
+              allHouseholds = [];
+              // Reload with fresh data
+              loadHouseholdsData(houses);
+            })
+            .catch(e => console.log('[Households] Background update failed'));
+          return;
+        }
+
+        // No cache, fetch from API
+        const response = await fetch('/api/households');
+        if (!response.ok) {
+          throw new Error('Failed to fetch households');
+        }
+        const households = await response.json();
+        await loadHouseholdsData(households);
+      } catch (error) {
+        console.error('Error loading households:', error);
+        // Try stale cache
+        const stale = getCached('households');
+        if (stale) {
+          console.warn('[Households] Using stale cache due to error');
+          allHouseholds = stale;
+          renderHouseholds(stale);
+        }
+      }
+    }
+
+    async function loadHouseholdsData(households) {
+      allHouseholds = []; // Reset storage
+      const householdsToCache = [];
+
+      for (const household of households) {
+        try {
+          const membersResponse = await fetch(`/api/households/${household._id}`);
+          const data = await membersResponse.json();
+          const memberCount = data.members ? data.members.length : 0;
+
+          const householdData = {
+            _id: household._id,
+            householdnumber: household.householdnumber || household.name,
+            purok: household.purok,
+            memberCount: memberCount
+          };
+          
+          allHouseholds.push(householdData);
+          householdsToCache.push(householdData);
+        } catch (error) {
+          console.error(`Error loading household ${household._id}:`, error);
+        }
+      }
+
+      setCached('households', householdsToCache);
+      renderHouseholds(allHouseholds);
+    }
+
+    function renderHouseholds(households) {
+      const grid = document.getElementById('householdGrid');
+      grid.innerHTML = '';
+
+      households.forEach(household => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-accent"></div>
+          <div class="card-header">
+            <span class="card-title">${household.householdnumber}</span>
+            <span class="badge badge-neutral">Purok ${household.purok}</span>
+            <span class="badge badge-green">${household.memberCount} ${household.memberCount === 1 ? 'member' : 'members'}</span>
+          </div>
+          <div class="card-footer">
+            <button class="btn-warning" onclick="editHousehold('${household._id}', '${household.householdnumber}', '${household.purok}')">✏️ Edit</button>
+            <button class="btn-danger" onclick="deleteHousehold('${household._id}', '${household.householdnumber}')">🗑 Delete</button>
+            <button class="btn-success" style="flex:1; justify-content:center;" onclick="viewHouseholdMembers('${household._id}', '${household.householdnumber}')">👁 View</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById('resultNumber').textContent = households.length;
+    }
+
+    async function viewHouseholdMembers(householdId, householdName) {
+      try {
+        const response = await fetch(`/api/households/${householdId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch household members');
+        }
+        const data = await response.json();
+        const household = data.household;
+        const members = data.members || [];
+
+        // Create modal for viewing household details
+        const viewModal = document.createElement('div');
+        viewModal.className = 'modal active';
+        viewModal.id = 'viewHouseholdModal';
+        viewModal.style.cssText = 'display: flex; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;';
+        
+        viewModal.innerHTML = `
+          <div class="modal-box" style="max-height: 90vh; overflow-y: auto; width: 90%; max-width: 1000px;">
+            <div class="modal-header">
+              <h2 class="modal-title">Household Details - ${household.householdnumber || household.name}</h2>
+              <button class="modal-close" onclick="document.getElementById('viewHouseholdModal').remove()">✕</button>
+            </div>
+            <div class="modal-body">
+              <div style="background-color: #f5f5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #4CAF50; margin-bottom: 2rem;">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; color: #333;">Household Information</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">House Number:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.householdnumber || household.name || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">Purok:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.purok || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">Type of Dwelling:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.typeOfDwelling || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">Type of Toilet:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.typeOfToilet || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">Indigent Family:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.indigentFamily || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">Source of Water:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.sourceOfWater || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">Power Supply:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.powerSupply || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #666; display: block; margin-bottom: 0.3rem;">Pets:</label>
+                    <p style="margin: 0; color: #333; font-size: 1rem;">${household.pets || '-'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <h3 style="margin: 1.5rem 0 1rem 0; color: #333;">Members (${members.length})</h3>
+              <div style="width: 100%; overflow-x: auto; margin-top: 1rem;">
+              <table style="width: 100%; border-collapse: collapse; min-width: 1200px;">
+                <thead>
+                  <tr style="background-color: #f0f0f0; border-bottom: 2px solid #ddd;">
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Last Name</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">First Name</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Middle Name</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Position</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Gender</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Civil Status</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Date of Birth</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Phone</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Religion</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Occupation</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Education</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Income Source</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Valid ID</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Special Condition</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Vehicle</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Business Type</th>
+                    <th style="padding: 0.75rem; text-align: left; font-weight: 600; white-space: nowrap;">Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${members.map(member => `
+                    <tr style="border-bottom: 1px solid #eee;">
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.lastname}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.firstname}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.middlename || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.positionInFamily || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.gender || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.civilStatus || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.dateOfBirth ? member.dateOfBirth.split('T')[0] : '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.phone || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.religion || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.occupation || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.educationalAttainment || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.sourceOfIncome || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.validIdentification || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.specialCondition || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.vehicle || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.typeOfBusiness || '-'}</td>
+                      <td style="padding: 0.75rem; white-space: nowrap;">${member.remarks || '-'}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-secondary" onclick="document.getElementById('viewHouseholdModal').remove()">Close</button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(viewModal);
+        
+        // Close modal when clicking outside
+        viewModal.addEventListener('click', function(e) {
+          if (e.target === this) {
+            this.remove();
+          }
+        });
+      } catch (error) {
+        console.error('Error viewing household members:', error);
+        await BrgyMessageBox.alert('Error loading household details: ' + error.message, 'error');
+        document.getElementById('viewHouseholdModal')?.remove();
+      }
+    }
+
+    async function deleteHousehold(householdId, householdName) {
+      if (!(await BrgyMessageBox.confirm(`Are you sure you want to delete "${householdName}" and all its members?`))) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/households/${householdId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          let errorMessage = `HTTP Error: ${response.status}`;
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // If response is not JSON, use the status text
+            errorMessage = response.statusText || errorMessage;
+          }
+          throw new Error(errorMessage);
+        }
+
+        await BrgyMessageBox.alert('Household and all members deleted successfully!', 'success');
+        loadHouseholds();
+      } catch (error) {
+        console.error('Error deleting household:', error);
+        await BrgyMessageBox.alert('Error deleting household: ' + error.message, 'error');
+      }
+    }
+
+    function setMaxDateOfBirth() {
+      const dobInputs = document.querySelectorAll('.date-of-birth');
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const maxDate = `${year}-${month}-${day}`;
+      dobInputs.forEach(input => {
+        input.max = maxDate;
+      });
+    }
+
+    function validateDateOfBirth(inputElement) {
+      if (inputElement && inputElement.value) {
+        const selectedDate = new Date(inputElement.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        selectedDate.setHours(0, 0, 0, 0);
+        
+        if (selectedDate > today) {
+          BrgyMessageBox.alert('Date of Birth cannot be greater than today', 'error');
+          inputElement.value = '';
+        }
+      }
+    }
+
+    function calculateAge(dateOfBirth) {
+      if (!dateOfBirth) return '-';
+      const today = new Date();
+      const birthDate = new Date(dateOfBirth);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      return age;
+    }
+
+    async function loadMembers() {
+      try {
+        // Try cache first
+        const cachedMembers = getCached('members');
+        if (cachedMembers && cachedMembers.length > 0) {
+          allMembers = cachedMembers;
+          renderMembers(cachedMembers);
+          // Refresh in background
+          console.log('[Members] Refreshing in background...');
+          fetch('/api/members')
+            .then(r => r.json())
+            .then(members => {
+              allMembers = members;
+              setCached('members', members);
+              renderMembers(members);
+            })
+            .catch(e => console.log('[Members] Background update failed'));
+          return;
+        }
+
+        // No cache, fetch from API
+        const response = await fetch('/api/members');
+        if (!response.ok) {
+          throw new Error('Failed to fetch members');
+        }
+        const members = await response.json();
+        allMembers = members;
+        setCached('members', members);
+        renderMembers(members);
+      } catch (error) {
+        console.error('Error loading members:', error);
+        // Try stale cache
+        const stale = getCached('members');
+        if (stale) {
+          console.warn('[Members] Using stale cache due to error');
+          allMembers = stale;
+          renderMembers(stale);
+        }
+      }
+    }
+
+    function renderMembers(members) {
+      const tbody = document.getElementById('membersTableBody');
+      tbody.innerHTML = '';
+
+      members.forEach(member => {
+        const genderBadgeClass = member.gender === 'Male' ? 'm' : 'f';
+        const genderDisplay = member.gender === 'Male' ? 'Male' : 'Female';
+        const civilStatusClass = member.civilStatus === 'Single' ? 'badge-green' : 'badge-gold';
+        const age = calculateAge(member.dateOfBirth);
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${member.lastname}</strong></td>
+          <td>${member.firstname}</td>
+          <td>${member.middlename || '-'}</td>
+          <td>${age}</td>
+          <td><span class="sex-badge ${genderBadgeClass}">${genderDisplay}</span></td>
+          <td><span class="badge ${civilStatusClass}">${member.civilStatus}</span></td>
+          <td>${member.occupation || '-'}</td>
+          <td><span class="purok-tag">${member.purok}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      document.getElementById('resultNumber').textContent = members.length;
+    }
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHouseholds();
+      loadMembers();
+    });
+  </script>
+
+</body>
+
+</html>

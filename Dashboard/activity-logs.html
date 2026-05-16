@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Logs — Barangay 59-A</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+  <style>
+    .mod-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: var(--fw-bold);
+      letter-spacing: .3px;
+    }
+    .mod-Documents { background: #dce9f5; color: #1a5fa0; }
+    .mod-Residents { background: var(--green-100); color: var(--green-800); }
+    .mod-FileManager   { background: var(--gold-pale); color: var(--gold-700); }
+    .mod-System    { background: var(--surface-3); color: var(--text-muted); }
+    .mod-Overview  { background: #eef2ff; color: #4338ca; }
+    .mod-Backup    { background: #fee2e2; color: #991b1b; }
+    .mod-Settings  { background: #f3e8ff; color: #6b21a8; }
+
+    .log-action-cell {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .log-icon {
+      width: 32px; height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
+      background: transparent;
+    }
+    .log-icon svg       { width: 16px; height: 16px; stroke: var(--text-muted); }
+    .log-icon.green svg { stroke: var(--green-600); }
+    .log-icon.blue svg  { stroke: #1a5fa0; }
+    .log-icon.gold svg  { stroke: var(--gold-700); }
+    .log-icon.red svg   { stroke: var(--red-500); }
+    .log-icon.gray svg  { stroke: var(--text-muted); }
+
+    .log-action-text  { font-weight: var(--fw-semibold); font-size: 13.5px; }
+    .log-details-text { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .log-time         { font-size: 12.5px; color: var(--text-muted); white-space: nowrap; }
+
+    .filter-bar {
+      display: flex; align-items: center;
+      gap: var(--space-3); margin-bottom: 18px; flex-wrap: wrap;
+    }
+
+    .table-card {
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .table-card table thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  </style>
+  <script src="/messagebox.js"></script>
+</head>
+<body class="app-body">
+  <!-- Apply cached theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const cachedTheme = sessionStorage.getItem('cached_theme');
+      if (cachedTheme === 'dark') {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='file-manager.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item active" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='backup.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-content">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Activity Logs</h1>
+          <div class="page-breadcrumb">Dashboard › <span>Activity Logs</span></div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-wrap" style="flex:1; max-width:320px;">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="searchInput" placeholder="Search logs…">
+        </div>
+        <select class="form-select" id="moduleFilter" style="width:auto;">
+          <option value="">All Modules</option>
+          <option value="Documents">Documents</option>
+          <option value="File Manager">File Manager</option>
+          <option value="Residents">Residents</option>
+          <option value="Reports">Reports</option>
+          <option value="System">System</option>
+          <option value="Overview">Overview</option>
+          <option value="Backup">Backup</option>
+          <option value="Settings">Settings</option>
+        </select>
+        <select class="form-select" id="dateFilter" style="width:auto;">
+          <option value="">All Time</option>
+          <option value="today">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+        </select>
+
+      </div>
+
+      <!-- Logs Table -->
+      <div class="table-card">
+        <div class="empty-state" id="emptyState" style="padding:60px 20px;">
+          <div class="empty-state-icon">📋</div>
+          <div class="empty-state-title">No activity recorded yet</div>
+          <div class="empty-state-desc">Only CRUD actions plus user login and logout will appear here.</div>
+        </div>
+        <table id="logsTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>User</th>
+              <th>Module</th>
+              <th>Date & Time</th>
+            </tr>
+          </thead>
+          <tbody id="logsTbody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+
+    const iconMap = [
+      { match: 'Generated', icon: '📄', color: 'blue'  },
+      { match: 'Added',     icon: '➕', color: 'green' },
+      { match: 'Edited',    icon: '✏️', color: 'gold'  },
+      { match: 'Deleted',   icon: '🗑',  color: 'red'   },
+      { match: 'Logged in', icon: '🔑', color: 'green' },
+      { match: 'Logged out',icon: '🚪', color: 'gray'  },
+      { match: 'Viewed',    icon: '👁', color: 'gray'  },
+      { match: 'Created',   icon: '💾', color: 'green' },
+      { match: 'Restored',  icon: '↩️', color: 'gold'  },
+      { match: 'Updated',   icon: '🔄', color: 'gold'  },
+      { match: 'Uploaded',  icon: '⬆️', color: 'blue'  },
+      { match: 'Downloaded',icon: '⬇️', color: 'green' },
+      { match: 'Copied',    icon: '📋', color: 'blue'  },
+      { match: 'Pasted',    icon: '📄', color: 'green' },
+      { match: 'Moved',     icon: '📦', color: 'gold'  },
+      { match: 'Renamed',   icon: '✏️', color: 'gold'  },
+      { match: 'Pinned',    icon: '📌', color: 'blue'  },
+      { match: 'Unpinned',  icon: '📌', color: 'gray'  },
+    ];
+
+    function getIcon(action) {
+      return iconMap.find(m => action.includes(m.match)) || { icon: '📋', color: 'gray' };
+    }
+
+
+    function isVisibleActivityLog(entry) {
+      const value = String(entry.action || '').toLowerCase().trim();
+      if (value === 'viewed page' || value.includes('page view')) return false;
+      return [
+        'added', 'created', 'registered', 'generated', 'viewed', 'read',
+        'updated', 'edited', 'approved', 'deleted', 'rejected',
+        'logged in', 'logged out',
+        'uploaded', 'downloaded', 'copied', 'pasted', 'moved', 'renamed', 'pinned', 'unpinned', 'opened'
+      ].some(keyword => value.includes(keyword));
+    }
+
+    function escapeHTML(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function renderLogs(logs) {
+      const tbody      = document.getElementById('logsTbody');
+      const table      = document.getElementById('logsTable');
+      const emptyState = document.getElementById('emptyState');
+      tbody.innerHTML  = '';
+
+      if (!logs || logs.length === 0) {
+        table.style.display      = 'none';
+        emptyState.style.display = '';
+        return;
+      }
+
+      table.style.display      = '';
+      emptyState.style.display = 'none';
+
+      logs.forEach(entry => {
+        const { icon, color } = getIcon(entry.action);
+        const row = document.createElement('tr');
+        const safeModuleClass = String(entry.module || 'System').replace(/[^a-zA-Z0-9_-]/g, '');
+        row.innerHTML = `
+          <td>
+            <div class="log-action-cell">
+              <div class="log-icon ${color}">${icon}</div>
+              <div>
+                <div class="log-action-text">${escapeHTML(entry.action)}</div>
+                <div class="log-details-text">${escapeHTML(entry.details || '')}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight:var(--fw-semibold);font-size:13.5px;">${escapeHTML(entry.user)}</div>
+            <div style="font-size:12px;color:var(--text-muted);">${escapeHTML(entry.role || '')}</div>
+          </td>
+          <td><span class="mod-badge mod-${safeModuleClass}">${escapeHTML(entry.module)}</span></td>
+          <td class="log-time">${escapeHTML(entry.timestamp)}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    async function applyFilters() {
+      const q      = document.getElementById('searchInput').value.toLowerCase();
+      const module = document.getElementById('moduleFilter').value;
+      const date   = document.getElementById('dateFilter').value;
+      let logs     = (await Logger.getAllAsync()).filter(isVisibleActivityLog);
+
+      if (module) logs = logs.filter(l => l.module === module);
+
+      if (date) {
+        const now   = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        logs = logs.filter(l => {
+          const d = new Date(l.createdAt || l.id);
+          if (date === 'today') return d >= today;
+          if (date === 'week')  return d >= new Date(+today - 6 * 864e5);
+          if (date === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+          return true;
+        });
+      }
+
+      if (q) {
+        logs = logs.filter(l =>
+          (l.action  || '').toLowerCase().includes(q) ||
+          (l.details || '').toLowerCase().includes(q) ||
+          (l.user    || '').toLowerCase().includes(q)
+        );
+      }
+
+      renderLogs(logs);
+    }
+
+function setActive(el) {
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('moduleFilter').addEventListener('change', applyFilters);
+    document.getElementById('dateFilter').addEventListener('change', applyFilters);
+
+    applyFilters();
+    setInterval(applyFilters, 15000);
+  </script>
+
+</body>
+</html>

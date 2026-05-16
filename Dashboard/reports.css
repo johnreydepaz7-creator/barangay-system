@@ -1,0 +1,107 @@
+/* ============================================================
+   REPORTS.CSS — Page-specific styles only.
+   base.css + components.css must be loaded before this.
+   ============================================================ */
+
+/* Wider modal for report content */
+.report-modal-box {
+  width: 560px;
+}
+
+/* Report metadata line (date generated) */
+.report-meta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Report data rows inside modal */
+.report-data {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.report-data-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.report-data-label {
+  font-size: var(--text-base);
+  color: var(--text-body);
+  font-weight: var(--fw-medium);
+}
+
+.report-data-count {
+  font-size: var(--text-lg);
+  font-weight: var(--fw-bold);
+  color: var(--green-700);
+}
+
+/* Empty state is already in components.css — no overrides needed */
+
+/* Table action buttons spacing */
+.report-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ── DARK MODE ──────────────────────────────────────────────── */
+body.dark {
+  --surface:     #0f1a12; --surface-2:   #162019; --surface-3:   #1d2b21;
+  --border:      #28392c; --border-dark: #324438;
+  --text-main:   #e4ede7; --text-body:   #c2d4c8;
+  --text-muted:  #7fa086; --text-light:  #536e59;
+  --green-50:    #0c1c10; --green-100:   #112016; --green-200:   #183224;
+  --shadow-xs:   0 1px 4px  rgba(0,0,0,.35);
+  --shadow-sm:   0 2px 8px  rgba(0,0,0,.45);
+  --shadow-md:   0 4px 20px rgba(0,0,0,.55);
+}
+body.dark .topbar              { background: #09120b; border-bottom-color: #1d3025; }
+body.dark .sidebar             { background: #0d1710; border-right-color: #1d3025; }
+body.dark .sidebar-divider     { background: var(--border); }
+body.dark .app-content         { background: var(--surface); }
+body.dark .page-title          { color: var(--text-main); }
+body.dark .page-breadcrumb     { color: var(--text-muted); }
+
+/* toolbar */
+body.dark .search-wrap         { background: var(--surface-2); border-color: var(--border); }
+body.dark .search-wrap input   { background: transparent; color: var(--text-main); }
+body.dark .search-wrap svg     { stroke: var(--text-muted); }
+body.dark .form-select         { background: var(--surface-3); border-color: var(--border); color: var(--text-main); }
+
+/* table */
+body.dark .table-card          { background: var(--surface-2); border-color: var(--border); }
+body.dark .table-card thead th { background: #09120b; color: var(--text-muted); border-bottom-color: var(--border); }
+body.dark .table-card td       { color: var(--text-main); border-bottom-color: var(--border); }
+body.dark .table-card tbody tr:hover { background: var(--surface-3); }
+
+/* empty state */
+body.dark .empty-state         { background: var(--surface-2); }
+body.dark .empty-state-icon svg { stroke: var(--text-muted); }
+body.dark .empty-state-title   { color: var(--text-main); }
+body.dark .empty-state-desc    { color: var(--text-muted); }
+
+/* modal */
+body.dark .modal-box           { background: var(--surface-2); }
+body.dark .modal-header        { border-bottom-color: var(--border); }
+body.dark .modal-title         { color: var(--text-main); }
+body.dark .modal-footer        { background: var(--surface-3); border-top-color: var(--border); }
+body.dark .modal-close:hover   { background: var(--surface-3); }
+body.dark .report-meta         { border-bottom-color: var(--border); }
+body.dark .report-data-row     { background: var(--surface-3); border-color: var(--border); }
+body.dark .report-data-label   { color: var(--text-body); }
+body.dark .report-data-count   { color: var(--green-400); }
+
+/* action buttons */
+body.dark .btn-warning         { background: rgba(201,168,76,.1); color: #c9a84c; border-color: rgba(201,168,76,.25); }
+body.dark .btn-success         { background: rgba(90,184,124,.12); color: var(--green-400); border-color: rgba(90,184,124,.25); }
+body.dark .btn-danger          { background: rgba(200,50,70,.1); color: #f08090; border-color: #3a1520; }

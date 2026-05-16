@@ -1,0 +1,8 @@
+PDF/document fixes applied:
+
+- Generated document pages always stay in light/normal mode.
+- Save as PDF now opens the browser Print dialog only. Choose Save as PDF there.
+- Removed canvas/image PDF generation because it causes broken word spacing.
+- Updated cache-busting to pdf-save.js?v=20260516-print-only-v4.
+- Added print CSS for Clearance, Certification, Indigency, Summons, and Complaint.
+- Fixed Certificate of Indigency spacing issue by forcing real text print styling and removing problematic text-rendering settings.

@@ -1,0 +1,1326 @@
+/* ============================================================
+   RESPONSIVE.CSS — Flexible dashboard layout
+   Link this AFTER base.css, components.css, and page CSS.
+   This file is for dashboard/app pages only, not printable documents.
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Prevent long names, emails, addresses, and table values from breaking layout */
+.app-content,
+.card,
+.table-card,
+.section-card,
+.form-card,
+.scard,
+.toolbar,
+.page-header,
+.modal-box {
+  min-width: 0;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+/* ---------- Desktop fluid improvements ---------- */
+.app-content {
+  width: 100%;
+}
+
+.page-header,
+.toolbar,
+.filter-bar {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.search-wrap {
+  min-width: 220px;
+}
+
+.table-card {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-card table {
+  min-width: 720px;
+}
+
+.card-grid,
+.overview-stats,
+.documents-grid,
+.quick-grid,
+.overview-grid,
+.household-grid {
+  max-width: 100%;
+}
+
+/* ---------- Large tablets / small laptops ---------- */
+@media (max-width: 1180px) {
+  .overview-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .documents-grid {
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+  }
+
+  .household-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  }
+
+  .settings-wrap {
+    grid-template-columns: 180px 1fr !important;
+    gap: 18px !important;
+  }
+}
+
+/* ---------- Tablet layout ---------- */
+@media (max-width: 900px) {
+  .app-body {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+
+  .topbar {
+    height: auto !important;
+    min-height: var(--topbar-height);
+    padding: 12px 16px !important;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-left {
+    min-width: 0;
+    flex: 1 1 260px;
+  }
+
+  .topbar-logo {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .topbar-titles {
+    min-width: 0;
+  }
+
+  .topbar-main,
+  .topbar-sub {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .topbar-right {
+    flex: 0 1 auto;
+    margin-left: auto;
+  }
+
+  .topbar-user {
+    padding: 6px 10px !important;
+  }
+
+  .app-container {
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .sidebar {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--green-700);
+    flex-direction: row !important;
+    align-items: stretch;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .sidebar-section {
+    display: contents;
+  }
+
+  .sidebar-label,
+  .sidebar-divider,
+  .sidebar-widget {
+    display: none !important;
+  }
+
+  .menu-item {
+    flex: 0 0 auto;
+    margin: 0 !important;
+    border-radius: var(--radius) !important;
+    padding: 10px 12px !important;
+    min-width: max-content;
+  }
+
+  .menu-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .menu-label {
+    white-space: nowrap;
+  }
+
+  .app-content {
+    padding: 22px 18px !important;
+    overflow: visible !important;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .page-actions,
+  .toolbar-actions,
+  .report-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .search-wrap,
+  .toolbar .form-select,
+  .toolbar select,
+  .toolbar input {
+    width: 100% !important;
+  }
+
+  .form-page-wrap {
+    max-width: 100% !important;
+  }
+
+  .form-card {
+    width: 100% !important;
+  }
+
+  .form-row,
+  .form-row.single,
+  .field-details.visible {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-card-header,
+  .form-card-body,
+  .form-card-footer {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .form-card-footer {
+    flex-direction: column-reverse;
+    align-items: stretch !important;
+  }
+
+  .form-card-footer .btn,
+  .form-card-footer button,
+  .form-card-footer a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .settings-wrap {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .settings-nav {
+    flex-direction: row !important;
+    overflow-x: auto;
+    gap: 8px !important;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .snav-item {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .srow {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .srow > *:last-child {
+    width: 100%;
+  }
+
+  .srow button,
+  .srow .btn,
+  .srow input,
+  .srow select {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modal-box,
+  .report-modal-box {
+    width: calc(100vw - 32px) !important;
+    max-width: 560px !important;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+}
+
+/* ---------- Mobile layout ---------- */
+@media (max-width: 640px) {
+  :root {
+    --text-xs: 11px;
+    --text-sm: 12px;
+    --text-base: 13px;
+    --text-lg: 15px;
+    --text-xl: 18px;
+  }
+
+  .topbar {
+    padding: 10px 12px !important;
+  }
+
+  .topbar-left {
+    flex: 1 1 100%;
+  }
+
+  .topbar-main {
+    font-size: 13.5px !important;
+    line-height: 1.25;
+  }
+
+  .topbar-sub {
+    font-size: 10px !important;
+    line-height: 1.25;
+  }
+
+  .topbar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .topbar-user {
+    max-width: calc(100% - 34px);
+  }
+
+  .topbar-user span,
+  #topbarUserName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar {
+    padding: 7px 8px !important;
+  }
+
+  .menu-item {
+    padding: 9px 10px !important;
+    gap: 7px !important;
+  }
+
+  .menu-icon {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .menu-label {
+    font-size: 12px !important;
+  }
+
+  .app-content {
+    padding: 18px 14px !important;
+  }
+
+  .page-title,
+  .page-header-title,
+  h1 {
+    font-size: 20px !important;
+    line-height: 1.25;
+  }
+
+  .page-sub,
+  .page-subtitle {
+    font-size: 12.5px !important;
+  }
+
+  .overview-stats,
+  .quick-grid,
+  .documents-grid,
+  .household-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 14px;
+    padding: 20px !important;
+  }
+
+  .quick-grid {
+    padding: 12px !important;
+  }
+
+  .quick-card {
+    min-height: 92px;
+  }
+
+  .doc-card {
+    padding: 22px 20px 18px !important;
+  }
+
+  .card,
+  .section-card,
+  .table-card,
+  .form-card,
+  .scard {
+    border-radius: 14px !important;
+  }
+
+  .card-header,
+  .section-card-header,
+  .scard-head {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .activity-row,
+  .purok-row {
+    align-items: flex-start !important;
+  }
+
+  .activity-time {
+    white-space: normal !important;
+    text-align: right;
+  }
+
+  .report-data-row {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 6px;
+  }
+
+  .resident-filled {
+    align-items: flex-start !important;
+  }
+
+  .date-display {
+    flex-wrap: wrap;
+  }
+
+  .date-display-label {
+    margin-left: 0 !important;
+    width: 100%;
+  }
+
+  .form-card-header {
+    align-items: flex-start !important;
+  }
+
+  .form-card-icon {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .table-card table {
+    min-width: 640px;
+  }
+
+  .btn,
+  button,
+  .back-link {
+    min-height: 38px;
+  }
+}
+
+/* ---------- Very small phones ---------- */
+@media (max-width: 420px) {
+  .app-content {
+    padding: 14px 10px !important;
+  }
+
+  .topbar-logo {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .topbar-avatar {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .menu-label {
+    display: none !important;
+  }
+
+  .menu-item {
+    min-width: 46px;
+    justify-content: center;
+  }
+
+  .menu-icon {
+    margin: 0 !important;
+  }
+
+  .form-card-header,
+  .form-card-body,
+  .form-card-footer,
+  .scard-head,
+  .srow {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .modal-box,
+  .report-modal-box {
+    width: calc(100vw - 20px) !important;
+  }
+
+  .table-card table {
+    min-width: 600px;
+  }
+}
+
+/* ---------- Wide screens ---------- */
+@media (min-width: 1440px) {
+  .app-content {
+    padding-left: 42px !important;
+    padding-right: 42px !important;
+  }
+
+  .overview-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .documents-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  }
+}
+
+/* ---------- Extra browser resize hardening ---------- */
+html, body { width: 100%; }
+.app-container, .topbar, .sidebar, .app-content { min-width: 0; }
+.topbar-left, .topbar-right, .topbar-user, .topbar-titles { min-width: 0; }
+.topbar-user { max-width: min(360px, 45vw); }
+.topbar-user span, #topbarUserName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Let dashboard grids shrink naturally when the browser is resized */
+.stat-grid, .stats-grid, .overview-stats, .documents-grid, .quick-grid, .card-grid, .resident-grid, .report-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+}
+
+/* File manager / document pages */
+.file-manager-layout, .file-layout, .fm-layout, .manager-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) minmax(0, 1fr);
+  gap: 18px;
+  max-width: 100%;
+}
+.file-panel, .folder-panel, .files-panel, .fm-panel, .doc-preview, .document-preview, .preview-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+.file-grid, .folder-grid, .items-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)) !important;
+}
+
+/* Prevent horizontal overflow from long text */
+.card, .section-card, .table-card, .form-card, .scard, .doc-card, .file-card, .resident-card,
+.srow-label, .srow-hint, .card-title, .card-subtitle, .page-title, .page-subtitle {
+  overflow-wrap: anywhere;
+}
+
+/* Tables remain usable on smaller widths */
+.table-wrap, .table-responsive, .data-table-wrap, .resident-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1100px) {
+  :root { --sidebar-width: 220px; }
+  .app-content { padding-left: 24px !important; padding-right: 24px !important; }
+  .topbar { padding-left: 20px !important; padding-right: 20px !important; }
+}
+
+@media (max-width: 760px) {
+  .file-manager-layout, .file-layout, .fm-layout, .manager-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .topbar-right { gap: 8px; }
+  .topbar-logout-btn { padding: 8px 10px !important; }
+  .topbar-logout-btn span, .topbar-logout-btn .btn-text { display: none !important; }
+  .document-actions, .page-actions, .toolbar-actions, .form-actions { width: 100%; }
+  .document-actions button, .page-actions button, .toolbar-actions button, .form-actions button,
+  .document-actions a, .page-actions a, .toolbar-actions a, .form-actions a {
+    flex: 1 1 160px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar-user { max-width: calc(100vw - 96px); }
+  .topbar-user span, #topbarUserName { max-width: 160px; }
+  .app-content { padding-left: 12px !important; padding-right: 12px !important; }
+  .toolbar input, .toolbar select, .toolbar button, .search-wrap { min-width: 0 !important; }
+}
+
+/* ============================================================
+   MOBILE APP ALIGNMENT FIX
+   Keeps the system usable when the browser becomes narrow.
+   The sidebar becomes a horizontal menu below the top bar,
+   content stacks vertically, and controls no longer overflow.
+   ============================================================ */
+@media (max-width: 1024px) {
+  html, body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden !important;
+  }
+
+  .app-body {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+  }
+
+  .app-container {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
+    min-width: 0;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: var(--topbar-height);
+    z-index: 90;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px;
+    padding: 8px 14px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--green-700);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar { display: none; }
+  .sidebar-section { display: contents !important; padding: 0 !important; }
+  .sidebar-label, .sidebar-divider, .sidebar-widget, .sidebar-footer { display: none !important; }
+
+  .menu-item {
+    flex: 0 0 auto !important;
+    min-width: max-content;
+    margin: 0 !important;
+    padding: 10px 14px !important;
+    border-radius: var(--radius) !important;
+    white-space: nowrap;
+  }
+
+  .menu-item.active::before { display: none !important; }
+
+  .app-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    padding: 24px 18px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    min-height: var(--topbar-height) !important;
+    height: auto !important;
+    padding: 10px 16px !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .topbar-left {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .topbar-logo {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .topbar-titles { min-width: 0 !important; }
+  .topbar-main, .topbar-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap !important;
+  }
+
+  .topbar-right {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin-left: 8px !important;
+    gap: 6px !important;
+  }
+
+  .topbar-user {
+    max-width: 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .topbar-user span,
+  #topbarUserName {
+    display: none !important;
+  }
+
+  .topbar-logout-btn {
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .topbar-logout-btn span,
+  .topbar-logout-btn .btn-text {
+    display: none !important;
+  }
+
+  .sidebar {
+    top: 58px;
+    padding: 7px 12px !important;
+  }
+
+  .menu-item {
+    gap: 8px !important;
+    padding: 10px 12px !important;
+  }
+
+  .menu-icon {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .menu-label {
+    display: inline !important;
+    font-size: 12.5px !important;
+  }
+
+  .app-content {
+    padding: 24px 16px !important;
+  }
+
+  .page-header,
+  .filter-bar,
+  .toolbar,
+  .page-actions,
+  .toolbar-actions,
+  .report-actions,
+  .document-actions,
+  .form-actions {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .filter-bar > *,
+  .toolbar > *,
+  .page-actions > *,
+  .toolbar-actions > *,
+  .report-actions > *,
+  .document-actions > *,
+  .form-actions > * {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .search-wrap,
+  .search-wrap input,
+  .filter-bar select,
+  .filter-bar button,
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .table-card,
+  .table-wrap,
+  .table-responsive,
+  .data-table-wrap,
+  .resident-table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-card table,
+  table.data-table {
+    min-width: 560px !important;
+  }
+}
+
+/* ============================================================
+   FINAL BROWSER-SIZE ADJUSTMENT FIX
+   Makes the whole dashboard fluid when the browser is resized.
+   ============================================================ */
+html,
+body {
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.app-body {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.app-container,
+.app-content,
+.topbar,
+.sidebar,
+.page-header,
+.filter-bar,
+.toolbar,
+.table-card,
+.card,
+.section-card,
+.form-card,
+.scard,
+.doc-card,
+.modal-box {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.app-content {
+  padding: clamp(14px, 2.4vw, 32px) !important;
+}
+
+.topbar {
+  padding-left: clamp(12px, 2vw, 28px) !important;
+  padding-right: clamp(12px, 2vw, 28px) !important;
+}
+
+.topbar-left,
+.topbar-right,
+.topbar-titles,
+.topbar-user {
+  min-width: 0 !important;
+}
+
+.topbar-main,
+.topbar-sub,
+.menu-label,
+.card-title,
+.page-title,
+.page-subtitle,
+.page-breadcrumb,
+.log-action-text,
+.log-details-text {
+  overflow-wrap: anywhere;
+}
+
+.overview-stats,
+.stats-grid,
+.stat-grid,
+.documents-grid,
+.quick-grid,
+.card-grid,
+.resident-grid,
+.household-grid,
+.report-grid,
+.file-grid,
+.folder-grid,
+.items-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)) !important;
+  gap: clamp(12px, 1.8vw, 18px) !important;
+}
+
+.welcome-banner,
+.card,
+.section-card,
+.table-card,
+.form-card,
+.scard,
+.doc-card,
+.quick-card,
+.stat-card {
+  width: 100% !important;
+}
+
+.filter-bar,
+.toolbar,
+.page-actions,
+.toolbar-actions,
+.report-actions,
+.document-actions,
+.form-actions {
+  flex-wrap: wrap !important;
+}
+
+.search-wrap {
+  flex: 1 1 260px !important;
+  max-width: 100% !important;
+  min-width: min(260px, 100%) !important;
+}
+
+.filter-bar select,
+.filter-bar input,
+.filter-bar button,
+.toolbar select,
+.toolbar input,
+.toolbar button,
+.page-actions button,
+.document-actions button,
+.form-actions button,
+.form-select,
+.form-input,
+.search-input {
+  max-width: 100% !important;
+}
+
+.table-card,
+.table-wrap,
+.table-responsive,
+.data-table-wrap,
+.resident-table-wrap {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-card table,
+table.data-table {
+  width: 100%;
+  min-width: 620px;
+}
+
+@media (max-width: 1100px) {
+  .app-body {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+  }
+
+  .app-container {
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 200 !important;
+    min-height: var(--topbar-height) !important;
+    height: auto !important;
+  }
+
+  .sidebar {
+    position: sticky !important;
+    top: var(--topbar-height) !important;
+    z-index: 180 !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--green-700) !important;
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar { display: none; }
+  .sidebar-section { display: contents !important; padding: 0 !important; }
+  .sidebar-label,
+  .sidebar-divider,
+  .sidebar-widget,
+  .sidebar-footer { display: none !important; }
+
+  .menu-item {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding: 10px 14px !important;
+    border-radius: var(--radius) !important;
+    white-space: nowrap !important;
+  }
+
+  .menu-item.active::before { display: none !important; }
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    gap: 10px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .topbar-left {
+    flex: 1 1 auto !important;
+    overflow: hidden !important;
+  }
+
+  .topbar-right {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin-left: 6px !important;
+    gap: 6px !important;
+  }
+
+  .topbar-main,
+  .topbar-sub {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .topbar-logo {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .topbar-user {
+    width: 38px !important;
+    height: 38px !important;
+    max-width: 38px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .topbar-user span,
+  #topbarUserName,
+  .topbar-logout-btn span,
+  .topbar-logout-btn .btn-text {
+    display: none !important;
+  }
+
+  .topbar-logout-btn {
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .sidebar {
+    top: 58px !important;
+    padding: 7px 10px !important;
+  }
+
+  .menu-item {
+    padding: 9px 12px !important;
+    gap: 8px !important;
+  }
+
+  .menu-icon {
+    width: 29px !important;
+    height: 29px !important;
+  }
+
+  .menu-label {
+    font-size: 12.5px !important;
+  }
+
+  .page-header,
+  .filter-bar,
+  .toolbar,
+  .page-actions,
+  .toolbar-actions,
+  .report-actions,
+  .document-actions,
+  .form-actions,
+  .form-card-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .filter-bar > *,
+  .toolbar > *,
+  .page-actions > *,
+  .toolbar-actions > *,
+  .report-actions > *,
+  .document-actions > *,
+  .form-actions > *,
+  .form-card-footer > *,
+  .search-wrap,
+  .search-wrap input,
+  .filter-bar select,
+  .toolbar select,
+  .toolbar input,
+  .toolbar button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .form-row,
+  .form-grid,
+  .settings-wrap,
+  .file-manager-layout,
+  .file-layout,
+  .fm-layout,
+  .manager-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-content {
+    padding: 18px 14px !important;
+  }
+
+  .page-title,
+  h1 {
+    font-size: 20px !important;
+    line-height: 1.25 !important;
+  }
+
+  .topbar-main { font-size: 13px !important; }
+  .topbar-sub { font-size: 9.5px !important; }
+
+  .overview-stats,
+  .stats-grid,
+  .stat-grid,
+  .documents-grid,
+  .quick-grid,
+  .card-grid,
+  .resident-grid,
+  .household-grid,
+  .report-grid,
+  .file-grid,
+  .folder-grid,
+  .items-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .table-card table,
+  table.data-table {
+    min-width: 560px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .menu-label { display: none !important; }
+  .menu-item {
+    min-width: 46px !important;
+    justify-content: center !important;
+  }
+  .menu-icon { margin: 0 !important; }
+}
+
+/* ============================================================
+   SMALL BROWSER TOP-NAV FIX
+   When the browser/window is narrow, the side panel is moved
+   below the header as a horizontal top menu instead of staying
+   as a left sidebar.
+   ============================================================ */
+@media (max-width: 1100px) {
+  body,
+  html {
+    overflow-x: hidden !important;
+  }
+
+  .app-body {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+  }
+
+  .topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 300 !important;
+    width: 100% !important;
+  }
+
+  .app-container {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .sidebar {
+    order: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    padding: 8px 14px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--green-700) !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .sidebar-section {
+    display: contents !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .sidebar-label,
+  .sidebar-divider,
+  .sidebar-widget,
+  .sidebar-footer {
+    display: none !important;
+  }
+
+  .menu-item {
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 10px 14px !important;
+    border-radius: var(--radius) !important;
+    white-space: nowrap !important;
+  }
+
+  .menu-item.active::before {
+    display: none !important;
+  }
+
+  .app-content {
+    order: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    padding: 7px 12px !important;
+    gap: 7px !important;
+  }
+
+  .menu-item {
+    padding: 9px 12px !important;
+    gap: 8px !important;
+  }
+
+  .menu-icon {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .menu-label {
+    display: inline !important;
+    font-size: 12.5px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .menu-label {
+    display: none !important;
+  }
+
+  .menu-item {
+    min-width: 46px !important;
+    justify-content: center !important;
+  }
+}
+
+body.dark .sidebar .menu-item.active {
+  background: rgba(255,255,255,.10) !important;
+  color: var(--text-white) !important;
+}
+
+body.dark .sidebar .menu-item.active .menu-icon,
+body.dark .sidebar .menu-item.active .menu-icon svg {
+  color: var(--text-white) !important;
+  stroke: currentColor !important;
+}

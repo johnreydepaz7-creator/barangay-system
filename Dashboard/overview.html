@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overview — Barangay 59-A</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+  <style>
+    /* ── STAT GRID ── */
+    .overview-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: 28px;
+    }
+
+    /* ── OVERVIEW GRID: two columns ── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .overview-grid.full { grid-template-columns: 1fr; }
+
+    /* ── SECTION CARD ── */
+    .section-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .section-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-card-title {
+      font-size: 14px;
+      font-weight: var(--fw-bold);
+      color: var(--text-main);
+    }
+
+    .section-card-link {
+      font-size: 12px;
+      color: var(--green-600);
+      font-weight: var(--fw-semibold);
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-fast);
+    }
+    .section-card-link:hover { color: var(--green-800); }
+
+    .section-card-body {
+      padding: 0;
+    }
+    
+    .purok-list-body {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .purok-list-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .purok-list-body::-webkit-scrollbar-track {
+      background: var(--surface-2);
+      border-radius: 3px;
+    }
+    
+    .purok-list-body::-webkit-scrollbar-thumb {
+      background: var(--text-muted);
+      border-radius: 3px;
+    }
+    
+    .purok-list-body::-webkit-scrollbar-thumb:hover {
+      background: var(--text-light);
+    }
+
+    /* ── RECENT ACTIVITY ROWS ── */
+    .activity-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--surface-2);
+      transition: background .12s;
+    }
+    .activity-row:last-child { border-bottom: none; }
+    .activity-row:hover { background: var(--surface); }
+
+    .activity-icon {
+      width: 34px; height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center;
+      justify-content: center; font-size: 15px;
+      flex-shrink: 0;
+    }
+    .activity-icon svg       { stroke: var(--text-muted); }
+    .activity-icon.blue svg  { stroke: #7ab3d9; }
+    .activity-icon.green svg { stroke: var(--green-600); }
+    .activity-icon.gold svg  { stroke: #c9a84c; }
+
+    .activity-info { flex: 1; min-width: 0; }
+    .activity-action { font-size: 13px; font-weight: var(--fw-semibold); color: var(--text-main); }
+    .activity-detail { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+    .activity-user { font-size: 11.5px; color: var(--text-light); margin-top: 2px; }
+
+    .activity-time {
+      font-size: 11.5px; color: var(--text-light);
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ── QUICK ACCESS CARDS ── */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .quick-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 12px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: var(--transition-base);
+      text-decoration: none;
+      text-align: center;
+    }
+    .quick-card:hover {
+      background: var(--green-50);
+      border-color: var(--green-200);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+    .quick-card:hover .quick-card-icon svg      { stroke: var(--green-700); }
+    .quick-card:hover .quick-card-icon.blue svg { stroke: #5a8bc9; }
+
+    .quick-card-icon {
+      width: 42px; height: 42px;
+      border-radius: var(--radius);
+      background: transparent;
+      display: flex; align-items: center;
+      justify-content: center; font-size: 20px;
+    }
+    .quick-card-icon svg      { stroke: var(--green-600); }
+    .quick-card-icon.blue svg { stroke: #7ab3d9; }
+
+    .quick-card-label {
+      font-size: 12px;
+      font-weight: var(--fw-semibold);
+      color: var(--text-body);
+      line-height: var(--lh-snug);
+    }
+
+    /* ── PUROK BREAKDOWN ── */
+    .purok-list { padding: 8px 0; }
+
+    .purok-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+    }
+
+    .purok-label {
+      font-size: 13px;
+      font-weight: var(--fw-medium);
+      color: var(--text-body);
+      min-width: 60px;
+    }
+
+    .purok-bar-wrap {
+      flex: 1;
+      background: var(--surface-2);
+      border-radius: var(--radius-full);
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .purok-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-600), var(--green-400));
+      border-radius: var(--radius-full);
+      transition: width .6s ease;
+    }
+
+    .purok-count {
+      font-size: 12px;
+      font-weight: var(--fw-bold);
+      color: var(--text-muted);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    /* ── WELCOME BANNER ── */
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--green-900) 0%, var(--green-700) 100%);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.04);
+    }
+
+    .welcome-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: 60px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.03);
+    }
+
+    .welcome-text { position: relative; z-index: 1; }
+
+    .welcome-greeting {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--green-400);
+      font-weight: var(--fw-bold);
+      margin-bottom: 4px;
+    }
+
+    .welcome-name {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: var(--fw-bold);
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .welcome-sub {
+      font-size: 12.5px;
+      color: rgba(255,255,255,.5);
+    }
+
+    .welcome-date {
+      position: relative;
+      z-index: 1;
+      text-align: right;
+    }
+
+    .welcome-date-day {
+      font-family: var(--font-display);
+      font-size: 42px;
+      font-weight: var(--fw-bold);
+      color: white;
+      line-height: 1;
+    }
+
+    .welcome-date-month {
+      font-size: 13px;
+      color: var(--green-400);
+      font-weight: var(--fw-semibold);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+  </style>
+  <script src="/messagebox.js"></script>
+</head>
+<body class="app-body">
+  <!-- Apply cached theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const cachedTheme = sessionStorage.getItem('cached_theme');
+      if (cachedTheme === 'dark') {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item active" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='file-manager.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='backup.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Overview</h1>
+          <div class="page-breadcrumb"><span>Dashboard</span></div>
+        </div>
+      </div>
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <div class="welcome-greeting">Good morning</div>
+          <div class="welcome-name" id="bannerName">Juan Dela Cruz</div>
+          <div class="welcome-sub" id="bannerRole">Barangay Secretary · Barangay 59-A, Sampaguita Village</div>
+        </div>
+        <div class="welcome-date">
+          <div class="welcome-date-day" id="bannerDay"></div>
+          <div class="welcome-date-month" id="bannerMonth"></div>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="overview-stats">
+        <div class="stat-card">
+          <div class="stat-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg></div>
+          <div>
+            <div class="stat-value" id="totalResidents">-</div>
+            <div class="stat-label">Total Residents</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3L21 10.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg></div>
+          <div>
+            <div class="stat-value" id="totalHouseholds">-</div>
+            <div class="stat-label">Households</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M8 22v-7l-2-4h8l-2 4v7"/><path d="M8 11c-2 1-3 3-3 5"/><path d="M16 11c2 1 3 3 3 5"/><path d="M6 13l-2 1"/><path d="M18 13l2 1"/></svg></div>
+          <div>
+            <div class="stat-value" id="seniorCitizens">-</div>
+            <div class="stat-label">Senior Citizens</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></div>
+          <div>
+            <div class="stat-value" id="docsIssuedToday">-</div>
+            <div class="stat-label">Docs Issued Today</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column section -->
+      <div class="overview-grid">
+
+        <!-- Recent Activity -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="section-card-title">Recent Activity</span>
+            <a class="section-card-link" href="activity-logs.html">View all →</a>
+          </div>
+          <div class="section-card-body" id="recentActivity">
+            <div class="empty-state" style="padding:32px 16px;">
+              <div class="empty-state-icon">📋</div>
+              <div class="empty-state-title">No activity yet</div>
+              <div class="empty-state-desc">Actions will appear here as they happen.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Residents by Purok -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="section-card-title">Residents by Purok</span>
+          </div>
+          <div class="section-card-body purok-list-body">
+            <div class="purok-list" id="purokList"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    /* ── DATE ── */
+    const now = new Date();
+    document.getElementById('bannerDay').textContent   = now.getDate();
+    document.getElementById('bannerMonth').textContent =
+      now.toLocaleString('en-PH', { month: 'long', year: 'numeric' });
+
+    /* Greeting based on time */
+    const hour = now.getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    document.querySelector('.welcome-greeting').textContent = greeting;
+
+    /* ── FILL USER INFO FROM SESSION ── */
+    document.getElementById('bannerName').textContent = CURRENT_USER.name;
+    document.getElementById('bannerRole').textContent =
+      CURRENT_USER.role + ' · Barangay 59-A, Sampaguita Village';
+
+    /* ── FETCH DASHBOARD STATS FROM API ── */
+    fetch('/api/dashboard/stats')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('totalResidents').textContent = 
+          data.totalResidents.toLocaleString();
+        document.getElementById('totalHouseholds').textContent = 
+          data.totalHouseholds.toLocaleString();
+        document.getElementById('seniorCitizens').textContent = 
+          data.seniorCitizens.toLocaleString();
+        document.getElementById('docsIssuedToday').textContent = 
+          data.docsIssuedToday.toLocaleString();
+      })
+      .catch(error => console.error('Error fetching stats:', error));
+
+    /* ── FETCH PUROK DATA FROM API ── */
+    fetch('/api/dashboard/purok-breakdown')
+      .then(response => response.json())
+      .then(puroks => {
+        const maxCount = Math.max(...puroks.map(p => p.count));
+        const purokList = document.getElementById('purokList');
+
+        puroks.forEach(p => {
+          const pct = Math.round((p.count / maxCount) * 100);
+          const row = document.createElement('div');
+          row.className = 'purok-row';
+          row.innerHTML = `
+            <span class="purok-label">${p.name}</span>
+            <div class="purok-bar-wrap">
+              <div class="purok-bar" style="width:${pct}%"></div>
+            </div>
+            <span class="purok-count">${p.count}</span>
+          `;
+          purokList.appendChild(row);
+        });
+      })
+      .catch(error => console.error('Error fetching purok data:', error));
+
+    /* ── RECENT ACTIVITY from logger ── */
+    const logs = Logger.getAll().slice(0, 5);
+    const activityEl = document.getElementById('recentActivity');
+
+    const iconMap = {
+      'Generated': { icon: '📄', color: 'blue'  },
+      'Added':     { icon: '➕', color: 'green' },
+      'Edited':    { icon: '✏️', color: 'gold'  },
+      'Deleted':   { icon: '🗑',  color: 'gold'  },
+    };
+
+    if (logs.length > 0) {
+      activityEl.innerHTML = '';
+      logs.forEach(log => {
+        const match = Object.entries(iconMap).find(([k]) => log.action.includes(k));
+        const { icon, color } = match ? match[1] : { icon: '📋', color: 'green' };
+        const row = document.createElement('div');
+        row.className = 'activity-row';
+        row.innerHTML = `
+          <div class="activity-icon ${color}">${icon}</div>
+          <div class="activity-info">
+            <div class="activity-action">${log.action}</div>
+            <div class="activity-detail">${log.details || ''}</div>
+            <div class="activity-user">by ${log.user}</div>
+          </div>
+          <div class="activity-time">${log.timestamp}</div>
+        `;
+        activityEl.appendChild(row);
+      });
+    }
+  </script>
+
+</body>
+</html>

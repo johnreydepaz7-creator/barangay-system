@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents — Barangay 59-A</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+  <style>
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 8px;
+    }
+
+    .doc-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 28px 24px 22px;
+      cursor: pointer;
+      transition: var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-700), var(--green-400));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--green-200);
+    }
+
+    .doc-card:hover::before { transform: scaleX(1); }
+
+    .doc-card.disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+    .doc-card.disabled:hover {
+      transform: none;
+      box-shadow: var(--shadow-sm);
+      border-color: var(--border);
+    }
+    .doc-card.disabled::before { display: none; }
+
+    .doc-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: var(--green-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .doc-card.disabled .doc-icon-wrap {
+      background: var(--surface-2);
+    }
+
+    .doc-card-title {
+      font-size: 14.5px;
+      font-weight: var(--fw-bold);
+      color: var(--text-main);
+      line-height: var(--lh-snug);
+    }
+
+    .doc-card-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: var(--lh-relaxed);
+    }
+
+    .doc-card-arrow {
+      margin-top: auto;
+      font-size: 12px;
+      color: var(--green-500);
+      font-weight: var(--fw-semibold);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .doc-card.disabled .doc-card-arrow {
+      color: var(--text-light);
+    }
+
+    .coming-soon {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--surface-2);
+      color: var(--text-light);
+      font-size: 10px;
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+    }
+
+    .page-sub {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+  </style>
+
+  <script src="/messagebox.js"></script>
+
+<!-- Theme folder redirect removed: dashboard pages keep the same layout; generated documents stay light mode only. -->
+
+</head>
+<body class="app-body">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item active" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='file-manager.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='backup.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-content">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Documents</h1>
+          <p class="page-sub">Generate and print official barangay documents.</p>
+          <div class="page-breadcrumb" style="margin-top:6px;">Dashboard › <span>Documents</span></div>
+        </div>
+      </div>
+
+      <div class="documents-grid">
+
+        <div class="doc-card" onclick="location.href='doc-form.html?doc=clearance'">
+          <div class="doc-icon-wrap">📄</div>
+          <div>
+            <div class="doc-card-title">Barangay Clearance</div>
+            <div class="doc-card-desc">Issue an official clearance certifying good moral character and no derogatory record.</div>
+          </div>
+          <div class="doc-card-arrow">Generate → </div>
+        </div>
+
+        <div class="doc-card" onclick="location.href='doc-form.html?doc=indigency'">
+          <div class="doc-icon-wrap">📑</div>
+          <div>
+            <div class="doc-card-title">Certificate of Indigency</div>
+            <div class="doc-card-desc">Certify that a resident belongs to an indigent family with insufficient financial resources.</div>
+          </div>
+          <div class="doc-card-arrow">Generate →</div>
+        </div>
+
+        <div class="doc-card" onclick="location.href='doc-form.html?doc=certification'">
+          <div class="doc-icon-wrap">📝</div>
+          <div>
+            <div class="doc-card-title">Barangay Certification</div>
+            <div class="doc-card-desc">Create a general-purpose barangay certification document for any legal purpose.</div>
+          </div>
+          <div class="doc-card-arrow">Generate →</div>
+        </div>
+
+        <div class="doc-card" onclick="location.href='doc-form.html?doc=summons'">
+          <div class="doc-icon-wrap">⚖️</div>
+          <div>
+            <div class="doc-card-title">Summons</div>
+            <div class="doc-card-desc">Generate summons documents for barangay dispute resolution.</div>
+          </div>
+          <div class="doc-card-arrow">Generate →</div>
+        </div>
+
+        <div class="doc-card" onclick="location.href='doc-form.html?doc=complaint'">
+          <div class="doc-icon-wrap">📢</div>
+          <div>
+            <div class="doc-card-title">Complaints</div>
+            <div class="doc-card-desc">Register complaints and generate official complaint reports.</div>
+          </div>
+          <div class="doc-card-arrow">Generate →</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    function setActive(el) {
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+    }
+  </script>
+</body>
+</html>

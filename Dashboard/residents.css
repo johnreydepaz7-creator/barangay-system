@@ -1,0 +1,83 @@
+/* ============================================================
+   RESIDENTS.CSS — Page-specific styles only.
+   base.css + components.css must be loaded before this.
+   ============================================================ */
+
+/* Household card grid layout */
+.household-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+}
+
+/* Modal adjustments for scrollable members */
+.modal-box {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  position: relative;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  padding-bottom: 80px; /* Space for fixed footer */
+}
+
+.modal-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid var(--border);
+  padding: 18px var(--space-6);
+}
+
+.members-container {
+  margin-bottom: var(--space-4);
+}
+
+.member-form {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--surface);
+}
+
+.member-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  font-weight: var(--fw-semibold);
+}
+
+.delete-member-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  transition: var(--transition-fast);
+}
+
+.delete-member-btn:hover {
+  background: var(--red-100);
+  color: var(--red-700);
+  border-color: var(--red-100);
+}
+
+/* Prevent label wrapping in member forms */
+.member-form .form-label {
+  white-space: nowrap;
+  font-size: 11px;
+}

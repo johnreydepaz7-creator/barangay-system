@@ -1,0 +1,3097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Manager — Barangay 59-A</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+
+
+  <style>
+
+    /* ── GOOGLE DRIVE BADGE ── */
+    .gdrive-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      font-size: 11.5px; font-weight: var(--fw-medium);
+      background: white; border: 1px solid var(--border);
+      cursor: pointer; transition: var(--transition-fast);
+      user-select: none; white-space: nowrap; color: var(--text-body);
+    }
+    .gdrive-badge:hover { background: var(--green-50); border-color: var(--green-300); }
+    .gdrive-badge.signed-in { background: var(--green-50); border-color: var(--green-300); color: var(--green-800); }
+    .gdrive-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--border-dark); flex-shrink: 0; transition: background .2s;
+    }
+    .gdrive-badge.signed-in .gdrive-dot { background: var(--green-500); }
+
+    /* ── DESTINATION TOGGLE ── */
+    .dest-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+    .dest-btn {
+      flex: 1; padding: 7px 10px; border-radius: var(--radius);
+      border: 1.5px solid var(--border); background: white;
+      font-size: 12.5px; font-weight: var(--fw-medium);
+      cursor: pointer; transition: var(--transition-fast);
+      color: var(--text-muted); text-align: center;
+    }
+    .dest-btn.active { border-color: var(--green-400); background: var(--green-50); color: var(--green-800); }
+
+    /* ── DRIVE CONNECTED BANNER ── */
+    .drive-banner {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; margin-bottom: 12px;
+      background: var(--green-50); border: 1px solid var(--green-200);
+      border-radius: var(--radius); font-size: 12.5px; color: var(--green-800);
+    }
+    .drive-banner-path { flex: 1; font-weight: var(--fw-medium); }
+    .drive-banner-out { font-size: 11px; color: var(--green-600); cursor: pointer; text-decoration: underline; }
+
+    /* ── SIGN-IN PROMPT (inside modal) ── */
+    .gdrive-prompt {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; margin-bottom: 12px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .gdrive-prompt-ico { font-size: 22px; flex-shrink: 0; }
+    .gdrive-prompt-txt { flex: 1; font-size: 12.5px; color: var(--text-muted); line-height: 1.4; }
+    .gdrive-prompt-btn {
+      padding: 6px 14px; border-radius: var(--radius-full);
+      background: var(--green-700); color: white; border: none;
+      font-size: 12px; font-weight: var(--fw-semibold);
+      cursor: pointer; transition: var(--transition-fast); white-space: nowrap;
+    }
+    .gdrive-prompt-btn:hover { background: var(--green-800); }
+
+    /* ── UPLOAD QUEUE ITEMS ── */
+    .upload-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0; border-bottom: 1px solid var(--surface-2);
+      font-size: 12.5px;
+    }
+    .upload-item:last-child { border-bottom: none; }
+    .upload-item-name { flex: 1; color: var(--text-body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .upload-item-size { color: var(--text-light); font-size: 11px; flex-shrink: 0; }
+    .upload-item-bar  { width: 56px; height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+    .upload-item-fill { height: 100%; background: var(--green-500); border-radius: 2px; width: 0%; transition: width .3s; }
+    .upload-item-status { font-size: 11px; flex-shrink: 0; min-width: 34px; text-align: right; color: var(--text-muted); }
+    .upload-item-status.done { color: var(--green-600); }
+    .upload-item-status.err  { color: var(--red-500); }
+
+    /* ── TOAST ── */
+    #appToast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--green-900); color: white;
+      padding: 10px 20px; border-radius: var(--radius-full);
+      font-size: 13px; font-weight: 500; z-index: 9999;
+      opacity: 0; transition: all .25s ease; white-space: nowrap;
+      box-shadow: var(--shadow-md); pointer-events: none;
+    }
+    #appToast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+
+    /* ── LOCK PAGE TO VIEWPORT ── */
+    html, body { height: 100%; overflow: hidden; }
+
+    .app-content {
+      overflow: hidden !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background: var(--surface) !important;
+    }
+
+    /* ═══════════════════════════════════════════
+       TOP STRIP — title · search · controls
+    ═══════════════════════════════════════════ */
+    .fm-topstrip {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 13px 28px 11px;
+      border-bottom: 1px solid var(--border);
+      background: white;
+      flex-shrink: 0;
+    }
+
+    .fm-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--fw-bold);
+      color: var(--text-main);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .fm-strip-div {
+      width: 1px; height: 20px;
+      background: var(--border); flex-shrink: 0;
+    }
+
+    .fm-topstrip .search-wrap { flex: 1; max-width: 280px; }
+
+    .fm-controls {
+      display: flex; align-items: center;
+      gap: var(--space-2); margin-left: auto;
+    }
+
+    /* ── SIZE SLIDER ── */
+    .fm-size-wrap {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px 10px;
+    }
+    .fm-size-ico { font-size: 10px; color: var(--text-light); user-select: none; line-height: 1; }
+    .fm-size-ico.lg { font-size: 15px; }
+    .fm-size-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 72px; height: 3px; border-radius: 2px;
+      background: var(--green-200); outline: none; cursor: pointer;
+    }
+    .fm-size-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px; height: 13px; border-radius: 50%;
+      background: var(--green-700); cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .fm-size-slider::-moz-range-thumb {
+      width: 13px; height: 13px; border-radius: 50%;
+      background: var(--green-700); cursor: pointer; border: none;
+    }
+
+    /* ═══════════════════════════════════════════
+       SHORTCUT BAR
+    ═══════════════════════════════════════════ */
+    .fm-shortcuts {
+      display: flex; align-items: center;
+      gap: 5px;
+      padding: 7px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .fm-sc-lbl {
+      font-size: 10px; font-weight: var(--fw-bold);
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-light); margin-right: 3px; flex-shrink: 0;
+    }
+
+    .fm-sc {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 11px;
+      border-radius: var(--radius-full);
+      font-size: 12px; font-weight: var(--fw-medium);
+      color: var(--text-body);
+      background: white; border: 1px solid var(--border);
+      cursor: pointer; transition: var(--transition-fast);
+      user-select: none; white-space: nowrap;
+    }
+    .fm-sc:hover  { background: var(--green-50);  border-color: var(--green-300); color: var(--green-800); }
+    .fm-sc.active { background: var(--green-100); border-color: var(--green-400); color: var(--green-800); font-weight: var(--fw-semibold); }
+
+    .fm-sc-sep {
+      width: 1px; height: 14px;
+      background: var(--border); margin: 0 3px; flex-shrink: 0;
+    }
+
+    /* Pinned shortcuts */
+    .fm-sc.pinned { position: relative; }
+
+    /* Drop zone on shortcut bar */
+    .fm-shortcuts.drag-over { background: var(--green-50); outline: 2px dashed var(--green-400); outline-offset: -3px; }
+    .fm-sc-drop-hint {
+      font-size: 11px; color: var(--green-600); font-style: italic;
+      padding: 2px 8px; display: none; flex-shrink: 0;
+    }
+    .fm-shortcuts.drag-over .fm-sc-drop-hint { display: inline; }
+
+    /* Inline storage in shortcut bar */
+    .fm-storage-inline {
+      display: flex; align-items: center; gap: 7px;
+      margin-left: auto; flex-shrink: 0;
+    }
+    .fm-storage-txt { font-size: 11px; color: var(--text-muted); font-weight: var(--fw-medium); white-space: nowrap; }
+    .fm-storage-bar {
+      width: 72px; height: 4px;
+      background: var(--surface-2); border-radius: var(--radius-full);
+      border: 1px solid var(--border); overflow: hidden;
+    }
+    .fm-storage-fill { height: 100%; background: linear-gradient(90deg, var(--green-700), var(--green-400)); }
+    .fm-storage-sub { font-size: 10.5px; color: var(--text-light); white-space: nowrap; }
+
+    /* ═══════════════════════════════════════════
+       FM BODY — fills remaining height
+    ═══════════════════════════════════════════ */
+    .fm-body {
+      flex: 1; min-height: 0;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── FILE AREA ── */
+    .fm-area {
+      flex: 1; min-height: 0;
+      display: flex; flex-direction: column;
+      background: white;
+    }
+
+    .fm-bcrumb {
+      display: flex; align-items: center; gap: 5px;
+      padding: 7px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px; color: var(--text-muted);
+      background: var(--surface); flex-shrink: 0;
+      min-height: 36px;
+    }
+    .fm-bcrumb .bc { cursor: pointer; transition: color .12s; }
+    .fm-bcrumb .bc:hover { color: var(--green-700); }
+    .fm-bcrumb .bc.here { color: var(--text-main); font-weight: var(--fw-semibold); cursor: default; }
+    .fm-bcrumb .sl { color: var(--border-dark); }
+    .fm-back-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 2px 10px 2px 6px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: white; color: var(--text-body);
+      font-size: 12px; font-weight: var(--fw-medium);
+      cursor: pointer; transition: var(--transition-fast);
+      margin-right: 4px; flex-shrink: 0;
+    }
+    .fm-back-btn:hover { background: var(--green-50); border-color: var(--green-300); color: var(--green-800); }
+
+    /* Scrollable file area */
+    .fm-files {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      padding: 16px 20px;
+      background: white;
+    }
+
+    /* ── GRID VIEW ── */
+    .fm-grid {
+      display: grid; gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(var(--tile-w, 110px), 1fr));
+    }
+
+    .fm-sec-lbl {
+      grid-column: 1 / -1;
+      font-size: 10.5px; font-weight: var(--fw-bold);
+      text-transform: uppercase; letter-spacing: .7px;
+      color: var(--text-light);
+      padding: 4px 0 5px;
+      border-bottom: 1px solid var(--surface-2);
+      margin-top: 4px;
+    }
+    .fm-sec-lbl:first-child { margin-top: 0; }
+
+    .fm-tile {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 5px;
+      padding: 12px 8px 9px;
+      border-radius: var(--radius);
+      border: 1.5px solid transparent;
+      cursor: pointer; transition: var(--transition-fast); text-align: center;
+    }
+    .fm-tile:hover   { background: var(--green-50);  border-color: var(--green-200); }
+    .fm-tile.sel     { background: var(--green-100); border-color: var(--green-400); }
+    .fm-tile-ico     { line-height: 1; }
+    .fm-tile-name    { font-size: 11.5px; font-weight: var(--fw-medium); color: var(--text-body); line-height: 1.3; word-break: break-word; }
+    .fm-tile-meta    { font-size: 10px; color: var(--text-light); }
+
+    /* ── LIST VIEW ── */
+    .fm-list-wrap { display: none; }
+
+    .fm-list-hd {
+      display: grid;
+      grid-template-columns: 2fr 80px 80px 110px 80px;
+      padding: 7px 12px;
+      font-size: 10.5px; font-weight: var(--fw-bold);
+      text-transform: uppercase; letter-spacing: .5px;
+      color: var(--text-light);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm); margin-bottom: 2px;
+    }
+    .fm-list-row {
+      display: grid;
+      grid-template-columns: 2fr 80px 80px 110px 80px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer; transition: var(--transition-fast);
+    }
+    .fm-list-row:hover { background: var(--green-50); border-color: var(--green-100); }
+    .fm-list-row.sel   { background: var(--green-100); border-color: var(--green-300); }
+
+    .fm-lr-name { display: flex; align-items: center; gap: 8px; font-weight: var(--fw-medium); color: var(--text-main); overflow: hidden; }
+    .fm-lr-name-ico { flex-shrink: 0; }
+    .fm-lr-name-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fm-lr-type, .fm-lr-size, .fm-lr-date { color: var(--text-muted); }
+    .fm-lr-acts { display: flex; gap: 3px; justify-content: flex-end; opacity: 0; transition: opacity .12s; }
+    .fm-list-row:hover .fm-lr-acts { opacity: 1; }
+
+    /* ── VIEW SWITCHING ── */
+    .is-grid .fm-grid     { display: grid; }
+    .is-grid .fm-list-wrap{ display: none;  }
+    .is-list .fm-grid     { display: none;  }
+    .is-list .fm-list-wrap{ display: block; }
+
+    /* ── STATUS BAR ── */
+    .fm-status {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 11.5px; color: var(--text-muted); flex-shrink: 0;
+    }
+
+    /* ── FILE TYPE COLOURS ── */
+    .fi-pdf { color: #c0392b; }
+    .fi-doc { color: var(--blue-700); }
+    .fi-xls { color: var(--green-700); }
+    .fi-img { color: #7d3c98; }
+    .fi-ppt { color: #c0550a; }
+    .fi-vid { color: #1a6fa0; }
+    .fi-aud { color: #7d3c98; }
+
+    /* ── CONTEXT MENU ── */
+    .ctx {
+      position: fixed; background: white;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow-md); z-index: 300;
+      min-width: 158px; padding: 4px 0; font-size: 13px; display: none;
+    }
+    .ctx.open { display: block; }
+    .ctx-row { display: flex; align-items: center; gap: 9px; padding: 8px 14px; cursor: pointer; color: var(--text-body); transition: background .1s; }
+    .ctx-row:hover { background: var(--green-50); color: var(--green-800); }
+    .ctx-row.red { color: var(--red-500); }
+    .ctx-row.red:hover { background: var(--red-100); }
+    .ctx-sep { border: none; border-top: 1px solid var(--border); margin: 3px 0; }
+
+
+    /* ── MULTI-SELECT TOOLBAR ── */
+    .sel-bar {
+      display: none; align-items: center; gap: 10px;
+      padding: 7px 20px; background: var(--green-900); color: white;
+      font-size: 12.5px; flex-shrink: 0;
+    }
+    .sel-bar.active { display: flex; }
+    .sel-bar-count  { font-weight: var(--fw-semibold); flex: 1; }
+    .sel-bar-btn {
+      padding: 4px 12px; border-radius: var(--radius-full);
+      border: 1px solid rgba(255,255,255,.3); background: transparent;
+      color: white; font-size: 12px; cursor: pointer; transition: background .15s;
+    }
+    .sel-bar-btn:hover { background: rgba(255,255,255,.15); }
+    .sel-bar-btn.red   { border-color: #fca5a5; color: #fca5a5; }
+    .sel-bar-btn.red:hover { background: rgba(239,68,68,.25); }
+
+    /* ── MOVE PICKER TREE ── */
+    .tree-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 12px; cursor: pointer; font-size: 13px;
+      color: var(--text-body); border-bottom: 1px solid var(--surface-2);
+      transition: background .1s; user-select: none;
+    }
+    .tree-row:last-child { border-bottom: none; }
+    .tree-row:hover { background: var(--green-50); }
+    .tree-row.selected { background: var(--green-100); color: var(--green-800); font-weight: var(--fw-semibold); }
+    .tree-row.loading  { opacity: .6; pointer-events: none; }
+    .tree-toggle {
+      width: 16px; height: 16px; flex-shrink: 0; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 10px; color: var(--text-light); border-radius: 3px;
+      transition: transform .15s;
+    }
+    .tree-toggle.open { transform: rotate(90deg); color: var(--green-700); }
+    .tree-toggle.leaf { visibility: hidden; }
+    .tree-children {
+      border-top: 1px solid var(--surface-2);
+    }
+
+    /* ── TILE CHECKBOX ── */
+    .fm-tile { position: relative; }
+    .fm-tile .tile-chk {
+      position: absolute; top: 6px; left: 6px;
+      width: 16px; height: 16px; border-radius: 4px;
+      border: 1.5px solid var(--border-dark); background: white;
+      display: none; align-items: center; justify-content: center;
+      font-size: 10px; z-index: 2; transition: var(--transition-fast); cursor: pointer;
+    }
+    .fm-tile:hover .tile-chk,
+    .fm-tile.sel   .tile-chk { display: flex; }
+    .fm-tile.sel   .tile-chk { background: var(--green-700); border-color: var(--green-700); color: white; }
+
+    /* ── LIST ROW CHECKBOX ── */
+    .row-chk {
+      width: 15px; height: 15px; border-radius: 3px;
+      border: 1.5px solid var(--border-dark); background: white;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; flex-shrink: 0; cursor: pointer;
+      transition: var(--transition-fast); margin-right: 4px;
+    }
+    .fm-list-row.sel .row-chk { background: var(--green-700); border-color: var(--green-700); color: white; }
+
+    /* ═══════════════════════════════════════════
+       DARK MODE STYLING
+    ═══════════════════════════════════════════ */
+
+    /* Online Storage Badge */
+    body.dark .gdrive-badge {
+      background: var(--surface-2); border-color: var(--border);
+      color: var(--text-body);
+    }
+    body.dark .gdrive-badge:hover { background: #1f6f43; border-color: var(--green-600); }
+    body.dark .gdrive-badge.signed-in {
+      background: #1f6f43; border-color: var(--green-600);
+      color: white;
+    }
+    body.dark .gdrive-dot { background: var(--green-500); }
+    body.dark .gdrive-badge.signed-in .gdrive-dot { background: #4ade80; }
+
+    /* Destination Toggle */
+    body.dark .dest-btn {
+      background: var(--surface-2); border-color: var(--border);
+      color: var(--text-muted);
+    }
+    body.dark .dest-btn.active {
+      border-color: var(--green-600); background: #1f6f43;
+      color: white;
+    }
+
+    /* Drive Connected Banner */
+    body.dark .drive-banner {
+      background: #1f6f432a; border-color: var(--green-700);
+      color: #4ade80;
+    }
+    body.dark .drive-banner-path { color: #4ade80; }
+    body.dark .drive-banner-out { color: #22c55e; }
+
+    /* Online Storage Prompt */
+    body.dark .gdrive-prompt {
+      background: var(--surface-2); border-color: var(--border);
+    }
+    body.dark .gdrive-prompt-ico { color: var(--green-500); }
+    body.dark .gdrive-prompt-txt { color: var(--text-light); }
+    body.dark .gdrive-prompt-btn {
+      background: var(--green-700);
+    }
+    body.dark .gdrive-prompt-btn:hover { background: #059669; }
+
+    /* Upload Items */
+    body.dark .upload-item {
+      border-bottom-color: var(--surface-3);
+    }
+    body.dark .upload-item-name { color: var(--text-body); }
+    body.dark .upload-item-size { color: var(--text-light); }
+    body.dark .upload-item-bar { background: var(--surface-3); }
+    body.dark .upload-item-fill { background: var(--green-500); }
+    body.dark .upload-item-status { color: var(--text-muted); }
+    body.dark .upload-item-status.done { color: #4ade80; }
+    body.dark .upload-item-status.err { color: var(--red-500); }
+
+    /* Toast */
+    body.dark #appToast {
+      background: var(--green-900); color: white;
+    }
+
+    /* App Content */
+    body.dark .app-content { background: var(--surface); }
+
+    /* Top Strip */
+    body.dark .fm-topstrip {
+      background: var(--surface-2); border-bottom-color: var(--border);
+    }
+    body.dark .fm-title { color: var(--text-main); }
+    body.dark .fm-strip-div { background: var(--border); }
+
+    /* Size Wrap and Slider */
+    body.dark .fm-size-wrap {
+      background: var(--surface-3); border-color: var(--border);
+    }
+    body.dark .fm-size-ico { color: var(--text-light); }
+    body.dark .fm-size-slider { background: #1f6f43; }
+    body.dark .fm-size-slider::-webkit-slider-thumb { background: var(--green-500); }
+    body.dark .fm-size-slider::-moz-range-thumb { background: var(--green-500); }
+
+    /* Shortcuts Bar */
+    body.dark .fm-shortcuts {
+      background: var(--surface); border-bottom-color: var(--border);
+    }
+    body.dark .fm-sc-lbl { color: var(--text-light); }
+    body.dark .fm-sc {
+      background: var(--surface-2); border-color: var(--border);
+      color: var(--text-body);
+    }
+    body.dark .fm-sc:hover {
+      background: #1f6f43; border-color: var(--green-600);
+      color: white;
+    }
+    body.dark .fm-sc.active {
+      background: var(--green-700); border-color: var(--green-600);
+      color: white;
+    }
+    body.dark .fm-sc-sep { background: var(--border); }
+    body.dark .fm-shortcuts.drag-over {
+      background: #0f1a121f; outline-color: var(--green-700);
+    }
+    body.dark .fm-sc-drop-hint { color: var(--green-500); }
+
+    /* Storage Bar */
+    body.dark .fm-storage-txt { color: var(--text-muted); }
+    body.dark .fm-storage-bar {
+      background: var(--surface-3); border-color: var(--border);
+    }
+    body.dark .fm-storage-fill {
+      background: linear-gradient(90deg, #115d31, #22c55e);
+    }
+    body.dark .fm-storage-sub { color: var(--text-light); }
+
+    /* FM Body */
+    body.dark .fm-body { background: var(--surface); }
+
+    /* File Area */
+    body.dark .fm-area { background: var(--surface); }
+    body.dark .fm-bcrumb {
+      background: var(--surface-2); border-bottom-color: var(--border);
+      color: var(--text-muted);
+    }
+    body.dark .fm-bcrumb .bc { color: var(--text-muted); }
+    body.dark .fm-bcrumb .bc:hover { color: var(--green-500); }
+    body.dark .fm-bcrumb .bc.here { color: var(--text-main); }
+    body.dark .fm-bcrumb .sl { color: var(--border); }
+    body.dark .fm-back-btn {
+      background: var(--surface-2); border-color: var(--border);
+      color: var(--text-body);
+    }
+    body.dark .fm-back-btn:hover {
+      background: #1f6f43; border-color: var(--green-600);
+      color: white;
+    }
+
+    /* Files Area */
+    body.dark .fm-files { background: var(--surface); }
+
+    /* Grid View */
+    body.dark .fm-grid {
+      background: var(--surface);
+    }
+    body.dark .fm-sec-lbl {
+      color: var(--text-light); border-bottom-color: var(--surface-3);
+    }
+    body.dark .fm-tile {
+      border-color: transparent;
+    }
+    body.dark .fm-tile:hover {
+      background: #1f6f431f; border-color: var(--green-600);
+    }
+    body.dark .fm-tile.sel {
+      background: #1f6f43; border-color: var(--green-600);
+    }
+    body.dark .fm-tile-ico { color: var(--text-main); }
+    body.dark .fm-tile-name { color: var(--text-body); }
+    body.dark .fm-tile-meta { color: var(--text-light); }
+
+    /* List View */
+    body.dark .fm-list-hd {
+      background: var(--surface-2); border-color: var(--border);
+      color: var(--text-light);
+    }
+    body.dark .fm-list-row {
+      border-color: transparent;
+    }
+    body.dark .fm-list-row:hover {
+      background: #1f6f431f; border-color: var(--green-600);
+    }
+    body.dark .fm-list-row.sel {
+      background: #1f6f43; border-color: var(--green-600);
+    }
+    body.dark .fm-lr-name { color: var(--text-main); }
+    body.dark .fm-lr-name-ico { color: var(--text-body); }
+    body.dark .fm-lr-name-txt { color: var(--text-body); }
+    body.dark .fm-lr-type,
+    body.dark .fm-lr-size,
+    body.dark .fm-lr-date { color: var(--text-muted); }
+
+    /* Status Bar */
+    body.dark .fm-status {
+      background: var(--surface-2); border-top-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Context Menu */
+    body.dark .ctx {
+      background: var(--surface-2); border-color: var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    }
+    body.dark .ctx-row {
+      color: var(--text-body);
+    }
+    body.dark .ctx-row:hover {
+      background: #1f6f43; color: white;
+    }
+    body.dark .ctx-row.red { color: var(--red-500); }
+    body.dark .ctx-row.red:hover {
+      background: rgba(239,68,68,.3); color: #fca5a5;
+    }
+    body.dark .ctx-sep { border-top-color: var(--border); }
+
+    /* Multi-select Toolbar */
+    body.dark .sel-bar { background: var(--green-800); color: white; }
+    body.dark .sel-bar-btn {
+      border-color: rgba(255,255,255,.2); color: white;
+    }
+    body.dark .sel-bar-btn:hover { background: rgba(255,255,255,.1); }
+    body.dark .sel-bar-btn.red {
+      border-color: #fca5a5; color: #fca5a5;
+    }
+    body.dark .sel-bar-btn.red:hover { background: rgba(239,68,68,.2); }
+
+    /* Move Picker Tree */
+    body.dark .tree-row {
+      color: var(--text-body); border-bottom-color: var(--surface-3);
+    }
+    body.dark .tree-row:hover { background: #1f6f431f; }
+    body.dark .tree-row.selected {
+      background: #1f6f43; color: white;
+    }
+    body.dark .tree-row.loading { opacity: .6; }
+    body.dark .tree-toggle { color: var(--text-light); }
+    body.dark .tree-toggle.open { color: var(--green-500); }
+    body.dark .tree-children { border-top-color: var(--surface-3); }
+
+    /* Tile and Row Checkboxes */
+    body.dark .tile-chk {
+      background: var(--surface-2); border-color: var(--border);
+    }
+    body.dark .fm-tile.sel .tile-chk {
+      background: var(--green-500); border-color: var(--green-500);
+      color: white;
+    }
+    body.dark .row-chk {
+      background: var(--surface-2); border-color: var(--border);
+    }
+    body.dark .fm-list-row.sel .row-chk {
+      background: var(--green-700); border-color: var(--green-700);
+      color: white;
+    }
+
+  </style>
+  <script src="/messagebox.js"></script>
+</head>
+<body class="app-body">
+  <!-- Apply cached theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const cachedTheme = sessionStorage.getItem('cached_theme');
+      if (cachedTheme === 'dark') {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- CONTEXT MENU -->
+  <div class="ctx" id="ctxMenu">
+    <div class="ctx-row" onclick="ctxOpen()">📂 Open</div>
+    <div class="ctx-row" onclick="ctxDownload()">⬇️ Download</div>
+    <div class="ctx-row" onclick="ctxRenameAct()">✏️ Rename</div>
+    <div class="ctx-row" onclick="ctxMoveAct()">📦 Move to…</div>
+    <hr class="ctx-sep">
+    <div class="ctx-row" onclick="ctxCopy()">📋 Copy link</div>
+    <hr class="ctx-sep">
+    <div class="ctx-row red" onclick="ctxDelete()">🗑️ Delete</div>
+  </div>
+
+
+  <!-- TOAST -->
+  <div id="appToast"></div>
+
+  <!-- MODAL: NEW FOLDER -->
+  <div class="modal" id="modalFolder">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">New Folder</span>
+        <button class="modal-close" onclick="closeModal('modalFolder')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Folder Name</label>
+          <input class="form-input" id="folderName" placeholder="e.g. Budget Reports 2025">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalFolder')">Cancel</button>
+        <button class="btn-primary" onclick="doMakeFolder()">Create Folder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RENAME -->
+  <div class="modal" id="modalRename">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">Rename</span>
+        <button class="modal-close" onclick="closeModal('modalRename')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">New Name</label>
+          <input class="form-input" id="renameVal" placeholder="Enter new name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalRename')">Cancel</button>
+        <button class="btn-primary" onclick="doRename()">Rename</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MOVE TO FOLDER -->
+  <div class="modal" id="modalMove">
+    <div class="modal-box" style="max-width:460px">
+      <div class="modal-header">
+        <span class="modal-title">Move to Folder</span>
+        <button class="modal-close" onclick="closeModal('modalMove')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;" id="moveSubtitle">
+          Select a destination folder
+        </div>
+        <div style="font-size:11px;color:var(--text-light);margin-bottom:8px;">
+          Click to select · Double-click to expand subfolders
+        </div>
+        <!-- Tree folder list -->
+        <div id="moveFolderList" style="max-height:300px;overflow-y:auto;
+          border:1px solid var(--border);border-radius:var(--radius);">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalMove')">Cancel</button>
+        <button class="btn-primary" id="moveMoveBtn" onclick="doMove()" disabled>Move Here</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: UPLOAD -->
+  <div class="modal" id="modalUpload">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">Upload Files</span>
+        <button class="modal-close" onclick="closeModal('modalUpload')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="uploadModalBody"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalUpload')">Cancel</button>
+        <button class="btn-primary" id="uploadBtn" onclick="doUpload()">Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item active">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='backup.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div>
+
+    <!-- APP CONTENT -->
+    <div class="app-content">
+
+      <!-- TOP STRIP -->
+      <div class="fm-topstrip">
+        <span class="fm-title">File Manager</span>
+        <div class="fm-strip-div"></div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="Search files and folders…" oninput="filterItems(this.value)">
+        </div>
+        <div class="fm-controls">
+          <div class="fm-size-wrap" title="Resize">
+            <span class="fm-size-ico">⊡</span>
+            <input type="range" class="fm-size-slider" id="sizeSlider" min="80" max="180" value="110" oninput="applySize(this.value)">
+            <span class="fm-size-ico lg">⊞</span>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="btnGrid" onclick="setView('grid')">⊞ Grid</button>
+            <button class="toggle-btn"        id="btnList" onclick="setView('list')">☰ List</button>
+          </div>
+          <button class="btn-secondary" onclick="pasteClipboard()">📋 Paste</button>
+          <button class="btn-secondary" onclick="openModal('modalFolder')">New Folder</button>
+          <button class="btn-primary"   onclick="openModal('modalUpload')">Upload Files</button>
+        </div>
+      </div>
+
+      <!-- STORAGE STATUS BAR -->
+      <div class="fm-shortcuts storage-only" id="fmShortcuts">
+        <span class="fm-sc-lbl">Storage</span>
+        <div class="fm-storage-inline" id="driveStorageWrap" style="opacity:0.4">
+          <span class="fm-storage-txt" id="storageUsed">— / —</span>
+          <div class="fm-storage-bar"><div class="fm-storage-fill" id="storageFill" style="width:0%"></div></div>
+          <span class="fm-storage-sub" id="storageFree">Online Storage</span>
+        </div>
+      </div>
+
+      <!-- SELECTION TOOLBAR -->
+      <div class="sel-bar" id="selBar">
+        <span class="sel-bar-count" id="selCount">0 selected</span>
+        <button class="sel-bar-btn" onclick="selectAll()">Select all</button>
+        <button class="sel-bar-btn" onclick="clearSelection()">Deselect</button>
+        <button class="sel-bar-btn" id="selRenameBtn" onclick="renameSelected()" style="display:none">✏️ Rename</button>
+        <button class="sel-bar-btn" onclick="copySelected()">📋 Copy selected</button>
+        <button class="sel-bar-btn" onclick="pasteClipboard()">📄 Paste here</button>
+        <button class="sel-bar-btn" onclick="moveSelected()">📦 Move to…</button>
+        <button class="sel-bar-btn red" onclick="deleteSelected()">🗑️ Delete selected</button>
+      </div>
+
+      <!-- FM BODY -->
+      <div class="fm-body">
+        <div class="fm-area">
+          <div class="fm-bcrumb" id="fmBcrumb">
+            <!-- populated by renderBreadcrumb() -->
+          </div>
+          <div class="fm-files is-grid" id="fmFiles">
+            <div class="fm-grid" id="fmGrid"></div>
+            <div class="fm-list-wrap" id="fmList">
+              <div class="fm-list-hd">
+                <span>Name</span><span>Type</span><span>Size</span><span>Modified</span><span></span>
+              </div>
+              <div id="fmListBody"></div>
+            </div>
+          </div>
+          <div class="fm-status">
+            <span id="statusCount">— items</span>
+            <span>·</span>
+            <span id="statusFiles">— files</span>
+            <span>·</span>
+            <span id="statusFolders">— folders</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /app-content -->
+  </div><!-- /app-container -->
+
+  <script>
+
+    /* ══ CONFIG ══ */
+    const GDRIVE_CONFIG = {
+      CLIENT_ID:   '1787950280-6bi4i3o26ldtvn656de9um8u2takatih.apps.googleusercontent.com',
+      API_KEY:     'AIzaSyDiFgg5ieV_JUjisOPdwb1SaO2xnEo2n9Y',
+      SCOPES:      'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly',
+      ROOT_FOLDER: 'Barangay 59-A — Sampaguita Village',
+    };
+
+    const GDrive = {
+      ready: false, signedIn: false,
+      accessToken: null, rootFolderId: null, currentFolderId: null,
+      destMode: 'drive', uploadQueue: [],
+      folderStack: [], // [{ id, name }, ...] — path from root to current folder
+    };
+
+    /* Selection state */
+    const Sel = { items: new Map() }; // id -> { name, link, isFolder }
+
+    document.head.insertAdjacentHTML('beforeend','<style>@keyframes spin{to{transform:rotate(360deg)}}</style>');
+
+    /* ── Boot ── */
+    function gdriveInit() {
+      if (typeof gapi === 'undefined') { setTimeout(gdriveInit, 500); return; }
+      gapi.load('client', () => {
+        gapi.client.init({
+          apiKey: GDRIVE_CONFIG.API_KEY,
+          discoveryDocs: [
+            'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
+          ],
+        }).then(() => {
+          GDrive.ready = true;
+          
+          // Try to get token from sessionStorage first (fallback from registration)
+          let saved = sessionStorage.getItem('gdrive_token');
+          
+          if (saved) {
+            GDrive.accessToken = saved;
+            GDrive.signedIn    = true;
+            gapi.client.setToken({ access_token: saved });
+            updateDriveBadge();
+            loadDriveFiles();
+            fetchDriveStorage();
+          } else {
+            // Try to retrieve from database for this user
+            retrieveGoogleDriveTokenFromDB();
+          }
+        }).catch(e => { console.warn('Drive init:', e); showEmptyState(); });
+      });
+    }
+    
+    // Retrieve shared Google Drive token from database (available to all users)
+    async function retrieveGoogleDriveTokenFromDB() {
+      try {
+        // Retrieve the system-wide shared Google Drive token
+        const response = await fetch('/api/accounts/gdrive/system-token');
+        const data = await response.json();
+
+        if (data.success && data.googleDriveToken) {
+          GDrive.accessToken = data.googleDriveToken;
+          GDrive.signedIn = true;
+          sessionStorage.setItem('gdrive_token', data.googleDriveToken);
+          gapi.client.setToken({ access_token: data.googleDriveToken });
+          updateDriveBadge();
+          loadDriveFiles();
+          fetchDriveStorage();
+        } else {
+          showEmptyState();
+        }
+      } catch (error) {
+        console.warn('Error retrieving system Google Drive token from database:', error);
+        showEmptyState();
+      }
+    }
+    
+    window.addEventListener('load', () => { showEmptyState(); renderBreadcrumb(); });
+
+    /* ── Sign in ── */
+    async function gdriveSignIn() {
+      if (typeof google === 'undefined') { await BrgyMessageBox.alert('Google API unavailable. Check your connection.', 'error'); return; }
+      google.accounts.oauth2.initTokenClient({
+        client_id: GDRIVE_CONFIG.CLIENT_ID,
+        scope:     GDRIVE_CONFIG.SCOPES,
+        callback:  (resp) => {
+          if (resp.error) { console.error(resp); return; }
+          GDrive.accessToken = resp.access_token;
+          GDrive.signedIn    = true;
+          gapi.client.setToken({ access_token: resp.access_token });
+          sessionStorage.setItem('gdrive_token', resp.access_token);
+          updateDriveBadge();
+          fetchDriveStorage();
+          showToast('✅ Connected to Google Drive');
+          loadDriveFiles();
+          if (document.getElementById('modalUpload').classList.contains('active')) renderUploadModal();
+        },
+      }).requestAccessToken({ prompt: 'consent' });
+    }
+
+    /* ── Sign out ── */
+    function gdriveSignOut() {
+      if (GDrive.accessToken) google.accounts.oauth2.revoke(GDrive.accessToken, () => {});
+      GDrive.signedIn = false; GDrive.accessToken = null;
+      GDrive.rootFolderId = null; GDrive.currentFolderId = null;
+      sessionStorage.removeItem('gdrive_token');
+      clearSelection();
+      updateDriveBadge();
+      showEmptyState();
+      resetStorageDisplay();
+      showToast('Signed out of Google Drive');
+    }
+
+    /* ── Badge ── */
+    function updateDriveBadge() {
+      const b = document.getElementById('gdriveBadge');
+      if (!b) return;
+      if (GDrive.signedIn) {
+        b.classList.add('signed-in');
+        b.innerHTML = '<span class="gdrive-dot"></span> Connected';
+        b.title = 'Click to disconnect from Google Drive';
+        b.onclick = async () => {
+          if (await BrgyMessageBox.confirm('Disconnect from Google Drive?\n\nYou will need to sign in again to access your files.')) {
+            gdriveSignOut();
+          }
+        };
+      } else {
+        b.classList.remove('signed-in');
+        b.innerHTML = '<span class="gdrive-dot"></span> Connect';
+        b.title = 'Sign in to Google Drive'; b.onclick = gdriveSignIn;
+      }
+    }
+
+    /* ── Live Drive storage ── */
+    async function fetchDriveStorage() {
+      try {
+        const res   = await gapi.client.drive.about.get({ fields: 'storageQuota' });
+        const q     = res.result.storageQuota;
+        const used  = parseInt(q.usage  || 0);
+        const total = parseInt(q.limit  || 0);
+        const free  = total > 0 ? total - used : 0;
+        const pct   = total > 0 ? Math.round(used / total * 100) : 0;
+
+        const wrap = document.getElementById('driveStorageWrap');
+        const txt  = document.getElementById('storageUsed');
+        const fill = document.getElementById('storageFill');
+        const sub  = document.getElementById('storageFree');
+
+        if (wrap) wrap.style.opacity = '1';
+        if (txt)  txt.textContent    = fmtSize(used) + ' / ' + (total > 0 ? fmtSize(total) : '∞');
+        if (fill) {
+          fill.style.width      = pct + '%';
+          fill.style.background = pct > 90 ? 'var(--red-500)' : pct > 75 ? 'var(--gold)' : '';
+        }
+        if (sub)  sub.textContent = total > 0 ? fmtSize(free) + ' free' : 'Unlimited';
+      } catch (e) { console.warn('Storage quota error:', e); }
+    }
+
+    function resetStorageDisplay() {
+      const wrap = document.getElementById('driveStorageWrap');
+      const txt  = document.getElementById('storageUsed');
+      const fill = document.getElementById('storageFill');
+      const sub  = document.getElementById('storageFree');
+      if (wrap) wrap.style.opacity = '0.4';
+      if (txt)  txt.textContent   = '— / —';
+      if (fill) { fill.style.width = '0%'; fill.style.background = ''; }
+      if (sub)  sub.textContent   = 'Connect Drive';
+    }
+
+    /* ── Empty / loading states ── */
+    function showEmptyState() {
+      const grid = document.getElementById('fmGrid');
+      const lb   = document.getElementById('fmListBody');
+      if (grid) grid.innerHTML = `
+        <div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
+          justify-content:center;padding:60px 20px;gap:10px;text-align:center;">
+          <div style="font-size:44px">☁️</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-muted)">Not connected to Google Drive</div>
+          <div style="font-size:12px;color:var(--text-light)">
+            Click <strong>Connect</strong> beside the search bar to sign in.
+          </div>
+        </div>`;
+      if (lb) lb.innerHTML = '';
+      updateStatus(0, 0, 0);
+    }
+
+    function showLoadingState() {
+      const grid = document.getElementById('fmGrid');
+      if (grid) grid.innerHTML = `
+        <div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;
+          padding:40px;justify-content:center;color:var(--text-muted);font-size:13px;">
+          <div style="width:16px;height:16px;border:2px solid var(--border);
+            border-top-color:var(--green-600);border-radius:50%;
+            animation:spin .7s linear infinite;flex-shrink:0;"></div>
+          Loading from Google Drive…
+        </div>`;
+    }
+
+    /* ── Breadcrumb ── */
+    function renderBreadcrumb() {
+      const bc = document.getElementById('fmBcrumb');
+      if (!bc) return;
+
+      const stack = GDrive.folderStack;
+      let html = '';
+
+      if (stack.length > 0) {
+        // Back button — goes up one level
+        const prev = stack[stack.length - 2];
+        html += `<span class="fm-back-btn" onclick="navigateBack()">← Back</span>`;
+      }
+
+      // Home crumb
+      html += `<span class="bc ${stack.length === 0 ? 'here' : ''}" onclick="goHome()">Home</span>`;
+
+      // Each folder in the stack
+      stack.forEach((folder, i) => {
+        html += `<span class="sl">/</span>`;
+        const isLast = i === stack.length - 1;
+        if (isLast) {
+          html += `<span class="bc here">${escHtml(folder.name)}</span>`;
+        } else {
+          html += `<span class="bc" onclick="navigateTo(${i})">${escHtml(folder.name)}</span>`;
+        }
+      });
+
+      bc.innerHTML = html;
+    }
+
+    /* Navigate back one level */
+    function navigateBack() {
+      if (GDrive.folderStack.length === 0) return;
+      GDrive.folderStack.pop();
+      const prev = GDrive.folderStack[GDrive.folderStack.length - 1];
+      GDrive.currentFolderId = prev ? prev.id : null;
+      renderBreadcrumb();
+      loadDriveFilesRaw(GDrive.currentFolderId);
+    }
+
+    /* Navigate to a specific crumb in the stack */
+    function navigateTo(index) {
+      GDrive.folderStack = GDrive.folderStack.slice(0, index + 1);
+      const target = GDrive.folderStack[index];
+      GDrive.currentFolderId = target ? target.id : null;
+      renderBreadcrumb();
+      loadDriveFilesRaw(GDrive.currentFolderId);
+    }
+
+    /* ── Load Drive files ── */
+    async function loadDriveFiles(folderId, folderName) {
+      clearSelection();
+
+      if (folderId) {
+        // Navigating into a subfolder — push to stack
+        GDrive.folderStack.push({ id: folderId, name: folderName || 'Folder' });
+        GDrive.currentFolderId = folderId;
+      } else {
+        // Going to root — reset stack
+        GDrive.folderStack = [];
+        GDrive.currentFolderId = null;
+      }
+
+      renderBreadcrumb();
+      await loadDriveFilesRaw(GDrive.currentFolderId);
+    }
+
+    /* Raw loader — does not touch the stack */
+    async function loadDriveFilesRaw(folderId) {
+      showLoadingState();
+      try {
+        let parentId = folderId || 'root';
+        if (!folderId) {
+          if (!GDrive.rootFolderId) {
+            const r = await gapi.client.drive.files.list({
+              q: `name='${GDRIVE_CONFIG.ROOT_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+              fields: 'files(id)', spaces: 'drive',
+            });
+            if (r.result.files.length) {
+              GDrive.rootFolderId = r.result.files[0].id;
+            } else {
+              const f = await gapi.client.drive.files.create({
+                resource: { name: GDRIVE_CONFIG.ROOT_FOLDER, mimeType: 'application/vnd.google-apps.folder' },
+                fields: 'id',
+              });
+              GDrive.rootFolderId = f.result.id;
+            }
+          }
+          parentId = GDrive.rootFolderId;
+        }
+        const res = await gapi.client.drive.files.list({
+          q: `'${parentId}' in parents and trashed=false`,
+          fields: 'files(id,name,mimeType,size,modifiedTime,webViewLink)',
+          orderBy: 'folder,name',
+          pageSize: 500,
+        });
+        renderDriveItems(res.result.files || [], !!folderId);
+      } catch (err) {
+        console.error(err);
+        const grid = document.getElementById('fmGrid');
+        if (grid) grid.innerHTML = `
+          <div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
+            padding:40px;gap:8px;text-align:center;">
+            <div style="font-size:32px">⚠️</div>
+            <div style="font-size:13px;color:var(--text-muted)">Failed to load. Try reconnecting.</div>
+          </div>`;
+      }
+    }
+
+    /* ── Render Drive items with checkboxes ── */
+    function renderDriveItems(files, isSubFolder) {
+      const grid = document.getElementById('fmGrid');
+      const lb   = document.getElementById('fmListBody');
+      grid.innerHTML = ''; lb.innerHTML = '';
+
+      if (!files.length) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
+            padding:60px 20px;gap:8px;text-align:center;">
+            <div style="font-size:40px">📂</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-muted)">This folder is empty</div>
+            <div style="font-size:12px;color:var(--text-light)">Upload files using the Upload Files button.</div>
+          </div>`;
+        updateStatus(0, 0, 0); return;
+      }
+
+      const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+      const docs    = files.filter(f => f.mimeType !== 'application/vnd.google-apps.folder');
+
+      /* GRID – folders */
+      if (folders.length) {
+        const lbl = document.createElement('div');
+        lbl.className = 'fm-sec-lbl'; lbl.textContent = 'Folders';
+        grid.appendChild(lbl);
+        folders.forEach(f => {
+          const tile = document.createElement('div');
+          tile.className = 'fm-tile';
+          tile.draggable = true;
+          tile.dataset.id = f.id; tile.dataset.name = f.name;
+          tile.dataset.link = f.webViewLink || ''; tile.dataset.folder = 'true';
+          tile.innerHTML = `<div class="tile-chk"></div>
+            <div class="fm-tile-ico" style="font-size:28px">📁</div>
+            <div class="fm-tile-name">${escHtml(f.name)}</div>
+            <div class="fm-tile-meta">${fmtDate(f.modifiedTime)}</div>`;
+          tile.addEventListener('dragstart', e => onTileDragStart(e, f.id, f.name, f.webViewLink||'', true));
+          tile.addEventListener('click', e => {
+            if (e.ctrlKey || e.metaKey || e.target.classList.contains('tile-chk'))
+              { e.preventDefault(); toggleSel(f.id, f.name, f.webViewLink||'', true, tile); }
+          });
+          tile.addEventListener('dblclick', () => loadDriveFiles(f.id, f.name));
+          tile.oncontextmenu = e => showCtx(e, f.name, 'folder', f.id, f.webViewLink||'');
+          grid.appendChild(tile);
+        });
+      }
+
+      /* GRID – files */
+      if (docs.length) {
+        const lbl = document.createElement('div');
+        lbl.className = 'fm-sec-lbl'; lbl.textContent = 'Files';
+        grid.appendChild(lbl);
+        docs.forEach(f => {
+          const ft   = getFileType(f.name);
+          const size = f.size ? fmtSize(parseInt(f.size)) : '—';
+          const tile = document.createElement('div');
+          tile.className = 'fm-tile';
+          tile.draggable = true;
+          tile.dataset.id = f.id; tile.dataset.name = f.name;
+          tile.dataset.link = f.webViewLink || ''; tile.dataset.folder = 'false';
+          tile.innerHTML = `<div class="tile-chk"></div>
+            <div class="fm-tile-ico ${ft.cls}" style="font-size:28px">${ft.ico}</div>
+            <div class="fm-tile-name">${escHtml(f.name)}</div>
+            <div class="fm-tile-meta">${size} · ${fmtDate(f.modifiedTime)}</div>`;
+          tile.addEventListener('dragstart', e => onTileDragStart(e, f.id, f.name, f.webViewLink||'', false));
+          tile.addEventListener('click', e => {
+            if (e.ctrlKey || e.metaKey || e.target.classList.contains('tile-chk'))
+              { e.preventDefault(); toggleSel(f.id, f.name, f.webViewLink||'', false, tile); }
+          });
+          tile.addEventListener('dblclick', () => { if (f.webViewLink) window.open(f.webViewLink,'_blank'); });
+          tile.oncontextmenu = e => showCtx(e, f.name, ft.label.toLowerCase(), f.id, f.webViewLink||'');
+          grid.appendChild(tile);
+        });
+      }
+
+      /* LIST */
+      files.forEach(f => {
+        const isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+        const ft   = isFolder ? {ico:'📁',cls:'',label:'Folder'} : getFileType(f.name);
+        const size = isFolder ? '—' : (f.size ? fmtSize(parseInt(f.size)) : '—');
+        const row  = document.createElement('div');
+        row.className = 'fm-list-row';
+        row.draggable = true;
+        row.dataset.id = f.id; row.dataset.name = f.name;
+        row.dataset.link = f.webViewLink || ''; row.dataset.folder = String(isFolder);
+        row.innerHTML = `
+          <span class="fm-lr-name">
+            <span class="row-chk"></span>
+            <span class="fm-lr-name-ico ${ft.cls}">${ft.ico}</span>
+            <span class="fm-lr-name-txt">${escHtml(f.name)}</span>
+          </span>
+          <span class="fm-lr-type">${ft.label}</span>
+          <span class="fm-lr-size">${size}</span>
+          <span class="fm-lr-date">${fmtDate(f.modifiedTime)}</span>
+          <span class="fm-lr-acts">
+            ${!isFolder ? `<button class="btn-icon" style="width:26px;height:26px;font-size:12px;"
+              onclick="window.open('${escHtml(f.webViewLink||'')}','_blank')">🔗</button>` : ''}
+            <button class="btn-icon" style="width:26px;height:26px;font-size:12px;"
+              onclick="deleteDriveFile('${f.id}','${escHtml(f.name).replace(/'/g,"\\'")}')">🗑️</button>
+          </span>`;
+        row.addEventListener('dragstart', e => onTileDragStart(e, f.id, f.name, f.webViewLink||'', isFolder));
+        row.addEventListener('click', e => {
+          if (e.ctrlKey || e.metaKey || e.target.classList.contains('row-chk'))
+            { e.preventDefault(); toggleSel(f.id, f.name, f.webViewLink||'', isFolder, row); }
+        });
+        row.addEventListener('dblclick', () => {
+          if (isFolder) loadDriveFiles(f.id, f.name);
+          else if (f.webViewLink) window.open(f.webViewLink,'_blank');
+        });
+        lb.appendChild(row);
+      });
+
+      updateStatus(files.length, docs.length, folders.length);
+    }
+
+    /* ── Multi-select ── */
+    function toggleSel(id, name, link, isFolder, el) {
+      const chk = el.querySelector('.tile-chk, .row-chk');
+      if (Sel.items.has(id)) {
+        Sel.items.delete(id);
+        el.classList.remove('sel');
+        if (chk) chk.textContent = '';
+      } else {
+        Sel.items.set(id, { name, link, isFolder });
+        el.classList.add('sel');
+        if (chk) chk.textContent = '✓';
+      }
+      updateSelBar();
+    }
+
+    function updateSelBar() {
+      const n      = Sel.items.size;
+      const bar    = document.getElementById('selBar');
+      const cnt    = document.getElementById('selCount');
+      const renBtn = document.getElementById('selRenameBtn');
+      if (bar)    bar.classList.toggle('active', n > 0);
+      if (cnt)    cnt.textContent = n + ' item' + (n !== 1 ? 's' : '') + ' selected';
+      if (renBtn) renBtn.style.display = n === 1 ? '' : 'none'; // only show for single selection
+    }
+
+    function clearSelection() {
+      Sel.items.clear();
+      document.querySelectorAll('.fm-tile.sel,.fm-list-row.sel').forEach(el => {
+        el.classList.remove('sel');
+        const ch = el.querySelector('.tile-chk,.row-chk');
+        if (ch) ch.textContent = '';
+      });
+      updateSelBar();
+    }
+
+    function selectAll() {
+      document.querySelectorAll('.fm-tile[data-id],.fm-list-row[data-id]').forEach(el => {
+        const { id, name, link, folder } = el.dataset;
+        if (!Sel.items.has(id)) {
+          Sel.items.set(id, { name, link, isFolder: folder === 'true' });
+          el.classList.add('sel');
+          const ch = el.querySelector('.tile-chk,.row-chk');
+          if (ch) ch.textContent = '✓';
+        }
+      });
+      updateSelBar();
+    }
+
+    function openSelectedInDrive() {
+      Sel.items.forEach(item => { if (item.link) window.open(item.link,'_blank'); });
+    }
+
+    async function deleteSelected() {
+      const n = Sel.items.size;
+      if (!n) return;
+      if (!(await BrgyMessageBox.confirm(`Delete ${n} item${n!==1?'s':''}?\nThis cannot be undone.`))) return;
+      let done = 0, failed = 0;
+      for (const [id] of Sel.items) {
+        try { await gapi.client.drive.files.delete({ fileId: id }); done++; }
+        catch (e) { console.error(e); failed++; }
+      }
+      clearSelection();
+      showToast(failed ? `Deleted ${done}, failed ${failed}` : `🗑️ Deleted ${done} item${done!==1?'s':''}`);
+      loadDriveFiles(GDrive.currentFolderId);
+    }
+
+    /* ═══════════════════════════════════════
+       MOVE TO FOLDER
+    ═══════════════════════════════════════ */
+    const Picker = {
+      currentFolderId: null,   // folder currently shown in picker
+      selectedFolderId: null,  // folder user clicked to move INTO
+      selectedFolderName: '',
+      moveIds: [],             // Drive file IDs to move
+      moveFromId: null,        // current parent (to remove from)
+    };
+
+    /* Open move modal from selection toolbar */
+    function moveSelected() {
+      if (!Sel.items.size) return;
+      Picker.moveIds = [...Sel.items.keys()];
+      Picker.moveFromId = GDrive.currentFolderId || GDrive.rootFolderId;
+      const n = Picker.moveIds.length;
+      document.getElementById('moveSubtitle').textContent =
+        `Moving ${n} item${n!==1?'s':''} — choose a destination folder`;
+      openPickerModal();
+    }
+
+    /* Open move modal from context menu (single item) */
+    function ctxMoveAct() {
+      if (!_ctx.id) return;
+      Picker.moveIds   = [_ctx.id];
+      Picker.moveFromId = GDrive.currentFolderId || GDrive.rootFolderId;
+      document.getElementById('moveSubtitle').textContent =
+        `Moving "${_ctx.name}" — choose a destination folder`;
+      openPickerModal();
+    }
+
+    function openPickerModal() {
+      Picker.currentFolderId  = null;
+      Picker.selectedFolderId = null;
+      Picker.selectedFolderName = '';
+      const btn = document.getElementById('moveMoveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Move Here';
+      openModal('modalMove');
+      buildPickerTree();
+    }
+
+    /* Build the initial tree from the root */
+    async function buildPickerTree() {
+      const list = document.getElementById('moveFolderList');
+      list.innerHTML = `<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px;">
+        <div style="width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--green-600);
+          border-radius:50%;animation:spin .7s linear infinite;display:inline-block;margin-right:6px;"></div>
+        Loading folders…</div>`;
+
+      try {
+        if (!GDrive.rootFolderId) await ensureRootFolder();
+        const rootId = GDrive.rootFolderId || 'root';
+        const folders = await fetchPickerFolders(rootId);
+
+        if (!folders.length) {
+          list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-light);font-size:12.5px;">
+            No folders found in your Drive.</div>`;
+          return;
+        }
+
+        list.innerHTML = '';
+        folders.forEach(f => list.appendChild(makeTreeRow(f, rootId, 0)));
+      } catch (e) {
+        console.error(e);
+        list.innerHTML = `<div style="padding:16px;color:var(--red-500);font-size:12.5px;">Failed to load folders.</div>`;
+      }
+    }
+
+    /* Fetch subfolders of a given parent */
+    async function fetchPickerFolders(parentId) {
+      const res = await gapi.client.drive.files.list({
+        q: `'${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+        fields: 'files(id,name)',
+        orderBy: 'name',
+        pageSize: 200,
+      });
+      return res.result.files || [];
+    }
+
+    /* Create a single tree row element */
+    function makeTreeRow(folder, parentId, depth) {
+      const wrapper = document.createElement('div');
+      wrapper.dataset.id       = folder.id;
+      wrapper.dataset.name     = folder.name;
+      wrapper.dataset.parentId = parentId;
+      wrapper.dataset.expanded = 'false';
+      wrapper.dataset.loaded   = 'false';
+
+      const row = document.createElement('div');
+      row.className = 'tree-row';
+      row.style.paddingLeft = (12 + depth * 20) + 'px';
+
+      const toggle = document.createElement('span');
+      toggle.className = 'tree-toggle';
+      toggle.textContent = '›';
+
+      const ico = document.createElement('span');
+      ico.textContent = '📁';
+      ico.style.fontSize = '15px';
+      ico.style.flexShrink = '0';
+
+      const label = document.createElement('span');
+      label.textContent = folder.name;
+      label.style.flex = '1';
+
+      row.appendChild(toggle);
+      row.appendChild(ico);
+      row.appendChild(label);
+      wrapper.appendChild(row);
+
+      // Single click → select
+      row.addEventListener('click', e => {
+        pickerSelectTree(folder.id, folder.name, wrapper);
+      });
+
+      // Double click → expand/collapse
+      row.addEventListener('dblclick', async e => {
+        e.preventDefault();
+        const isExpanded = wrapper.dataset.expanded === 'true';
+
+        if (isExpanded) {
+          // Collapse — remove children
+          const children = wrapper.querySelector('.tree-children');
+          if (children) children.remove();
+          wrapper.dataset.expanded = 'false';
+          wrapper.dataset.loaded   = 'false';
+          toggle.classList.remove('open');
+          ico.textContent = '📁';
+        } else {
+          // Expand — load subfolders
+          toggle.classList.add('open');
+          ico.textContent = '📂';
+          row.classList.add('loading');
+          toggle.textContent = '…';
+
+          try {
+            const subFolders = await fetchPickerFolders(folder.id);
+            row.classList.remove('loading');
+            toggle.textContent = '›';
+
+            const childContainer = document.createElement('div');
+            childContainer.className = 'tree-children';
+
+            if (!subFolders.length) {
+              toggle.classList.remove('open');
+              toggle.classList.add('leaf');
+              toggle.textContent = '';
+            } else {
+              subFolders.forEach(sf => {
+                childContainer.appendChild(makeTreeRow(sf, folder.id, depth + 1));
+              });
+            }
+
+            wrapper.appendChild(childContainer);
+            wrapper.dataset.expanded = 'true';
+            wrapper.dataset.loaded   = 'true';
+
+            // Scroll the newly expanded rows into view
+            childContainer.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          } catch (e2) {
+            console.error(e2);
+            row.classList.remove('loading');
+            toggle.textContent = '!';
+          }
+        }
+      });
+
+      return wrapper;
+    }
+
+    /* Select a folder in the tree */
+    function pickerSelectTree(id, name, wrapperEl) {
+      // Deselect all
+      document.querySelectorAll('#moveFolderList .tree-row').forEach(r => r.classList.remove('selected'));
+      // Select this row
+      const row = wrapperEl.querySelector('.tree-row');
+      if (row) row.classList.add('selected');
+
+      Picker.selectedFolderId   = id;
+      Picker.selectedFolderName = name;
+
+      const btn = document.getElementById('moveMoveBtn');
+      btn.disabled = false;
+      btn.textContent = `Move into "${name}"`;
+    }
+
+    /* Keep old pickerSelect/pickerNav for compatibility but redirect */
+    function pickerNav() {}
+    function pickerSelect() {}
+
+    /* Execute the move */
+    async function doMove() {
+      const destId = Picker.selectedFolderId;
+      if (!destId || !Picker.moveIds.length) return;
+
+      closeModal('modalMove');
+
+      const fromId = Picker.moveFromId || GDrive.rootFolderId || 'root';
+      let done = 0, failed = 0;
+
+      for (const fileId of Picker.moveIds) {
+        try {
+          await gapi.client.drive.files.update({
+            fileId,
+            addParents:    destId,
+            removeParents: fromId,
+            fields: 'id,parents',
+          });
+          done++;
+        } catch (e) {
+          console.error('Move failed for', fileId, e);
+          failed++;
+        }
+      }
+
+      clearSelection();
+      const dest = Picker.selectedFolderName;
+      showToast(failed
+        ? `📦 Moved ${done}, failed ${failed}`
+        : `📦 Moved ${done} item${done!==1?'s':''} to "${dest}"`);
+      loadDriveFiles(GDrive.currentFolderId);
+    }
+
+    /* ── Delete single file ── */
+    async function deleteDriveFile(id, name) {
+      if (!(await BrgyMessageBox.confirm(`Delete "${name}"?\nThis cannot be undone.`))) return;
+      try {
+        await gapi.client.drive.files.delete({ fileId: id });
+        showToast(`🗑️ "${name}" deleted`);
+        loadDriveFiles(GDrive.currentFolderId);
+      } catch (e) { showToast('Delete failed'); }
+    }
+
+    /* ── Ensure root folder ── */
+    async function ensureRootFolder() {
+      if (GDrive.rootFolderId) return GDrive.rootFolderId;
+      const res = await gapi.client.drive.files.list({
+        q: `name='${GDRIVE_CONFIG.ROOT_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+        fields: 'files(id)', spaces: 'drive',
+      });
+      if (res.result.files.length) { GDrive.rootFolderId = res.result.files[0].id; return GDrive.rootFolderId; }
+      const f = await gapi.client.drive.files.create({
+        resource: { name: GDRIVE_CONFIG.ROOT_FOLDER, mimeType: 'application/vnd.google-apps.folder' },
+        fields: 'id',
+      });
+      GDrive.rootFolderId = f.result.id;
+      return GDrive.rootFolderId;
+    }
+
+    /* ── Upload one file to Drive ── */
+    async function uploadFileToDrive(file, itemEl) {
+      const folderId  = GDrive.currentFolderId || await ensureRootFolder();
+      const meta = JSON.stringify({ name: file.name, parents: [folderId] });
+      const form = new FormData();
+      form.append('metadata', new Blob([meta], { type: 'application/json' }));
+      form.append('file', file);
+      const fillEl   = itemEl ? itemEl.querySelector('.upload-item-fill')   : null;
+      const statusEl = itemEl ? itemEl.querySelector('.upload-item-status') : null;
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + GDrive.accessToken);
+        xhr.upload.onprogress = e => {
+          if (e.lengthComputable && fillEl && statusEl) {
+            const pct = Math.round(e.loaded / e.total * 100);
+            fillEl.style.width = pct + '%'; statusEl.textContent = pct + '%';
+          }
+        };
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            if (fillEl)   fillEl.style.width = '100%';
+            if (statusEl) { statusEl.textContent = '✓'; statusEl.classList.add('done'); }
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            if (statusEl) { statusEl.textContent = '✗'; statusEl.classList.add('err'); }
+            reject(new Error(xhr.responseText));
+          }
+        };
+        xhr.onerror = () => {
+          if (statusEl) { statusEl.textContent = '✗'; statusEl.classList.add('err'); }
+          reject(new Error('Network error'));
+        };
+        xhr.send(form);
+      });
+    }
+
+    /* ── Toast ── */
+    function showToast(msg, ms = 3200) {
+      const t = document.getElementById('appToast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), ms);
+    }
+
+    /* ── Status bar ── */
+    function updateStatus(total, files, folders) {
+      const sc  = document.getElementById('statusCount');
+      const sf  = document.getElementById('statusFiles');
+      const sfo = document.getElementById('statusFolders');
+      if (sc)  sc.textContent  = total   + ' items';
+      if (sf)  sf.textContent  = files   + ' files';
+      if (sfo) sfo.textContent = folders + ' folders';
+    }
+
+    /* ── Helpers ── */
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' });
+    }
+    function fmtSize(b) {
+      if (b < 1024)        return b + ' B';
+      if (b < 1048576)     return (b / 1024).toFixed(1)       + ' KB';
+      if (b < 1073741824)  return (b / 1048576).toFixed(1)    + ' MB';
+      return                      (b / 1073741824).toFixed(2) + ' GB';
+    }
+
+    /* ── File type map ── */
+    const FILE_TYPES = {
+      pdf:{ico:'📕',cls:'fi-pdf',label:'PDF'}, doc:{ico:'📘',cls:'fi-doc',label:'Word'},
+      docx:{ico:'📘',cls:'fi-doc',label:'Word'}, odt:{ico:'📘',cls:'fi-doc',label:'Document'},
+      rtf:{ico:'📄',cls:'',label:'RTF'}, txt:{ico:'📝',cls:'',label:'Text'},
+      xls:{ico:'📊',cls:'fi-xls',label:'Excel'}, xlsx:{ico:'📊',cls:'fi-xls',label:'Excel'},
+      csv:{ico:'📊',cls:'fi-xls',label:'CSV'}, ods:{ico:'📊',cls:'fi-xls',label:'Spreadsheet'},
+      ppt:{ico:'📑',cls:'fi-ppt',label:'PowerPoint'}, pptx:{ico:'📑',cls:'fi-ppt',label:'PowerPoint'},
+      jpg:{ico:'🖼️',cls:'fi-img',label:'Image'}, jpeg:{ico:'🖼️',cls:'fi-img',label:'Image'},
+      png:{ico:'🖼️',cls:'fi-img',label:'Image'}, gif:{ico:'🖼️',cls:'fi-img',label:'GIF'},
+      webp:{ico:'🖼️',cls:'fi-img',label:'Image'}, bmp:{ico:'🖼️',cls:'fi-img',label:'Image'},
+      svg:{ico:'🖼️',cls:'fi-img',label:'SVG'}, heic:{ico:'🖼️',cls:'fi-img',label:'Image'},
+      mp4:{ico:'🎬',cls:'fi-vid',label:'Video'}, mov:{ico:'🎬',cls:'fi-vid',label:'Video'},
+      avi:{ico:'🎬',cls:'fi-vid',label:'Video'}, mkv:{ico:'🎬',cls:'fi-vid',label:'Video'},
+      webm:{ico:'🎬',cls:'fi-vid',label:'Video'}, m4v:{ico:'🎬',cls:'fi-vid',label:'Video'},
+      mp3:{ico:'🎵',cls:'fi-aud',label:'Audio'}, wav:{ico:'🎵',cls:'fi-aud',label:'Audio'},
+      aac:{ico:'🎵',cls:'fi-aud',label:'Audio'}, m4a:{ico:'🎵',cls:'fi-aud',label:'Audio'},
+      ogg:{ico:'🎵',cls:'fi-aud',label:'Audio'}, flac:{ico:'🎵',cls:'fi-aud',label:'Audio'},
+      zip:{ico:'🗜️',cls:'',label:'ZIP'}, rar:{ico:'🗜️',cls:'',label:'RAR'},
+      '7z':{ico:'🗜️',cls:'',label:'7-Zip'}, tar:{ico:'🗜️',cls:'',label:'TAR'}, gz:{ico:'🗜️',cls:'',label:'GZ'},
+    };
+    function getFileType(name) {
+      const ext = name.split('.').pop().toLowerCase();
+      return FILE_TYPES[ext] || { ico:'📄', cls:'', label:(ext||'File').toUpperCase() };
+    }
+
+    /* ── Upload modal ── */
+    function renderUploadModal() {
+      const body = document.getElementById('uploadModalBody');
+      if (!body) return;
+      const isDrive = GDrive.destMode === 'drive';
+      const n = GDrive.uploadQueue.length;
+
+      const destToggle = `
+        <div class="dest-toggle">
+          <div class="dest-btn ${!isDrive?'active':''}" onclick="setDestMode('local')">💾 Online Database</div>
+          <div class="dest-btn ${isDrive?'active':''}" onclick="setDestMode('drive')">☁️ Online Storage</div>
+        </div>`;
+
+      const driveBanner = (isDrive && GDrive.signedIn) ? `
+        <div class="drive-banner">
+          <span>☁️</span>
+          <span class="drive-banner-path">Online → ${GDRIVE_CONFIG.ROOT_FOLDER}</span>
+        </div>` : '';
+
+      const qHeader = n > 0 ? `
+        <div style="display:flex;align-items:center;justify-content:space-between;
+          margin-bottom:6px;font-size:12px;color:var(--text-muted);">
+          <span><strong style="color:var(--green-700)">${n} file${n!==1?'s':''}</strong> queued</span>
+          <span onclick="clearQueue()" style="cursor:pointer;color:var(--red-500);font-size:11px;">Clear all</span>
+        </div>` : '';
+
+      body.innerHTML = destToggle + driveBanner + `
+        <div id="dropZone" style="border:2px dashed var(--green-300);border-radius:var(--radius-lg);
+          padding:24px;text-align:center;background:var(--green-50);cursor:pointer;
+          transition:var(--transition-base);margin-bottom:10px;"
+          onclick="document.getElementById('fileInput').click()">
+          <div style="font-size:26px;margin-bottom:5px;">${isDrive?'☁️':'📂'}</div>
+          <div style="font-size:13.5px;font-weight:var(--fw-semibold);color:var(--green-800);">
+            Click or drag files here
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:5px;line-height:1.7;">
+            📄 Docs · 📕 PDF · 📊 Excel · 📑 PowerPoint · 📝 Text<br>
+            🖼️ Images · 🎵 Audio · 🗜️ ZIP<br><strong style="color:var(--red-500);">Videos are not allowed</strong>
+          </div>
+        </div>
+        <input type="file" id="fileInput" multiple style="display:none"
+          accept=".doc,.docx,.pdf,.ppt,.pptx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ods,
+                  .jpg,.jpeg,.png,.gif,.webp,.bmp,.svg,.heic,
+                  .mp3,.wav,.aac,.m4a,.ogg,.flac,
+                  .zip,.rar,.7z,.tar,.gz"
+          onchange="handleFiles(event)">
+        ${qHeader}
+        <div id="fileQueue" style="max-height:190px;overflow-y:auto;"></div>`;
+
+      const dz = document.getElementById('dropZone');
+      dz.addEventListener('dragover',  e => { e.preventDefault(); dz.style.borderColor='var(--green-600)'; dz.style.background='var(--green-100)'; });
+      dz.addEventListener('dragleave', () => { dz.style.borderColor=''; dz.style.background=''; });
+      dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.style.borderColor=''; dz.style.background='';
+        addToQueue(Array.from(e.dataTransfer.files));
+      });
+      renderFileQueue(GDrive.uploadQueue);
+    }
+
+    function setDestMode(mode) {
+      GDrive.destMode = mode;
+      if (mode === 'drive' && !GDrive.ready) gdriveInit();
+      renderUploadModal();
+    }
+
+    /* ── Accumulating queue ── */
+    function isVideoUpload(file) {
+      const name = (file && file.name ? file.name : '').toLowerCase();
+      const type = (file && file.type ? file.type : '').toLowerCase();
+      return type.startsWith('video/') || /\.(mp4|m4v|mov|avi|mkv|webm|wmv|flv|3gp|3g2|mpeg|mpg|mpe|mpv|ogv|ts|mts|m2ts|vob|divx|f4v)$/i.test(name);
+    }
+
+    async function addToQueue(incoming) {
+      const files = Array.from(incoming || []);
+      const allowed = files.filter(f => !isVideoUpload(f));
+      const blocked = files.length - allowed.length;
+      if (blocked > 0) {
+        await BrgyMessageBox.alert('Video upload is not allowed in the File Manager. Please upload documents, images, audio, or compressed files only.', 'warning', 'Video Upload Disabled');
+      }
+      GDrive.uploadQueue = [...GDrive.uploadQueue, ...allowed];
+      const n = GDrive.uploadQueue.length;
+      if (allowed.length) showToast(n + ' file' + (n!==1?'s':'') + ' queued');
+      renderUploadModal();
+    }
+
+    function handleFiles(e) {
+      addToQueue(Array.from(e.target.files));
+      e.target.value = '';
+    }
+
+    function removeFromQueue(i) {
+      GDrive.uploadQueue.splice(i, 1);
+      renderUploadModal();
+    }
+
+    function clearQueue() {
+      GDrive.uploadQueue = [];
+      renderUploadModal();
+    }
+
+    function renderFileQueue(files) {
+      const q = document.getElementById('fileQueue');
+      if (!q) return;
+      if (!files || !files.length) { q.innerHTML = ''; return; }
+      q.innerHTML = files.map((f, i) => {
+        const ft = getFileType(f.name);
+        return `<div class="upload-item" id="uitem-${i}">
+          <span style="font-size:15px;flex-shrink:0">${ft.ico}</span>
+          <span class="upload-item-name">${escHtml(f.name)}</span>
+          <span style="font-size:10px;color:var(--text-light);flex-shrink:0;
+            background:var(--surface-2);padding:1px 7px;border-radius:var(--radius-full)">${ft.label}</span>
+          <span class="upload-item-size">${fmtSize(f.size)}</span>
+          <div class="upload-item-bar"><div class="upload-item-fill"></div></div>
+          <span class="upload-item-status">—</span>
+          <span onclick="removeFromQueue(${i})" title="Remove"
+            style="cursor:pointer;color:var(--text-light);font-size:12px;flex-shrink:0;padding:0 2px">✕</span>
+        </div>`;
+      }).join('');
+    }
+
+    async function doUpload() {
+      const files = GDrive.uploadQueue;
+      if (!files || !files.length) { closeModal('modalUpload'); return; }
+      if (GDrive.destMode === 'drive') {
+        if (!GDrive.signedIn) { gdriveSignIn(); return; }
+        const btn = document.getElementById('uploadBtn');
+        btn.disabled = true; btn.textContent = 'Uploading…';
+        let done = 0, failed = 0;
+        for (let i = 0; i < files.length; i++) {
+          try { await uploadFileToDrive(files[i], document.getElementById('uitem-'+i)); done++; }
+          catch (e) { console.error(e); failed++; }
+        }
+        btn.disabled = false; btn.textContent = 'Upload';
+        closeModal('modalUpload');
+        showToast(failed ? `${done} uploaded, ${failed} failed` : `☁️ ${done} file${done!==1?'s':''} saved to Drive`);
+        loadDriveFiles(GDrive.currentFolderId);
+        fetchDriveStorage(); // refresh quota after upload
+      } else {
+        GDrive.uploadQueue = [];
+        closeModal('modalUpload');
+        showToast(files.length + ' file(s) uploaded locally');
+      }
+    }
+
+    /* ── Size slider ── */
+    function applySize(v) {
+      v = parseInt(v);
+      document.getElementById('fmGrid').style.setProperty('--tile-w', v+'px');
+      document.querySelectorAll('.fm-tile-ico').forEach(el => el.style.fontSize = Math.round(20+(v-80)*0.22)+'px');
+      document.querySelectorAll('.fm-tile-name').forEach(el => el.style.fontSize = Math.round(10+(v-80)*0.04)+'px');
+      const rp=Math.round(5+(v-80)*0.06)+'px', rt=Math.round(11+(v-80)*0.025)+'px';
+      const st=Math.round(10+(v-80)*0.018)+'px', ri=Math.round(13+(v-80)*0.06)+'px';
+      document.querySelectorAll('.fm-list-row').forEach(el => {
+        el.style.paddingTop=rp; el.style.paddingBottom=rp; el.style.fontSize=rt;
+      });
+      document.querySelectorAll('.fm-lr-name-txt').forEach(el => el.style.fontSize=rt);
+      document.querySelectorAll('.fm-lr-type,.fm-lr-size,.fm-lr-date').forEach(el => el.style.fontSize=st);
+      document.querySelectorAll('.fm-lr-name-ico').forEach(el => el.style.fontSize=ri);
+    }
+    applySize(110);
+
+    /* ── View toggle ── */
+    function setView(v) {
+      const f = document.getElementById('fmFiles');
+      f.classList.toggle('is-grid', v==='grid');
+      f.classList.toggle('is-list', v==='list');
+      document.getElementById('btnGrid').classList.toggle('active', v==='grid');
+      document.getElementById('btnList').classList.toggle('active', v==='list');
+      applySize(parseInt(document.getElementById('sizeSlider').value));
+    }
+
+    /* ── Navigation ── */
+    function navSc(label, el) {
+      if (el) {
+        document.querySelectorAll('.fm-sc').forEach(s => s.classList.remove('active'));
+        el.classList.add('active');
+      }
+      goHome();
+    }
+    function goHome() {
+      GDrive.folderStack     = [];
+      GDrive.currentFolderId = null;
+      clearSelection();
+      renderBreadcrumb();
+      if (GDrive.signedIn) loadDriveFilesRaw(null); else showEmptyState();
+    }
+
+    function logFileManagerActivity(action, details) {
+      try {
+        if (window.Logger && typeof Logger.log === 'function') {
+          Logger.log(action, details || '', 'File Manager');
+        }
+      } catch (e) {
+        console.warn('File Manager activity log failed:', e);
+      }
+    }
+
+    // Safe no-op handlers kept for old cached markup.
+    function openPinnedShortcut() {}
+    function addPinnedShortcut() {}
+    function removePinnedShortcut() {}
+
+    /* ── Legacy drag handler. ── */
+    function onTileDragStart(e, id, name, link, isFolder) {
+      if (e && e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', id || name || '');
+      }
+    }
+
+    /* ── Modals ── */
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      if (id==='modalUpload') { GDrive.uploadQueue=[]; renderUploadModal(); }
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    document.querySelectorAll('.modal').forEach(m =>
+      m.addEventListener('click', e => { if (e.target===m) m.classList.remove('active'); })
+    );
+
+    /* ── Create folder ── */
+    async function doMakeFolder() {
+      const name = document.getElementById('folderName').value.trim();
+      if (!name) return;
+      document.getElementById('folderName').value = '';
+      closeModal('modalFolder');
+
+      if (!GDrive.signedIn) {
+        showToast('Sign in to Google Drive to create folders');
+        return;
+      }
+
+      try {
+        const parentId = GDrive.currentFolderId || await ensureRootFolder();
+        await gapi.client.drive.files.create({
+          resource: {
+            name,
+            mimeType: 'application/vnd.google-apps.folder',
+            parents: [parentId],
+          },
+          fields: 'id,name',
+        });
+        showToast('📁 Folder "' + name + '" created');
+        loadDriveFiles(GDrive.currentFolderId);
+      } catch (e) {
+        console.error(e);
+        showToast('❌ Failed to create folder');
+      }
+    }
+
+    /* ── Rename selected (single item) ── */
+    function renameSelected() {
+      if (Sel.items.size !== 1) return;
+      const [id, item] = [...Sel.items.entries()][0];
+      _rt = id; // store Drive file ID instead of name
+      document.getElementById('renameVal').value = item.name;
+      openModal('modalRename');
+    }
+
+    /* ── Rename modal: also used from context menu ── */
+    let _rt = '';  // holds Drive file ID when renaming via selection, or name when via ctx menu
+    let _rtId = null; // Drive file ID for the current rename
+
+    function openRenameModal(name, id) {
+      _rtId = id || null;
+      document.getElementById('renameVal').value = name;
+      openModal('modalRename');
+    }
+
+    async function doRename() {
+      const newName = document.getElementById('renameVal').value.trim();
+      if (!newName) return;
+
+      // Get Drive file ID — from selection bar or from context menu
+      let fileId = _rtId;
+      if (!fileId && Sel.items.size === 1) {
+        fileId = [...Sel.items.keys()][0];
+      }
+
+      closeModal('modalRename');
+
+      if (fileId && GDrive.signedIn) {
+        try {
+          await gapi.client.drive.files.update({
+            fileId,
+            resource: { name: newName },
+          });
+          showToast(`✏️ Renamed to "${newName}"`);
+          clearSelection();
+          loadDriveFiles(GDrive.currentFolderId);
+        } catch (e) {
+          console.error(e);
+          showToast('❌ Rename failed');
+        }
+      } else {
+        showToast(`✏️ Renamed to "${newName}"`);
+      }
+      _rtId = null;
+    }
+
+    /* ── Context menu ── */
+    let _ctx = {};
+    const ctxMenu = document.getElementById('ctxMenu');
+    function showCtx(e, name, type, id, link) {
+      e.preventDefault();
+      _ctx = { name, type, id:id||null, link:link||null };
+      ctxMenu.style.left=e.clientX+'px'; ctxMenu.style.top=e.clientY+'px';
+      ctxMenu.classList.add('open');
+    }
+    document.addEventListener('click', () => ctxMenu.classList.remove('open'));
+    function ctxOpen() {
+      if (_ctx.type==='folder'&&_ctx.id) {
+        loadDriveFiles(_ctx.id, _ctx.name);
+      } else if (_ctx.link) window.open(_ctx.link,'_blank');
+    }
+    function ctxDownload()  { if (_ctx.link) window.open(_ctx.link,'_blank'); }
+    function ctxRenameAct() { openRenameModal(_ctx.name, _ctx.id); }
+    function ctxCopy()      { if (_ctx.link) { navigator.clipboard.writeText(_ctx.link); showToast('📋 Link copied'); } }
+    function ctxDelete()    { if (_ctx.id) deleteDriveFile(_ctx.id, _ctx.name); }
+    async function confirmDel(n)  { if (await BrgyMessageBox.confirm(`Delete "${n}"?`)) {} }
+
+    /* ── Search ── */
+    /* ── Search — uses Drive API to search all files including subdirectories ── */
+    let _searchTimer = null;
+
+    function filterItems(q) {
+      q = q.trim();
+
+      // Clear any pending search
+      clearTimeout(_searchTimer);
+
+      if (!q) {
+        // Empty query — go back to current folder view
+        const searchBanner = document.getElementById('searchBanner');
+        if (searchBanner) searchBanner.remove();
+        loadDriveFilesRaw(GDrive.currentFolderId);
+        return;
+      }
+
+      if (!GDrive.signedIn) {
+        // Offline — filter visible items only
+        const ql = q.toLowerCase();
+        document.querySelectorAll('.fm-tile').forEach(el => {
+          const nm = el.querySelector('.fm-tile-name');
+          el.style.display = (!ql||(nm&&nm.textContent.toLowerCase().includes(ql))) ? '' : 'none';
+        });
+        document.querySelectorAll('.fm-list-row').forEach(el => {
+          const nm = el.querySelector('.fm-lr-name-txt');
+          el.style.display = (!ql||(nm&&nm.textContent.toLowerCase().includes(ql))) ? '' : 'none';
+        });
+        return;
+      }
+
+      // Debounce — wait 400ms after user stops typing before hitting Drive API
+      _searchTimer = setTimeout(() => driveSearch(q), 400);
+    }
+
+    async function driveSearch(q) {
+      const grid = document.getElementById('fmGrid');
+      const lb   = document.getElementById('fmListBody');
+
+      // Show loading
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;
+          padding:40px;justify-content:center;color:var(--text-muted);font-size:13px;">
+          <div style="width:16px;height:16px;border:2px solid var(--border);
+            border-top-color:var(--green-600);border-radius:50%;
+            animation:spin .7s linear infinite;flex-shrink:0;"></div>
+          Searching Google Drive…
+        </div>`;
+      lb.innerHTML = '';
+
+      // Show search context banner in breadcrumb
+      renderSearchBanner(q);
+
+      try {
+        // Search within the barangay root folder and all subdirectories
+        const rootId = GDrive.rootFolderId || await ensureRootFolder();
+
+        // Drive fullText search — searches name and content across all subfolders
+        const res = await gapi.client.drive.files.list({
+          q: `name contains '${q.replace(/'/g,"\\'")}' and trashed=false and '${rootId}' in parents or (name contains '${q.replace(/'/g,"\\'")}' and trashed=false and mimeType != 'application/vnd.google-apps.folder')`,
+          fields: 'files(id,name,mimeType,size,modifiedTime,webViewLink,parents)',
+          orderBy: 'folder,name',
+          pageSize: 100,
+          spaces: 'drive',
+        });
+
+        // Better: search all files with name match anywhere in drive
+        const res2 = await gapi.client.drive.files.list({
+          q: `name contains '${q.replace(/'/g,"\\'")}' and trashed=false`,
+          fields: 'files(id,name,mimeType,size,modifiedTime,webViewLink,parents)',
+          orderBy: 'folder,name',
+          pageSize: 100,
+          spaces: 'drive',
+        });
+
+        const files = res2.result.files || [];
+        grid.innerHTML = ''; lb.innerHTML = '';
+
+        if (!files.length) {
+          grid.innerHTML = `
+            <div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
+              padding:60px 20px;gap:8px;text-align:center;">
+              <div style="font-size:36px">🔍</div>
+              <div style="font-size:14px;font-weight:600;color:var(--text-muted)">No results for "${escHtml(q)}"</div>
+              <div style="font-size:12px;color:var(--text-light)">Try a different search term.</div>
+            </div>`;
+          updateStatus(0, 0, 0);
+          return;
+        }
+
+        const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+        const docs    = files.filter(f => f.mimeType !== 'application/vnd.google-apps.folder');
+
+        // GRID
+        if (folders.length) {
+          const lbl = document.createElement('div');
+          lbl.className = 'fm-sec-lbl'; lbl.textContent = 'Folders';
+          grid.appendChild(lbl);
+          folders.forEach(f => {
+            const tile = document.createElement('div');
+            tile.className = 'fm-tile';
+            tile.draggable = true;
+            tile.dataset.id = f.id; tile.dataset.name = f.name;
+            tile.dataset.link = f.webViewLink||''; tile.dataset.folder = 'true';
+            tile.innerHTML = `<div class="tile-chk"></div>
+              <div class="fm-tile-ico" style="font-size:28px">📁</div>
+              <div class="fm-tile-name">${escHtml(f.name)}</div>
+              <div class="fm-tile-meta">${fmtDate(f.modifiedTime)}</div>`;
+            tile.addEventListener('dragstart', e => onTileDragStart(e, f.id, f.name, f.webViewLink||'', true));
+            tile.addEventListener('click', e => {
+              if (e.ctrlKey||e.metaKey||e.target.classList.contains('tile-chk'))
+                { e.preventDefault(); toggleSel(f.id, f.name, f.webViewLink||'', true, tile); }
+            });
+            tile.addEventListener('dblclick', () => loadDriveFiles(f.id, f.name));
+            tile.oncontextmenu = e => showCtx(e, f.name, 'folder', f.id, f.webViewLink||'');
+            grid.appendChild(tile);
+          });
+        }
+
+        if (docs.length) {
+          const lbl = document.createElement('div');
+          lbl.className = 'fm-sec-lbl'; lbl.textContent = 'Files';
+          grid.appendChild(lbl);
+          docs.forEach(f => {
+            const ft   = getFileType(f.name);
+            const size = f.size ? fmtSize(parseInt(f.size)) : '—';
+            const tile = document.createElement('div');
+            tile.className = 'fm-tile';
+            tile.draggable = true;
+            tile.dataset.id = f.id; tile.dataset.name = f.name;
+            tile.dataset.link = f.webViewLink||''; tile.dataset.folder = 'false';
+            tile.innerHTML = `<div class="tile-chk"></div>
+              <div class="fm-tile-ico ${ft.cls}" style="font-size:28px">${ft.ico}</div>
+              <div class="fm-tile-name">${escHtml(f.name)}</div>
+              <div class="fm-tile-meta">${size} · ${fmtDate(f.modifiedTime)}</div>`;
+            tile.addEventListener('dragstart', e => onTileDragStart(e, f.id, f.name, f.webViewLink||'', false));
+            tile.addEventListener('click', e => {
+              if (e.ctrlKey||e.metaKey||e.target.classList.contains('tile-chk'))
+                { e.preventDefault(); toggleSel(f.id, f.name, f.webViewLink||'', false, tile); }
+            });
+            tile.addEventListener('dblclick', () => { if (f.webViewLink) window.open(f.webViewLink,'_blank'); });
+            tile.oncontextmenu = e => showCtx(e, f.name, ft.label.toLowerCase(), f.id, f.webViewLink||'');
+            grid.appendChild(tile);
+          });
+        }
+
+        // LIST
+        files.forEach(f => {
+          const isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+          const ft   = isFolder ? {ico:'📁',cls:'',label:'Folder'} : getFileType(f.name);
+          const size = isFolder ? '—' : (f.size ? fmtSize(parseInt(f.size)) : '—');
+          const row  = document.createElement('div');
+          row.className = 'fm-list-row';
+          row.draggable = true;
+          row.dataset.id = f.id; row.dataset.name = f.name;
+          row.dataset.link = f.webViewLink||''; row.dataset.folder = String(isFolder);
+          row.innerHTML = `
+            <span class="fm-lr-name">
+              <span class="row-chk"></span>
+              <span class="fm-lr-name-ico ${ft.cls}">${ft.ico}</span>
+              <span class="fm-lr-name-txt">${escHtml(f.name)}</span>
+            </span>
+            <span class="fm-lr-type">${ft.label}</span>
+            <span class="fm-lr-size">${size}</span>
+            <span class="fm-lr-date">${fmtDate(f.modifiedTime)}</span>
+            <span class="fm-lr-acts">
+              ${!isFolder?`<button class="btn-icon" style="width:26px;height:26px;font-size:12px;"
+                onclick="window.open('${escHtml(f.webViewLink||'')}','_blank')">🔗</button>`:''}
+              <button class="btn-icon" style="width:26px;height:26px;font-size:12px;"
+                onclick="deleteDriveFile('${f.id}','${escHtml(f.name).replace(/'/g,"\\'")}')">🗑️</button>
+            </span>`;
+          row.addEventListener('dragstart', e => onTileDragStart(e, f.id, f.name, f.webViewLink||'', isFolder));
+          row.addEventListener('click', e => {
+            if (e.ctrlKey||e.metaKey||e.target.classList.contains('row-chk'))
+              { e.preventDefault(); toggleSel(f.id, f.name, f.webViewLink||'', isFolder, row); }
+          });
+          row.addEventListener('dblclick', () => {
+            if (isFolder) loadDriveFiles(f.id, f.name);
+            else if (f.webViewLink) window.open(f.webViewLink,'_blank');
+          });
+          lb.appendChild(row);
+        });
+
+        updateStatus(files.length, docs.length, folders.length);
+
+      } catch (err) {
+        console.error(err);
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
+            padding:40px;gap:8px;text-align:center;">
+            <div style="font-size:32px">⚠️</div>
+            <div style="font-size:13px;color:var(--text-muted)">Search failed. Try again.</div>
+          </div>`;
+      }
+    }
+
+    function renderSearchBanner(q) {
+      // Remove existing banner
+      const old = document.getElementById('searchBanner');
+      if (old) old.remove();
+
+      const bc = document.getElementById('fmBcrumb');
+      if (!bc) return;
+
+      const banner = document.createElement('div');
+      banner.id = 'searchBanner';
+      banner.style.cssText = `display:flex;align-items:center;gap:8px;padding:6px 20px;
+        background:var(--green-50);border-bottom:1px solid var(--green-200);
+        font-size:12.5px;color:var(--green-800);flex-shrink:0;`;
+      banner.innerHTML = `
+        <span style="font-size:14px">🔍</span>
+        <span>Search results for <strong>"${escHtml(q)}"</strong> — across all folders</span>
+        <span onclick="clearSearch()" style="margin-left:auto;cursor:pointer;
+          color:var(--green-600);font-size:11px;text-decoration:underline;">Clear search</span>`;
+
+      // Insert after breadcrumb
+      bc.parentNode.insertBefore(banner, bc.nextSibling);
+    }
+
+    function clearSearch() {
+      const input = document.querySelector('.search-input');
+      if (input) input.value = '';
+      const banner = document.getElementById('searchBanner');
+      if (banner) banner.remove();
+      loadDriveFilesRaw(GDrive.currentFolderId);
+    }
+
+    /* ── Session ── */
+    try {
+      if (typeof CURRENT_USER !== 'undefined') {
+        const initials = CURRENT_USER.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        document.getElementById('topbarAvatar').textContent   = initials;
+        document.getElementById('topbarUserName').textContent = CURRENT_USER.name;
+      }
+    } catch(e) {}
+
+  </script>
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    /* ════════════════════════════════════════════════════════════════════════
+       ONLINE FILE MANAGER FIX
+       Files and folders are saved online in MongoDB GridFS. Video uploads are temporarily disabled.
+    ═════════════════════════════════════════════════════════════════════════ */
+    const OnlineFM = {
+      currentPath: '',
+      storagePath: '',
+      lastItems: [],
+      active: true
+    };
+
+    function onlineDownloadUrl(path) {
+      return '/api/file-manager/download?path=' + encodeURIComponent(path || '');
+    }
+
+    function refreshOnlineStorageInfo() {
+      return fetch('/api/file-manager/info')
+        .then(r => r.json())
+        .then(data => {
+          if (!data.success) throw new Error(data.message || 'Unable to read file storage.');
+          OnlineFM.storagePath = data.storagePath || '';
+          const wrap = document.getElementById('driveStorageWrap');
+          const txt  = document.getElementById('storageUsed');
+          const fill = document.getElementById('storageFill');
+          const sub  = document.getElementById('storageFree');
+          if (wrap) { wrap.style.opacity = '1'; wrap.title = 'Files are saved online in MongoDB GridFS.'; }
+          if (txt) txt.textContent = fmtSize(Number(data.usedBytes || 0)) + ' used';
+          if (fill) { const pct = data.limitBytes ? Math.min(100, (Number(data.usedBytes || 0) / Number(data.limitBytes)) * 100) : 0; fill.style.width = pct.toFixed(1) + '%'; fill.style.background = 'var(--green-600)'; }
+          if (sub) sub.textContent = data.limitBytes ? (fmtSize(Number(data.limitBytes || 0) - Number(data.usedBytes || 0)) + ' free') : 'Online database';
+        })
+        .catch(err => console.warn('MongoDB GridFS storage info error:', err));
+    }
+
+    function updateOnlineHeader() {
+      const badge = document.getElementById('gdriveBadge');
+      if (badge) {
+        badge.classList.add('signed-in');
+        badge.innerHTML = '<span class="gdrive-dot"></span> Online Storage';
+        badge.title = OnlineFM.storagePath ? ('Saved at: ' + OnlineFM.storagePath) : 'Files are saved online in MongoDB GridFS.';
+        badge.onclick = async () => {
+          await BrgyMessageBox.alert('File Manager saves files online in MongoDB GridFS. Video uploads are temporarily disabled. Storage details:\n\n' + (OnlineFM.storagePath || 'MongoDB Atlas / GridFS'), 'info', 'File Storage Location');
+        };
+      }
+    }
+
+    function onlineFolderStackFromPath(relPath) {
+      if (!relPath) return [];
+      const parts = relPath.split('/').filter(Boolean);
+      let acc = '';
+      return parts.map(part => {
+        acc = acc ? acc + '/' + part : part;
+        return { id: acc, name: part };
+      });
+    }
+
+    let OnlineDraggedItem = null;
+    const OnlineClipboard = {
+      mode: 'copy',
+      items: []
+    };
+
+    function selectedPaths() {
+      return [...Sel.items.keys()].filter(Boolean);
+    }
+
+    function copyItems(paths, label) {
+      const unique = [...new Set((paths || []).filter(Boolean))];
+      if (!unique.length) {
+        showToast('Select a file or folder to copy');
+        return;
+      }
+      OnlineClipboard.mode = 'copy';
+      OnlineClipboard.items = unique;
+      showToast(`📋 Copied ${unique.length} item${unique.length !== 1 ? 's' : ''}${label ? `: ${label}` : ''}`);
+    }
+
+    function copySelected() {
+      if (!Sel.items.size) {
+        showToast('Select files or folders first');
+        return;
+      }
+      copyItems(selectedPaths());
+    }
+
+    function copyContextItem() {
+      if (!_ctx || !_ctx.id) return;
+      copyItems([_ctx.id], _ctx.name || '');
+    }
+
+    async function pasteClipboard(destinationPath) {
+      const paths = [...new Set(OnlineClipboard.items || [])];
+      if (!paths.length) {
+        await BrgyMessageBox.alert('Nothing to paste. Copy one or more files/folders first.', 'info');
+        return;
+      }
+      const dest = destinationPath !== undefined ? destinationPath : (OnlineFM.currentPath || '');
+      try {
+        const res = await fetch('/api/file-manager/copy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paths, destinationPath: dest || '' })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Paste failed.');
+        clearSelection();
+        showToast(`📄 Pasted ${data.copied?.length || paths.length} item${(data.copied?.length || paths.length) !== 1 ? 's' : ''}`);
+        await loadOnlineFiles(OnlineFM.currentPath || '');
+      } catch (error) {
+        console.error(error);
+        await BrgyMessageBox.alert(error.message || 'Paste failed.', 'error');
+      }
+    }
+
+    function pasteIntoContextFolder() {
+      const dest = (_ctx && _ctx.type === 'folder' && _ctx.id) ? _ctx.id : (OnlineFM.currentPath || '');
+      pasteClipboard(dest);
+    }
+
+    document.addEventListener('keydown', function(e) {
+      const tag = (e.target && e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.target?.isContentEditable) return;
+      if (!e.ctrlKey && !e.metaKey) return;
+      const key = String(e.key || '').toLowerCase();
+      if (key === 'c') {
+        if (Sel.items.size) {
+          e.preventDefault();
+          copySelected();
+        }
+      } else if (key === 'v') {
+        if (OnlineClipboard.items.length) {
+          e.preventDefault();
+          pasteClipboard();
+        }
+      }
+    });
+
+    function setOnlineDragData(e, item) {
+      OnlineDraggedItem = {
+        path: item.path,
+        name: item.name,
+        isFolder: !!item.isFolder
+      };
+      if (e && e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'copyMove';
+        e.dataTransfer.setData('text/plain', item.path);
+        e.dataTransfer.setData('application/x-brgy-file-path', item.path);
+      }
+    }
+
+    function canDropOnlineItem(sourcePath, destinationPath) {
+      if (!sourcePath || destinationPath === undefined || destinationPath === null) return false;
+      if (sourcePath === destinationPath) return false;
+      const currentParent = sourcePath.split('/').slice(0, -1).join('/');
+      if (currentParent === destinationPath) return false;
+      if (destinationPath && destinationPath.startsWith(sourcePath + '/')) return false;
+      return true;
+    }
+
+    function enableOnlineFolderDrop(el, folderItem) {
+      if (!el || !folderItem || !folderItem.isFolder) return;
+
+      el.addEventListener('dragover', e => {
+        const sourcePath = OnlineDraggedItem?.path || (e.dataTransfer && e.dataTransfer.getData('application/x-brgy-file-path'));
+        if (!canDropOnlineItem(sourcePath, folderItem.path)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = 'move';
+        el.style.outline = '2px dashed var(--green-500)';
+        el.style.outlineOffset = '-4px';
+        el.style.background = 'var(--green-50)';
+      });
+
+      el.addEventListener('dragleave', e => {
+        if (el.contains(e.relatedTarget)) return;
+        el.style.outline = '';
+        el.style.outlineOffset = '';
+        el.style.background = '';
+      });
+
+      el.addEventListener('drop', async e => {
+        const sourcePath = OnlineDraggedItem?.path || (e.dataTransfer && e.dataTransfer.getData('application/x-brgy-file-path'));
+        el.style.outline = '';
+        el.style.outlineOffset = '';
+        el.style.background = '';
+        if (!canDropOnlineItem(sourcePath, folderItem.path)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const pathsToMove = Sel.items && Sel.items.has(sourcePath) ? [...Sel.items.keys()] : [sourcePath];
+        await moveOnlineItems(pathsToMove, folderItem.path, folderItem.name);
+      });
+    }
+
+    async function moveOnlineItems(paths, destinationPath, destinationName) {
+      const validPaths = [...new Set((paths || []).filter(Boolean))];
+      if (!validPaths.length) return;
+      try {
+        const res = await fetch('/api/file-manager/move', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paths: validPaths, destinationPath: destinationPath || '' })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Move failed.');
+        clearSelection();
+        OnlineDraggedItem = null;
+        showToast(`📦 Moved ${data.moved.length || validPaths.length} item${(data.moved.length || validPaths.length) !== 1 ? 's' : ''} to "${destinationName || 'Home'}"`);
+        await loadOnlineFiles(OnlineFM.currentPath || '');
+      } catch (error) {
+        console.error(error);
+        await BrgyMessageBox.alert(error.message || 'Move failed.', 'error');
+      }
+    }
+
+    function onlineRenderItems(items) {
+      OnlineFM.lastItems = items || [];
+      const grid = document.getElementById('fmGrid');
+      const lb = document.getElementById('fmListBody');
+      if (!grid || !lb) return;
+      grid.innerHTML = '';
+      lb.innerHTML = '';
+
+      if (!items.length) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;padding:60px 20px;gap:8px;text-align:center;">
+            <div style="font-size:40px">📂</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-muted)">This folder is empty</div>
+            <div style="font-size:12px;color:var(--text-light)">Files are saved online in MongoDB GridFS. Video uploads are temporarily disabled.</div>
+          </div>`;
+        updateStatus(0, 0, 0);
+        return;
+      }
+
+      const folders = items.filter(f => f.isFolder);
+      const docs = items.filter(f => !f.isFolder);
+
+      function makeTile(f) {
+        const ft = f.isFolder ? { ico:'📁', cls:'', label:'Folder' } : getFileType(f.name);
+        const link = f.isFolder ? '' : onlineDownloadUrl(f.path);
+        const tile = document.createElement('div');
+        tile.className = 'fm-tile';
+        tile.draggable = true;
+        tile.dataset.id = f.path;
+        tile.dataset.name = f.name;
+        tile.dataset.link = link;
+        tile.dataset.folder = String(f.isFolder);
+        tile.addEventListener('dragstart', e => setOnlineDragData(e, f));
+        tile.addEventListener('dragend', () => { OnlineDraggedItem = null; });
+        enableOnlineFolderDrop(tile, f);
+        tile.innerHTML = `<div class="tile-chk"></div>
+          <div class="fm-tile-ico ${ft.cls}" style="font-size:28px">${ft.ico}</div>
+          <div class="fm-tile-name">${escHtml(f.name)}</div>
+          <div class="fm-tile-meta">${f.isFolder ? fmtDate(f.modifiedTime) : fmtSize(Number(f.size || 0)) + ' · ' + fmtDate(f.modifiedTime)}</div>`;
+        tile.addEventListener('click', e => {
+          if (e.ctrlKey || e.metaKey || e.target.classList.contains('tile-chk')) {
+            e.preventDefault(); toggleSel(f.path, f.name, link, f.isFolder, tile);
+          }
+        });
+        tile.addEventListener('dblclick', () => {
+          if (f.isFolder) loadOnlineFiles(f.path);
+          else window.open(link, '_blank');
+        });
+        tile.oncontextmenu = e => showCtx(e, f.name, f.isFolder ? 'folder' : ft.label.toLowerCase(), f.path, link);
+        return tile;
+      }
+
+      if (folders.length) {
+        const lbl = document.createElement('div');
+        lbl.className = 'fm-sec-lbl';
+        lbl.textContent = 'Folders';
+        grid.appendChild(lbl);
+        folders.forEach(f => grid.appendChild(makeTile(f)));
+      }
+
+      if (docs.length) {
+        const lbl = document.createElement('div');
+        lbl.className = 'fm-sec-lbl';
+        lbl.textContent = 'Files';
+        grid.appendChild(lbl);
+        docs.forEach(f => grid.appendChild(makeTile(f)));
+      }
+
+      items.forEach(f => {
+        const ft = f.isFolder ? { ico:'📁', cls:'', label:'Folder' } : getFileType(f.name);
+        const link = f.isFolder ? '' : onlineDownloadUrl(f.path);
+        const row = document.createElement('div');
+        row.className = 'fm-list-row';
+        row.draggable = true;
+        row.dataset.id = f.path;
+        row.dataset.name = f.name;
+        row.dataset.link = link;
+        row.dataset.folder = String(f.isFolder);
+        row.addEventListener('dragstart', e => setOnlineDragData(e, f));
+        row.addEventListener('dragend', () => { OnlineDraggedItem = null; });
+        enableOnlineFolderDrop(row, f);
+        row.innerHTML = `
+          <span class="fm-lr-name">
+            <span class="row-chk"></span>
+            <span class="fm-lr-name-ico ${ft.cls}">${ft.ico}</span>
+            <span class="fm-lr-name-txt">${escHtml(f.name)}</span>
+          </span>
+          <span class="fm-lr-type">${ft.label}</span>
+          <span class="fm-lr-size">${f.isFolder ? '—' : fmtSize(Number(f.size || 0))}</span>
+          <span class="fm-lr-date">${fmtDate(f.modifiedTime)}</span>
+          <span class="fm-lr-acts">
+            ${!f.isFolder ? `<button class="btn-icon" style="width:26px;height:26px;font-size:12px;" onclick="window.open('${link}','_blank')">⬇️</button>` : ''}
+            <button class="btn-icon" style="width:26px;height:26px;font-size:12px;" onclick="deleteDriveFile('${escHtml(f.path).replace(/'/g, "\\'")}','${escHtml(f.name).replace(/'/g, "\\'")}')">🗑️</button>
+          </span>`;
+        row.addEventListener('click', e => {
+          if (e.ctrlKey || e.metaKey || e.target.classList.contains('row-chk')) {
+            e.preventDefault(); toggleSel(f.path, f.name, link, f.isFolder, row);
+          }
+        });
+        row.addEventListener('dblclick', () => {
+          if (f.isFolder) loadOnlineFiles(f.path);
+          else window.open(link, '_blank');
+        });
+        lb.appendChild(row);
+      });
+
+      updateStatus(items.length, docs.length, folders.length);
+      applySize(parseInt(document.getElementById('sizeSlider').value));
+    }
+
+    async function loadOnlineFiles(path = '') {
+      OnlineFM.active = true;
+      GDrive.destMode = 'local';
+      clearSelection();
+      showLoadingState();
+      try {
+        const res = await fetch('/api/file-manager/list?path=' + encodeURIComponent(path || ''));
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Failed to load files.');
+        OnlineFM.currentPath = data.currentPath || '';
+        OnlineFM.storagePath = data.storagePath || OnlineFM.storagePath;
+        GDrive.currentFolderId = OnlineFM.currentPath || null;
+        GDrive.folderStack = onlineFolderStackFromPath(OnlineFM.currentPath);
+        renderBreadcrumb();
+        onlineRenderItems(data.items || []);
+        await refreshOnlineStorageInfo();
+        updateOnlineHeader();
+      } catch (error) {
+        console.error(error);
+        const grid = document.getElementById('fmGrid');
+        if (grid) grid.innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--red-500)">⚠️ ${escHtml(error.message)}</div>`;
+      }
+    }
+
+    const originalGDriveSignIn = typeof gdriveSignIn === 'function' ? gdriveSignIn : null;
+    gdriveSignIn = async function() {
+      const useDrive = await BrgyMessageBox.confirm('The File Manager uses MongoDB GridFS online storage. Browser sign-in is not needed.');
+      if (useDrive && originalGDriveSignIn) return originalGDriveSignIn();
+    };
+
+    showEmptyState = function() {
+      loadOnlineFiles(OnlineFM.currentPath || '');
+    };
+
+    showLoadingState = function() {
+      const grid = document.getElementById('fmGrid');
+      if (grid) grid.innerHTML = `
+        <div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:40px;justify-content:center;color:var(--text-muted);font-size:13px;">
+          <div style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--green-600);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></div>
+          Loading online files…
+        </div>`;
+    };
+
+    goHome = function() {
+      OnlineFM.currentPath = '';
+      GDrive.folderStack = [];
+      GDrive.currentFolderId = null;
+      clearSelection();
+      renderBreadcrumb();
+      loadOnlineFiles('');
+    };
+
+    navigateBack = function() {
+      const parts = (OnlineFM.currentPath || '').split('/').filter(Boolean);
+      parts.pop();
+      loadOnlineFiles(parts.join('/'));
+    };
+
+    navigateTo = function(index) {
+      const target = GDrive.folderStack[index];
+      loadOnlineFiles(target ? target.id : '');
+    };
+
+    loadDriveFiles = async function(folderId, folderName) {
+      if (OnlineFM.active) return loadOnlineFiles(folderId || '');
+      return loadDriveFilesRaw(folderId);
+    };
+
+    loadDriveFilesRaw = async function(folderId) {
+      if (OnlineFM.active || GDrive.destMode === 'local' || !GDrive.signedIn) return loadOnlineFiles(folderId || OnlineFM.currentPath || '');
+    };
+
+    doUpload = async function() {
+      const files = GDrive.uploadQueue;
+      if (!files || !files.length) { closeModal('modalUpload'); return; }
+
+      if (GDrive.destMode === 'drive' && GDrive.signedIn && !OnlineFM.active) {
+        await BrgyMessageBox.alert('Files are saved to MongoDB GridFS online storage.', 'info');
+        return;
+      }
+
+      const btn = document.getElementById('uploadBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Uploading…'; }
+      try {
+        const form = new FormData();
+        files.forEach(file => form.append('files', file));
+        const res = await fetch('/api/file-manager/upload?path=' + encodeURIComponent(OnlineFM.currentPath || ''), { method: 'POST', body: form });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Upload failed.');
+        document.querySelectorAll('.upload-item-fill').forEach(el => el.style.width = '100%');
+        document.querySelectorAll('.upload-item-status').forEach(el => { el.textContent = '✓'; el.classList.add('done'); });
+        GDrive.uploadQueue = [];
+        closeModal('modalUpload');
+        showToast(`☁️ ${data.files.length} file${data.files.length !== 1 ? 's' : ''} saved online`);
+        await loadOnlineFiles(OnlineFM.currentPath || '');
+      } catch (error) {
+        console.error(error);
+        await BrgyMessageBox.alert(error.message || 'Upload failed.', 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Upload'; }
+      }
+    };
+
+    doMakeFolder = async function() {
+      const input = document.getElementById('folderName');
+      const name = input.value.trim();
+      if (!name) return;
+      input.value = '';
+      closeModal('modalFolder');
+      try {
+        const res = await fetch('/api/file-manager/folder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: OnlineFM.currentPath || '', name })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Failed to create folder.');
+        showToast('📁 Folder "' + name + '" created');
+        await loadOnlineFiles(OnlineFM.currentPath || '');
+      } catch (error) {
+        await BrgyMessageBox.alert(error.message || 'Failed to create folder.', 'error');
+      }
+    };
+
+    deleteDriveFile = async function(id, name) {
+      if (!(await BrgyMessageBox.confirm(`Delete "${name}"?\nThis cannot be undone.`))) return;
+      try {
+        const res = await fetch('/api/file-manager/item', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: id })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Delete failed.');
+        showToast(`🗑️ "${name}" deleted`);
+        await loadOnlineFiles(OnlineFM.currentPath || '');
+      } catch (error) {
+        await BrgyMessageBox.alert(error.message || 'Delete failed.', 'error');
+      }
+    };
+
+    deleteSelected = async function() {
+      const n = Sel.items.size;
+      if (!n) return;
+      if (!(await BrgyMessageBox.confirm(`Delete ${n} selected item${n !== 1 ? 's' : ''}?\nThis cannot be undone.`))) return;
+      let done = 0, failed = 0;
+      for (const [id] of Sel.items) {
+        try {
+          const res = await fetch('/api/file-manager/item', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: id })
+          });
+          const data = await res.json();
+          if (!data.success) throw new Error(data.message || 'Delete failed.');
+          done++;
+        } catch (error) { console.error(error); failed++; }
+      }
+      clearSelection();
+      showToast(failed ? `Deleted ${done}, failed ${failed}` : `🗑️ Deleted ${done} item${done !== 1 ? 's' : ''}`);
+      await loadOnlineFiles(OnlineFM.currentPath || '');
+    };
+
+    ctxOpen = function() {
+      if (_ctx.type === 'folder' && _ctx.id) loadOnlineFiles(_ctx.id);
+      else if (_ctx.link) window.open(_ctx.link, '_blank');
+    };
+    ctxDownload = function() { if (_ctx.link) window.open(_ctx.link, '_blank'); };
+    ctxCopy = function() { copyContextItem(); };
+    ctxDelete = function() { if (_ctx.id) deleteDriveFile(_ctx.id, _ctx.name); };
+    openSelectedInDrive = function() { Sel.items.forEach(item => { if (item.link) window.open(item.link, '_blank'); }); };
+    moveSelected = function() {
+      if (!Sel.items.size) return;
+      Picker.moveIds = [...Sel.items.keys()];
+      Picker.moveFromId = OnlineFM.currentPath || '';
+      const n = Picker.moveIds.length;
+      const subtitle = document.getElementById('moveSubtitle');
+      if (subtitle) subtitle.textContent = `Moving ${n} item${n !== 1 ? 's' : ''} — choose a destination folder`;
+      openPickerModal();
+    };
+    ctxMoveAct = function() {
+      if (!_ctx.id) return;
+      Picker.moveIds = [_ctx.id];
+      Picker.moveFromId = OnlineFM.currentPath || '';
+      const subtitle = document.getElementById('moveSubtitle');
+      if (subtitle) subtitle.textContent = `Moving "${_ctx.name}" — choose a destination folder`;
+      openPickerModal();
+    };
+
+    doRename = async function() {
+      const newName = document.getElementById('renameVal').value.trim();
+      if (!newName) return;
+      let fileId = _rtId;
+      if (!fileId && Sel.items.size === 1) fileId = [...Sel.items.keys()][0];
+      if (!fileId && _ctx.id) fileId = _ctx.id;
+      closeModal('modalRename');
+      try {
+        const res = await fetch('/api/file-manager/rename', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: fileId, name: newName })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Rename failed.');
+        showToast(`✏️ Renamed to "${newName}"`);
+        _rtId = null;
+        clearSelection();
+        await loadOnlineFiles(OnlineFM.currentPath || '');
+      } catch (error) {
+        await BrgyMessageBox.alert(error.message || 'Rename failed.', 'error');
+      }
+    };
+
+    fetchPickerFolders = async function(parentPath) {
+      const res = await fetch('/api/file-manager/list?path=' + encodeURIComponent(parentPath || ''));
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || 'Failed to load folders.');
+      return (data.items || []).filter(item => item.isFolder).map(item => ({ id: item.path, name: item.name }));
+    };
+
+    buildPickerTree = async function() {
+      const list = document.getElementById('moveFolderList');
+      list.innerHTML = `<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px;">Loading folders…</div>`;
+      try {
+        const folders = await fetchPickerFolders('');
+        list.innerHTML = '';
+
+        const homeWrapper = document.createElement('div');
+        const homeRow = document.createElement('div');
+        homeRow.className = 'tree-row';
+        homeRow.style.paddingLeft = '12px';
+        homeRow.innerHTML = '<span class="tree-toggle leaf"></span><span style="font-size:15px;flex-shrink:0">🏠</span><span style="flex:1">Home / Root folder</span>';
+        homeWrapper.appendChild(homeRow);
+        homeRow.addEventListener('click', () => pickerSelectTree('', 'Home', homeWrapper));
+        list.appendChild(homeWrapper);
+
+        if (!folders.length) {
+          const empty = document.createElement('div');
+          empty.style.cssText = 'padding:14px 20px;color:var(--text-light);font-size:12.5px;';
+          empty.textContent = 'No folders found. You can move items to Home only.';
+          list.appendChild(empty);
+          return;
+        }
+        folders.forEach(f => list.appendChild(makeTreeRow(f, '', 0)));
+      } catch (e) {
+        console.error(e);
+        list.innerHTML = `<div style="padding:16px;color:var(--red-500);font-size:12.5px;">Failed to load folders.</div>`;
+      }
+    };
+
+    doMove = async function() {
+      if (!Picker.moveIds.length) return;
+      const destId = Picker.selectedFolderId || '';
+      const destName = Picker.selectedFolderName || 'Home';
+      closeModal('modalMove');
+      await moveOnlineItems(Picker.moveIds, destId, destName);
+    };
+
+    renderUploadModal = (function(originalRenderUploadModal) {
+      return function() {
+        GDrive.destMode = 'local';
+        originalRenderUploadModal();
+        const body = document.getElementById('uploadModalBody');
+        if (body) {
+          const toggle = body.querySelector('.dest-toggle');
+          if (toggle) toggle.style.display = 'none';
+          body.insertAdjacentHTML('afterbegin', `
+            <div class="drive-banner" style="margin-bottom:10px">
+              <span>💾</span>
+              <span class="drive-banner-path">Saving to MongoDB GridFS: ${escHtml(OnlineFM.storagePath || 'MongoDB Atlas / GridFS')}</span>
+            </div>`);
+        }
+      };
+    })(renderUploadModal);
+
+
+
+    function setOnlineDragData(e, item) {
+      OnlineDraggedItem = {
+        path: item.path,
+        name: item.name,
+        isFolder: !!item.isFolder
+      };
+      _dragItem = {
+        id: item.path,
+        name: item.name,
+        link: item.isFolder ? '' : onlineDownloadUrl(item.path),
+        isFolder: !!item.isFolder
+      };
+      if (e && e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'copyMove';
+        e.dataTransfer.setData('text/plain', item.path);
+        e.dataTransfer.setData('application/x-brgy-file-path', item.path);
+      }
+    }
+
+
+
+    /* ── Multi-select right-click menu for File Manager ──
+       When 2 or more selected items are right-clicked, show only Download, Move, and Delete.
+       This works for both grid and list view and keeps single-item right-click behavior unchanged. */
+    function fmCtxPlace(menu, x, y) {
+      menu.classList.add('open');
+      const pad = 8;
+      const rect = menu.getBoundingClientRect();
+      const left = Math.min(x, window.innerWidth - rect.width - pad);
+      const top = Math.min(y, window.innerHeight - rect.height - pad);
+      menu.style.left = Math.max(pad, left) + 'px';
+      menu.style.top = Math.max(pad, top) + 'px';
+    }
+
+    function fmRenderSingleContext() {
+      if (!ctxMenu) return;
+      const hasClipboard = OnlineClipboard.items && OnlineClipboard.items.length;
+      const pasteLabel = (_ctx && _ctx.type === 'folder') ? '📄 Paste into folder' : '📄 Paste here';
+      ctxMenu.innerHTML = `
+        <div class="ctx-row" onclick="ctxOpen()">📂 Open</div>
+        <div class="ctx-row" onclick="ctxDownload()">⬇️ Download</div>
+        <div class="ctx-row" onclick="ctxRenameAct()">✏️ Rename</div>
+        <div class="ctx-row" onclick="ctxCopy()">📋 Copy</div>
+        ${hasClipboard ? `<div class="ctx-row" onclick="pasteIntoContextFolder()">${pasteLabel}</div>` : ''}
+        <div class="ctx-row" onclick="ctxMoveAct()">📦 Move to…</div>
+        <hr class="ctx-sep">
+        <div class="ctx-row red" onclick="ctxDelete()">🗑️ Delete</div>`;
+    }
+
+    function fmRenderMultiContext() {
+      if (!ctxMenu) return;
+      const count = Sel.items.size;
+      const hasClipboard = OnlineClipboard.items && OnlineClipboard.items.length;
+      ctxMenu.innerHTML = `
+        <div class="ctx-row" onclick="downloadSelected()">⬇️ Download selected</div>
+        <div class="ctx-row" onclick="copySelected()">📋 Copy selected</div>
+        ${hasClipboard ? '<div class="ctx-row" onclick="pasteClipboard()">📄 Paste here</div>' : ''}
+        <div class="ctx-row" onclick="moveSelected()">📦 Move selected to…</div>
+        <hr class="ctx-sep">
+        <div class="ctx-row red" onclick="deleteSelected()">🗑️ Delete selected</div>
+        <div style="padding:7px 14px 8px;color:var(--text-light);font-size:11.5px;border-top:1px solid var(--border);">
+          ${count} item${count !== 1 ? 's' : ''} selected
+        </div>`;
+    }
+
+    async function downloadSelected() {
+      const selected = [...Sel.items.entries()].map(([id, item]) => ({ id, ...item }));
+      const files = selected.filter(item => !item.isFolder);
+      const folders = selected.length - files.length;
+      if (!files.length) {
+        await BrgyMessageBox.alert('Selected folders cannot be downloaded directly. Please open the folder and download its files.', 'info');
+        return;
+      }
+      files.forEach((item, index) => {
+        const url = item.link || onlineDownloadUrl(item.id);
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = item.name || '';
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }, index * 150);
+      });
+      showToast(`⬇️ Downloading ${files.length} file${files.length !== 1 ? 's' : ''}${folders ? `; ${folders} folder${folders !== 1 ? 's' : ''} skipped` : ''}`);
+    }
+
+    function fmShowSingleCtx(e, itemEl) {
+      const id = itemEl.dataset.id || '';
+      const name = itemEl.dataset.name || '';
+      const isFolder = itemEl.dataset.folder === 'true';
+      const link = itemEl.dataset.link || (isFolder ? '' : onlineDownloadUrl(id));
+      _ctx = { name, type: isFolder ? 'folder' : 'file', id: id || null, link: link || null };
+      fmRenderSingleContext();
+      fmCtxPlace(ctxMenu, e.clientX, e.clientY);
+    }
+
+    function fmShowMultiCtx(e) {
+      fmRenderMultiContext();
+      fmCtxPlace(ctxMenu, e.clientX, e.clientY);
+    }
+
+    function fmShowBlankCtx(e) {
+      if (!ctxMenu || !OnlineClipboard.items.length) return;
+      ctxMenu.innerHTML = `<div class="ctx-row" onclick="pasteClipboard()">📄 Paste here</div>`;
+      fmCtxPlace(ctxMenu, e.clientX, e.clientY);
+    }
+
+    document.addEventListener('contextmenu', function(e) {
+      const itemEl = e.target.closest && e.target.closest('.fm-tile[data-id], .fm-list-row[data-id]');
+      if (!itemEl || !document.getElementById('fmFiles')?.contains(itemEl)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      const id = itemEl.dataset.id || '';
+      const isAlreadySelected = Sel.items.has(id);
+
+      if (Sel.items.size >= 2 && isAlreadySelected) {
+        fmShowMultiCtx(e);
+        return;
+      }
+
+      fmShowSingleCtx(e, itemEl);
+    }, true);
+
+    document.addEventListener('contextmenu', function(e) {
+      const area = document.getElementById('fmFiles');
+      if (!area || !area.contains(e.target)) return;
+      if (e.target.closest && e.target.closest('.fm-tile[data-id], .fm-list-row[data-id]')) return;
+      if (!OnlineClipboard.items.length) return;
+      e.preventDefault();
+      e.stopPropagation();
+      fmShowBlankCtx(e);
+    });
+
+    window.addEventListener('load', async () => {
+      GDrive.destMode = 'local';
+      OnlineFM.active = true;
+      await refreshOnlineStorageInfo();
+      updateOnlineHeader();
+      loadOnlineFiles('');
+    });
+</script>
+</body>
+</html>

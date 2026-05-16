@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="responsive.css">
+  <script src="/messagebox.js"></script>
+</head>
+<body>
+<div class="auth-screen">
+
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <div class="auth-right" style="overflow-y:auto;">
+    <div class="auth-right-inner">
+
+      <button class="btn-back" onclick="location.href='login.html'">← Back to Login</button>
+
+      <!-- Form -->
+      <div id="registerForm">
+        <h1 class="auth-heading">Register</h1>
+        <p class="auth-subheading">Submit your details. Your account will be activated once approved by the Punong Barangay.</p>
+
+        <div class="auth-alert" id="regAlert"></div>
+
+        <div class="form-row-3" style="margin-bottom:14px;">
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" id="lastName" placeholder="">
+          </div>
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" id="firstName" placeholder="">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Middle Name</label>
+            <input class="form-input" type="text" id="middleName" placeholder="">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label class="form-label">Role / Position</label>
+          <select class="form-select" id="role">
+            <option value="">Select your role</option>
+            <option>Barangay Secretary</option>
+            <option>Barangay Treasurer</option>
+            <option>Kagawad</option>
+            <option>SK Chairman</option>
+            <option>Tanod</option>
+            <option>Staff</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Phone Number</label>
+          <div class="phone-wrap">
+            <div class="phone-prefix"><span class="phone-prefix-flag">🇵🇭</span>+63</div>
+            <input class="phone-input" type="tel" id="phone" placeholder="9XXXXXXXXX" maxlength="10" inputmode="numeric">
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="submitRegistration()">Submit for Approval</button>
+        <p class="auth-helper">Your request will be reviewed by the Punong Barangay before you can log in.</p>
+      </div>
+
+      <!-- Success -->
+      <div id="successCard" style="display:none;">
+        <div class="pending-notice">
+          <div class="pending-icon">⏳</div>
+          <div class="pending-title">Request Submitted!</div>
+          <div class="pending-desc">
+            Your registration is pending approval from the Punong Barangay.
+            You will be able to log in once approved.
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="location.href='login.html'" style="margin-top:20px;">
+          Back to Login
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<script>
+  function showAlert(msg, type) {
+    const el = document.getElementById('regAlert');
+    el.textContent = msg; 
+    el.className = 'auth-alert show ' + type;
+  }
+
+  async function submitRegistration() {
+    const lastName   = document.getElementById('lastName').value.trim();
+    const firstName  = document.getElementById('firstName').value.trim();
+    const middleName = document.getElementById('middleName').value.trim();
+    const role       = document.getElementById('role').value;
+    const raw        = document.getElementById('phone').value.trim();
+    const phone      = '0' + raw;
+
+    if (!lastName || !firstName || !role || !raw || raw.length < 9) {
+      showAlert('Please fill in all required fields.', 'error');
+      return;
+    }
+
+    // Disable button during submission
+    const submitBtn = document.querySelector('[onclick="submitRegistration()"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    try {
+      const response = await fetch('/api/accounts/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lastName,
+          firstName,
+          middleName,
+          phone,
+          role: role
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Show success message
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('successCard').style.display = 'block';
+      } else {
+        showAlert(data.message || 'Registration failed. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      showAlert('An error occurred. Please try again.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit for Approval';
+    }
+  }
+</script>
+</body>
+</html>

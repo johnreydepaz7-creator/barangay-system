@@ -1,0 +1,41 @@
+/* ============================================================
+   LOGIN RESPONSIVE.CSS — adjusts authentication/admin screens
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: hidden; }
+img, svg, canvas, video { max-width: 100%; }
+input, select, textarea, button { max-width: 100%; }
+.auth-page, .auth-shell, .auth-container, .auth-card, .admin-card, .form-card, .panel, .card { min-width: 0; }
+
+@media (max-width: 900px) {
+  body { min-height: 100vh; overflow-y: auto; }
+  .auth-shell, .auth-page, .auth-container, .admin-shell {
+    width: 100% !important;
+    min-height: 100vh !important;
+    padding: 22px 16px !important;
+  }
+  .auth-card, .admin-card, .form-card, .panel, .card {
+    width: min(100%, 520px) !important;
+    max-width: 100% !important;
+  }
+  .auth-header, .brand-row, .admin-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .form-row, .form-grid, .admin-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .actions, .form-actions, .button-row {
+    flex-wrap: wrap;
+  }
+  table { min-width: 640px; }
+  .table-wrap, .table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+@media (max-width: 520px) {
+  .auth-shell, .auth-page, .auth-container, .admin-shell { padding: 16px 10px !important; }
+  .auth-card, .admin-card, .form-card, .panel, .card { border-radius: 16px !important; padding-left: 18px !important; padding-right: 18px !important; }
+  h1, .title { font-size: 22px !important; line-height: 1.2; }
+  .subtitle, .auth-subtitle { font-size: 13px !important; }
+  .actions button, .actions a, .form-actions button, .form-actions a { width: 100%; justify-content: center; }
+}

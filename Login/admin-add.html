@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Account — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="responsive.css">
+  <script src="/messagebox.js"></script>
+</head>
+<body>
+<div class="auth-screen">
+
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <div class="auth-right" style="overflow-y:auto;">
+    <div class="auth-right-inner">
+
+      <button class="btn-back" onclick="location.href='admin-menu.html'">← Back</button>
+
+      <h1 class="auth-heading">Add Account</h1>
+      <p class="auth-subheading">Register a new barangay staff account directly.</p>
+
+      <div class="auth-alert" id="addAlert"></div>
+
+      <div class="form-row-3" style="margin-bottom:14px;">
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" id="lastName" placeholder="Dela Cruz">
+        </div>
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" id="firstName" placeholder="Juan">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Middle Name</label>
+          <input class="form-input" type="text" id="middleName" placeholder="Santos">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label class="form-label">Role</label>
+        <select class="form-select" id="role">
+          <option value="">Select Role</option>
+          <option>Punong Barangay</option>
+          <option>Barangay Secretary</option>
+          <option>Barangay Treasurer</option>
+          <option>Kagawad</option>
+          <option>SK Chairman</option>
+          <option>Tanod</option>
+          <option>Staff</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom:24px;">
+        <label class="form-label">Phone Number</label>
+        <div class="phone-wrap">
+          <div class="phone-prefix"><span class="phone-prefix-flag">🇵🇭</span>+63</div>
+          <input class="phone-input" type="tel" id="phone" placeholder="9XXXXXXXXX" maxlength="10" inputmode="numeric">
+        </div>
+      </div>
+
+      <button class="btn-gold" onclick="addAccount()">Register Account</button>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- QR Code Modal -->
+<div id="qrCodeModal" class="modal" style="display:none;">
+  <div class="modal-overlay" onclick="acknowledgeQRCode()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Punong Barangay QR Code</h2>
+      <button class="modal-close" onclick="acknowledgeQRCode()">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center; padding:30px;">
+      <p style="margin-bottom:20px; color:#666;">Share this QR code with the new Punong Barangay to simplify login</p>
+      <div id="qrcodeDisplay" style="display:inline-block; padding:15px; background:white; border-radius:8px;"></div>
+      <div id="encodedDisplay" style="margin-top:15px; font-size:11px; color:#666; word-break:break-all; font-family:monospace; background:#f5f5f5; padding:10px; border-radius:6px; max-height:80px; overflow-y:auto;"></div>
+      <button class="btn-primary" onclick="acknowledgeQRCode()" style="margin-top:20px; width:100%;">Understood, Proceed</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  max-width: 450px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-body {
+  padding: 20px;
+  background: white;
+}
+</style>
+
+<script>
+  const user = JSON.parse(sessionStorage.getItem('current_user')||'null');
+  if (!user) { location.href='login.html'; }
+
+  let pendingLogout = false;
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('addAlert');
+    el.textContent = msg;
+    el.className = 'auth-alert show ' + type;
+  }
+
+  // Base64 encoding function
+  function encodeBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function acknowledgeQRCode() {
+    document.getElementById('qrCodeModal').style.display = 'none';
+    if (pendingLogout) {
+      sessionStorage.clear();
+      location.replace('login.html');
+    }
+  }
+
+  async function addAccount() {
+    const lastName = document.getElementById('lastName').value.trim();
+    const firstName = document.getElementById('firstName').value.trim();
+    const middleName = document.getElementById('middleName').value.trim();
+    const role = document.getElementById('role').value;
+    const raw = document.getElementById('phone').value.trim();
+    const phone = '0' + raw;
+
+    if (!lastName || !firstName || !role || !raw || raw.length < 9) {
+      showAlert('Please fill in all required fields.', 'error');
+      return;
+    }
+
+    // If adding Punong Barangay, show warning confirmation
+    if (role === 'Punong Barangay') {
+      const confirmed = await BrgyMessageBox.confirm(
+        '⚠️  WARNING!\n\n' +
+        'You are about to add a new Punong Barangay.\n\n' +
+        '• The old Punong Barangay account will be DELETED from the database\n' +
+        '• You will be automatically logged out\n' +
+        '• The new Punong Barangay will need to login with their phone number\n\n' +
+        'Do you want to proceed?'
+      );
+      
+      if (!confirmed) {
+        return;
+      }
+    }
+
+    // Disable button during submission
+    const submitBtn = document.querySelector('[onclick="addAccount()"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Registering...';
+
+    try {
+      const response = await fetch('/api/accounts/admin/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lastName,
+          firstName,
+          middleName,
+          phone,
+          role
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showAlert(firstName + ' ' + lastName + ' registered successfully.', 'success');
+        
+        // If this was a Punong Barangay replacement, show QR code before logout
+        if (role === 'Punong Barangay' && data.replacedOldPunong) {
+          setTimeout(() => {
+            // Generate QR code
+            const normalizedPhone = phone.startsWith('0') ? phone.substring(1) : phone;
+            const fullName = (firstName + ' ' + (middleName || '') + ' ' + lastName).trim();
+            const SECRET = 'l69xAAm3';
+            const combined = fullName + '|' + normalizedPhone + '|' + SECRET;
+            const encoded = encodeBase64(combined);
+
+            // Show QR Code modal with server-generated QR
+            fetch('/api/accounts/generate-qrcode', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ encoded: encoded })
+            })
+            .then(response => response.json())
+            .then(qrData => {
+              if (qrData.success && qrData.qrCodeImage) {
+                document.getElementById('qrcodeDisplay').innerHTML = `<img src="${qrData.qrCodeImage}" alt="QR Code" style="width:200px; height:200px; border-radius:8px; background:white; padding:10px; display:block;">`;
+              } else {
+                document.getElementById('qrcodeDisplay').textContent = 'QR code generation failed';
+              }
+              document.getElementById('encodedDisplay').textContent = 'Encoded: ' + encoded;
+              document.getElementById('qrCodeModal').style.display = 'flex';
+              pendingLogout = true;
+            })
+            .catch(error => {
+              console.error('QR code generation error:', error);
+              document.getElementById('qrCodeModal').style.display = 'flex';
+              pendingLogout = true;
+            });
+          }, 1000);
+        } else {
+          // Clear form
+          ['lastName', 'firstName', 'middleName', 'phone'].forEach(id => document.getElementById(id).value = '');
+          document.getElementById('role').value = '';
+          // Redirect to accounts page after 1.5 seconds
+          setTimeout(() => { location.href = 'admin-accounts.html'; }, 1500);
+        }
+      } else {
+        showAlert(data.message || 'Registration failed. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register Account';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showAlert('Error during registration. Please try again.', 'error');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Register Account';
+    }
+  }
+</script>
+</body>
+</html>

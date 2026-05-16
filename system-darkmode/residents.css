@@ -1,0 +1,11 @@
+/* ============================================================
+   RESIDENTS.CSS — Page-specific styles only.
+   base.css + components.css must be loaded before this.
+   ============================================================ */
+
+/* Household card grid layout */
+.household-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 360px));
+  gap: 18px;
+}

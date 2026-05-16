@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="responsive.css">
+  <style>
+    #logoutBtn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    #logoutBtn::before {
+      content: '🚪';
+      font-size: 16px;
+    }
+
+    #logoutBtn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+  </style>
+  <script src="/messagebox.js"></script>
+</head>
+<body>
+<div class="auth-screen">
+
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-right-inner">
+
+      <div class="step-indicator">
+        <div class="step-dot done"></div>
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+      </div>
+
+      <div class="welcome-block">
+        <div class="welcome-label">Logged in as</div>
+        <div class="welcome-name">Welcome, <em id="userName">—</em></div>
+      </div>
+
+      <button class="role-btn" onclick="goTo('user')" id="userBtn" style="display:none; margin-top:20px;">
+        <div class="role-icon">👤</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;">User</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Access the Management System</div>
+        </div>
+        <span class="role-arrow">›</span>
+      </button>
+
+      <button class="role-btn" onclick="goTo('admin')" id="adminBtn" style="display:none;">
+        <div class="role-icon" style="background:var(--gold-pale);">⚙️</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;">Administrator</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Manage accounts and settings</div>
+        </div>
+        <span class="role-arrow">›</span>
+      </button>
+
+      <div class="auth-divider" style="margin-top:20px;"></div>
+
+      <button class="btn-secondary" id="logoutBtn" onclick="logout()" style="display:none;">Sign Out</button>
+
+    </div>
+  </div>
+
+</div>
+<script>
+  // Check session via API instead of sessionStorage
+  async function initializePage() {
+    try {
+      const response = await fetch('/api/session/check', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      const data = await response.json();
+      
+      if (!data.success || !data.user) {
+        location.href = 'login.html';
+        return;
+      }
+
+      const user = data.user;
+      const role = user.role || 'Staff';
+      const firstName = user.firstName || 'User';
+      
+      // Display "Logged in as" with Role and FirstName
+      document.getElementById('userName').textContent = role + ' ' + firstName;
+      
+      // Show role buttons and sign out for Punong Barangay only
+      if (user.role === 'Punong Barangay') {
+        document.getElementById('userBtn').style.display = 'flex';
+        document.getElementById('adminBtn').style.display = 'flex';
+        document.getElementById('logoutBtn').style.display = 'flex';
+      } else {
+        // Other roles automatically redirect to dashboard
+        document.getElementById('userBtn').style.display = 'none';
+        document.getElementById('adminBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'none';
+        
+        // Auto-redirect non-Punong users to dashboard
+        sessionStorage.setItem('current_user', JSON.stringify(user));
+        sessionStorage.setItem('access_mode', 'user');
+        setTimeout(() => {
+          location.href = '/overview.html';
+        }, 500);
+        return;
+      }
+      
+      // Store user for later use on dashboard
+      sessionStorage.setItem('current_user', JSON.stringify(user));
+      sessionStorage.setItem('access_mode', 'user');
+    } catch (error) {
+      console.error('Error checking session:', error);
+      location.href = 'login.html';
+    }
+  }
+
+  function goTo(mode) {
+    sessionStorage.setItem('access_mode', mode);
+    location.href = mode === 'admin' ? 'admin-menu.html' : '/overview.html';
+  }
+
+  async function logout() {
+    try {
+      await fetch('/api/session/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    sessionStorage.clear();
+    window.location.href = '/';
+  }
+
+  // Initialize page on load
+  document.addEventListener('DOMContentLoaded', initializePage);
+  if (document.readyState !== 'loading') {
+    initializePage();
+  }
+</script>
+</body>
+</html>

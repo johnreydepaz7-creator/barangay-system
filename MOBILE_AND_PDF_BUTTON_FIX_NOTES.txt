@@ -1,0 +1,1 @@
+Fixed: removed Save as PDF button from generated documents. Added mobile/narrow-browser alignment so the sidebar becomes a horizontal menu and page controls stack without overflowing. Use Print Document, then choose Save as PDF in the browser print dialog when a PDF is needed.

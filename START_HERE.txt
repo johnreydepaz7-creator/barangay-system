@@ -1,0 +1,20 @@
+BARANGAY MANAGEMENT SYSTEM - START HERE
+
+After extracting this folder, you can place the project anywhere, for example:
+- Desktop
+- Documents
+- Downloads
+- D:\Barangay System
+- A USB drive folder
+
+To run the system:
+1. Open the extracted project folder.
+2. Double-click RUN_SYSTEM.bat.
+3. Wait for the system to install dependencies on first run.
+4. The system will automatically open in your default browser.
+
+Important:
+- Do not move RUN_SYSTEM.bat outside the project folder.
+- The launcher can run from any folder location, but it must stay inside the same folder as server.js and package.json.
+- Node.js must be installed on the computer.
+- Internet is needed only for first-time npm install and MongoDB Atlas connection.

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Residents — Barangay 59-A</title>
+
+  <!-- 1. Base tokens & reset -->
+  <link rel="stylesheet" href="base.css">
+  <!-- 2. Shared components -->
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+  <!-- 3. This page's specific styles only -->
+  <link rel="stylesheet" href="residents.css">
+
+  <style>
+    body.dark {
+      --surface:     #0f1a12; --surface-2:   #162019; --surface-3:   #1d2b21;
+      --border:      #28392c; --border-dark: #324438;
+      --text-main:   #e4ede7; --text-body:   #c2d4c8;
+      --text-muted:  #7fa086; --text-light:  #536e59;
+      --green-50:    #0c1c10; --green-100:   #112016; --green-200:   #183224;
+      --gold-pale:   #1c1908; --red-100:     #1f0c0f; --blue-100:    #0c1520;
+      --shadow-xs:   0 1px 4px  rgba(0,0,0,.35);
+      --shadow-sm:   0 2px 8px  rgba(0,0,0,.45);
+      --shadow-md:   0 4px 20px rgba(0,0,0,.55);
+    }
+    body.dark .topbar            { background:#09120b; border-bottom-color:#1d3025; }
+    body.dark .sidebar           { background:#0d1710; border-right-color:#1d3025; }
+    body.dark .sidebar-divider   { background: var(--border); }
+    body.dark .app-content       { background: var(--surface); }
+    body.dark .card              { background: var(--surface-2); border-color: var(--border); }
+    body.dark .card-header       { border-bottom-color: var(--border); }
+    body.dark .card-footer       { border-top-color: var(--border); }
+    body.dark .table-card        { background: var(--surface-2); border-color: var(--border); }
+    body.dark .table-card tbody tr:hover { background: var(--surface-3); }
+    body.dark .table-card td     { color: var(--text-main); }
+    body.dark .table-card th     { background: #09120b; }
+    body.dark .form-input,
+    body.dark .form-select       { background: var(--surface-3); border-color: var(--border); color: var(--text-main); }
+    body.dark .modal-box         { background: var(--surface-2); }
+    body.dark .modal-header      { border-bottom-color: var(--border); }
+    body.dark .modal-footer      { background: var(--surface); border-top-color: var(--border); }
+    body.dark .modal-close:hover { background: var(--surface-3); }
+    body.dark .toggle-btn.active { background: var(--surface-3); color: var(--green-400); box-shadow:none; }
+    body.dark .badge-neutral     { background: var(--surface-3); border-color: var(--border); }
+    body.dark .search-wrap       { background: var(--surface-2); border-color: var(--border); }
+    body.dark .search-wrap input { background: transparent; color: var(--text-main); }
+    body.dark .page-header       { border-bottom-color: var(--border); }
+    body.dark .toolbar           { background: var(--surface-2); border-color: var(--border); }
+    body.dark .household-grid .card { background: var(--surface-2); border-color: var(--border); }
+    body.dark .sidebar-widget    { background: var(--surface-2); border-color: var(--border); }
+    body.dark .purok-tag         { background: var(--surface-3); border-color: var(--border); color: var(--text-muted); }
+    body.dark .btn-warning       { background: rgba(201,168,76,.1); color: #c9a84c; border-color: rgba(201,168,76,.25); }
+    body.dark .btn-warning:hover { background: rgba(201,168,76,.18); border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.15); }
+    body.dark .btn-success       { background: rgba(90,184,124,.12); color: var(--green-400); border-color: rgba(90,184,124,.25); }
+    body.dark .btn-success:hover { background: rgba(90,184,124,.2);  border-color: var(--green-400); box-shadow: 0 0 0 3px rgba(90,184,124,.15); }
+    body.dark .btn-danger        { background: rgba(200,50,70,.1); color: #f08090; border-color:#3a1520; }
+    body.dark .btn-danger:hover  { background:#1f0c0f; border-color: #c43050; box-shadow: 0 0 0 3px rgba(200,50,80,.18); }
+  </style>
+  <script src="/messagebox.js"></script>
+</head>
+<body class="app-body">
+
+  
+  <!-- ── TOPBAR ────────────────────────────────────────────── -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right" style="display:flex;align-items:center;gap:10px;">
+      <span id="modeIcon" title="Current theme mode" style="display:inline-flex;align-items:center;color:var(--text-muted);opacity:.7;">
+        <!-- icon set by JS on load -->
+      </span>
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+        <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    
+    <!-- ── SIDEBAR ──────────────────────────────────────────── -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item active" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='reports.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+          </div>
+          <span class="menu-label">Reports</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='#'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-widget">
+          <div class="sidebar-widget-title">Quick Stats</div>
+          <div class="sidebar-widget-row">
+            <span class="sidebar-widget-label">Total Residents</span>
+            <span class="sidebar-widget-val">1,284</span>
+          </div>
+          <div class="sidebar-widget-row">
+            <span class="sidebar-widget-label">Households</span>
+            <span class="sidebar-widget-val">312</span>
+          </div>
+          <div class="sidebar-widget-row">
+            <span class="sidebar-widget-label">Puroks</span>
+            <span class="sidebar-widget-val">6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+    <div class="app-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Residents</h1>
+          <div class="page-breadcrumb">Dashboard › <span>Residents</span></div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="toggleView('household', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 10.5L12 3L21 10.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg>Household</button>
+          <button class="toggle-btn" onclick="toggleView('individual', this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>Per Person</button>
+        </div>
+
+        <div class="search-wrap" style="flex:1; max-width:340px;">
+          <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input class="search-input" placeholder="Search resident or household…">
+        </div>
+
+        <select class="form-select" style="width:auto;">
+          <option>All Puroks</option>
+          <option>Purok 1</option>
+          <option>Purok 2</option>
+          <option>Purok 3</option>
+          <option>Purok 4</option>
+          <option>Purok 5</option>
+          <option>Purok 6</option>
+        </select>
+
+        <div class="spacer"></div>
+
+        <button class="btn-primary" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" ><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Household</button>
+      </div>
+
+      <!-- ── HOUSEHOLD VIEW ────────────────────────────────── -->
+      <div id="householdView" class="view-panel active">
+        <div class="household-grid">
+
+          <div class="card">
+            <div class="card-accent"></div>
+            <div class="card-header">
+              <span class="card-title">Household #001</span>
+              <span class="badge badge-green">5 members</span>
+            </div>
+            <div class="card-body">
+              <div class="card-row">
+                <span class="card-row-label">Purok</span>
+                <span class="card-row-val">Purok 3</span>
+              </div>
+              <div class="card-row">
+                <span class="card-row-label">Water Source</span>
+                <span class="card-row-val">Deep Well</span>
+              </div>
+              <div class="card-row">
+                <span class="card-row-label">Power Supply</span>
+                <span class="card-row-val">Leyeco</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-warning"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button>
+              <button class="btn-danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</button>
+              <button class="btn-success"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View Members</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-accent"></div>
+            <div class="card-header">
+              <span class="card-title">Household #002</span>
+              <span class="badge badge-green">3 members</span>
+            </div>
+            <div class="card-body">
+              <div class="card-row">
+                <span class="card-row-label">Purok</span>
+                <span class="card-row-val">Purok 2</span>
+              </div>
+              <div class="card-row">
+                <span class="card-row-label">Water Source</span>
+                <span class="card-row-val">Faucet</span>
+              </div>
+              <div class="card-row">
+                <span class="card-row-label">Power Supply</span>
+                <span class="card-row-val">Leyeco</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-warning"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button>
+              <button class="btn-danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</button>
+              <button class="btn-success"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View Members</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-accent"></div>
+            <div class="card-header">
+              <span class="card-title">Household #003</span>
+              <span class="badge badge-green">7 members</span>
+            </div>
+            <div class="card-body">
+              <div class="card-row">
+                <span class="card-row-label">Purok</span>
+                <span class="card-row-val">Purok 1</span>
+              </div>
+              <div class="card-row">
+                <span class="card-row-label">Water Source</span>
+                <span class="card-row-val">Deep Well</span>
+              </div>
+              <div class="card-row">
+                <span class="card-row-label">Power Supply</span>
+                <span class="card-row-val">Generator</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-warning"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button>
+              <button class="btn-danger"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</button>
+              <button class="btn-success"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View Members</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── PER PERSON VIEW ───────────────────────────────── -->
+      <div id="individualView" class="view-panel">
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Middle</th>
+                <th>Sex</th>
+                <th>Civil Status</th>
+                <th>Occupation</th>
+                <th>Purok</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Dela Cruz</strong></td>
+                <td>Juan</td>
+                <td>Santos</td>
+                <td><span class="sex-badge m">M</span></td>
+                <td><span class="badge badge-gold">Married</span></td>
+                <td>Driver</td>
+                <td><span class="purok-tag">Purok 3</span></td>
+                <td><button class="btn-warning"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Dela Cruz</strong></td>
+                <td>Maria</td>
+                <td>Lopez</td>
+                <td><span class="sex-badge f">F</span></td>
+                <td><span class="badge badge-gold">Married</span></td>
+                <td>Housewife</td>
+                <td><span class="purok-tag">Purok 3</span></td>
+                <td><button class="btn-warning"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Reyes</strong></td>
+                <td>Carlo</td>
+                <td>Mendoza</td>
+                <td><span class="sex-badge m">M</span></td>
+                <td><span class="badge badge-green">Single</span></td>
+                <td>Student</td>
+                <td><span class="purok-tag">Purok 2</span></td>
+                <td><button class="btn-warning"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MODAL ─────────────────────────────────────────────── -->
+  <div id="myModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">Add Household</h2>
+        <button class="modal-close" onclick="closeModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Household Number</label>
+            <input class="form-input" type="text" placeholder="e.g. 004">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Purok</label>
+            <select class="form-select">
+              <option>Select Purok</option>
+              <option>Purok 1</option>
+              <option>Purok 2</option>
+              <option>Purok 3</option>
+              <option>Purok 4</option>
+              <option>Purok 5</option>
+              <option>Purok 6</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">No. of Members</label>
+            <input class="form-input" type="number" placeholder="0" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Water Source</label>
+            <select class="form-select">
+              <option>Select</option>
+              <option>Deep Well</option>
+              <option>Faucet</option>
+              <option>Bottled Water</option>
+              <option>River</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Power Supply</label>
+            <select class="form-select">
+              <option>Select</option>
+              <option>Leyeco</option>
+              <option>Generator</option>
+              <option>Solar</option>
+              <option>None</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary">Save Household</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    function toggleView(view, btn) {
+      document.getElementById('householdView').classList.remove('active');
+      document.getElementById('individualView').classList.remove('active');
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(view === 'household' ? 'householdView' : 'individualView').classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function setActive(el) {
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function openModal() {
+      document.getElementById('myModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('myModal').classList.remove('active');
+    }
+
+    document.getElementById('myModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+  </script>
+
+
+  <script>
+    // ── Dark mode persistence + mode indicator ─────────
+    (function() {
+      var isDark = localStorage.getItem('brgy-theme') === 'dark';
+      if (isDark) document.body.classList.add('dark');
+
+      var sunIcon  = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+      var moonIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+      document.getElementById('modeIcon').innerHTML = isDark ? moonIcon : sunIcon;
+    })();
+  </script>
+
+  <script>
+    /* ── Compact mode restore ── */
+    (function() {
+      if (localStorage.getItem('compactMode') === '1') {
+        document.body.classList.add('compact');
+      } else {
+        localStorage.setItem('compactMode', '0');
+      }
+    })();
+  </script>
+</body>
+</html>

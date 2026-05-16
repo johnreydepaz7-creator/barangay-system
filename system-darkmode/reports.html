@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports — Barangay 59-A</title>
+
+  <!-- 1. Base tokens & reset -->
+  <link rel="stylesheet" href="base.css">
+  <!-- 2. Shared components -->
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+  <!-- 3. Page-specific styles -->
+  <link rel="stylesheet" href="reports.css">
+
+
+  <script src="/messagebox.js"></script>
+</head>
+<body class="app-body">
+
+  
+  <!-- ── TOPBAR ────────────────────────────────────────────── -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    
+    <!-- ── SIDEBAR ──────────────────────────────────────────── -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item active" onclick="location.href='reports.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+          </div>
+          <span class="menu-label">Reports</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='#'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-widget">
+          <div class="sidebar-widget-title">Quick Stats</div>
+          <div class="sidebar-widget-row">
+            <span class="sidebar-widget-label">Total Residents</span>
+            <span class="sidebar-widget-val">1,284</span>
+          </div>
+          <div class="sidebar-widget-row">
+            <span class="sidebar-widget-label">Households</span>
+            <span class="sidebar-widget-val">312</span>
+          </div>
+          <div class="sidebar-widget-row">
+            <span class="sidebar-widget-label">Puroks</span>
+            <span class="sidebar-widget-val">6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Reports</h1>
+          <div class="page-breadcrumb">Dashboard › <span>Reports</span></div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-wrap" style="flex:1; max-width:360px;">
+          <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input class="search-input" id="searchInput" placeholder="Search reports…">
+        </div>
+
+        <select class="form-select" id="reportType" style="width:auto;">
+          <option value="Daily Report">Daily Report</option>
+          <option value="Monthly Report">Monthly Report</option>
+        </select>
+
+        <div class="spacer"></div>
+
+        <button class="btn-primary" id="generateBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Generate Report</button>
+      </div>
+
+      <!-- Reports Table -->
+      <div class="table-card" id="tableWrap">
+
+        <!-- Empty state (shown when no reports yet) -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-state-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+          <div class="empty-state-title">No reports generated yet</div>
+          <div class="empty-state-desc">Select a report type and click Generate Report to get started.</div>
+        </div>
+
+        <table id="reportsTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>Report Name</th>
+              <th>Description</th>
+              <th>Date Generated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTbody">
+            <!-- Rows inserted by JS -->
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REPORT VIEW MODAL -->
+  <div class="modal" id="reportModal">
+    <div class="modal-box report-modal-box">
+
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="report-meta" id="modalMeta"></div>
+        <div class="report-data" id="modalBody"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn-primary" onclick="window.print()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Report</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+
+    /* ── SAMPLE DATA ─────────────────────────────────────────────
+       Replace with your real data source when ready.
+    ────────────────────────────────────────────────────────────── */
+    const activities = [
+      { resident: 'Juan Dela Cruz', type: 'Certificate of Indigency', date: '2026-03-10' },
+      { resident: 'Maria Santos',   type: 'Barangay Clearance',        date: '2026-03-10' },
+      { resident: 'Pedro Cruz',     type: 'Barangay Certification',    date: '2026-03-09' },
+      { resident: 'Ana Lopez',      type: 'Certificate of Indigency', date: '2026-03-08' },
+      { resident: 'Luis Garcia',    type: 'Barangay Clearance',        date: '2026-03-07' },
+    ];
+
+    let reports = [];
+
+    /* ── GENERATE ── */
+    document.getElementById('generateBtn').addEventListener('click', generateReport);
+
+    function generateReport() {
+      const reportType = document.getElementById('reportType').value;
+      const report = reportType === 'Daily Report'
+        ? createDailyReport()
+        : createMonthlyReport();
+      reports.push(report);
+      Logger.log('Generated Report', report.name, 'Reports');
+      renderReports();
+    }
+
+    function createDailyReport() {
+      const today  = new Date().toISOString().split('T')[0];
+      const counts = {};
+      activities
+        .filter(a => a.date === today)
+        .forEach(a => { counts[a.type] = (counts[a.type] || 0) + 1; });
+      return {
+        name:        'Daily Activity Report',
+        description: 'Certificates issued today',
+        date:        new Date().toLocaleString('en-PH'),
+        data:        counts,
+      };
+    }
+
+    function createMonthlyReport() {
+      const now    = new Date();
+      const month  = now.getMonth();
+      const year   = now.getFullYear();
+      const counts = {};
+      activities
+        .filter(a => {
+          const d = new Date(a.date);
+          return d.getMonth() === month && d.getFullYear() === year;
+        })
+        .forEach(a => { counts[a.type] = (counts[a.type] || 0) + 1; });
+      return {
+        name:        'Monthly Summary Report',
+        description: 'Summary of barangay activities this month',
+        date:        new Date().toLocaleString('en-PH'),
+        data:        counts,
+      };
+    }
+
+    /* ── RENDER ── */
+    function renderReports() {
+      const tbody      = document.getElementById('reportsTbody');
+      const table      = document.getElementById('reportsTable');
+      const emptyState = document.getElementById('emptyState');
+
+      tbody.innerHTML = '';
+
+      if (reports.length === 0) {
+        table.style.display      = 'none';
+        emptyState.style.display = '';
+        return;
+      }
+
+      table.style.display      = '';
+      emptyState.style.display = 'none';
+
+      reports.forEach((report, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${report.name}</strong></td>
+          <td>${report.description}</td>
+          <td>${report.date}</td>
+          <td>
+            <div class="report-actions">
+              <button class="btn-success" onclick="viewReport(${index})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+              <button class="btn-danger"  onclick="deleteReport(${index})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    /* ── MODAL ── */
+    function viewReport(index) {
+      const report = reports[index];
+      document.getElementById('modalTitle').textContent = report.name;
+      document.getElementById('modalMeta').textContent  = 'Generated: ' + report.date;
+
+      const bodyEl = document.getElementById('modalBody');
+      bodyEl.innerHTML = '';
+
+      if (Object.keys(report.data).length === 0) {
+        bodyEl.innerHTML = '<p style="color:var(--text-muted);font-size:13.5px;">No activity recorded for this period.</p>';
+      } else {
+        for (const key in report.data) {
+          const row = document.createElement('div');
+          row.className = 'report-data-row';
+          row.innerHTML = `
+            <span class="report-data-label">${key}</span>
+            <span class="report-data-count">${report.data[key]}</span>
+          `;
+          bodyEl.appendChild(row);
+        }
+      }
+
+      document.getElementById('reportModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('reportModal').classList.remove('active');
+    }
+
+    document.getElementById('reportModal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+
+    /* ── DELETE ── */
+    function deleteReport(index) {
+      const name = reports[index].name;
+      reports.splice(index, 1);
+      Logger.log('Deleted Report', name, 'Reports');
+      renderReports();
+    }
+
+    /* ── SIDEBAR ── */
+    function setActive(el) {
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    /* ── SEARCH FILTER ── */
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('#reportsTbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  </script>
+
+
+  <script>
+    // ── Dark mode persistence ──────────────────────────
+    (function() {
+      if (localStorage.getItem('brgy-theme') === 'dark') {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <script>
+    /* ── Compact mode restore ── */
+    (function() {
+      if (localStorage.getItem('compactMode') === '1') {
+        document.body.classList.add('compact');
+      } else {
+        localStorage.setItem('compactMode', '0');
+      }
+    })();
+  </script>
+  <script src="session-manager.js"></script>
+</body>
+</html>

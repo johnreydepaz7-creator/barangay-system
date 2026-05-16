@@ -1,0 +1,14 @@
+Browser Size Responsive Fix
+
+Changes made:
+1. Added a stronger responsive CSS override for all dashboard pages.
+2. The system now adjusts when the browser is resized.
+3. At smaller browser widths, the sidebar becomes a horizontal menu under the top bar.
+4. Content cards, document cards, overview cards, forms, and file manager grids now shrink and stack properly.
+5. Search bars, dropdown filters, buttons, and toolbars now wrap instead of overflowing.
+6. Tables remain usable by scrolling horizontally instead of breaking the whole layout.
+7. The same responsive rules were copied to the normal dashboard and dark-mode dashboard folders.
+
+Important:
+- Generated documents are still kept in light/normal mode.
+- Save as PDF button remains removed; Print Document remains.

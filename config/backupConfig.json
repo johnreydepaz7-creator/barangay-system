@@ -1,0 +1,9 @@
+{
+  "schedule": {
+    "frequency": "daily",
+    "time": "02:00"
+  },
+  "backupPath": "DYNAMIC_DOCUMENTS_BACKUP_DIR",
+  "maxBackups": 10,
+  "note": "Default resolves to the current Windows user's Documents\\Barangay Management System\\Backups folder."
+}

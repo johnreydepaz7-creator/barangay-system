@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backup & Recovery — Barangay 59-A</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=topnav-fixed-20260516">
+  <style>
+    .backup-section {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .backup-panel {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      position: relative;
+    }
+
+    .backup-panel-title {
+      font-size: 11px;
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--green-700);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .backup-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .action-btn {
+      padding: 11px 16px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 13.5px;
+      font-weight: var(--fw-semibold);
+      cursor: pointer;
+      transition: var(--transition-base);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .action-btn.primary {
+      background: var(--green-600);
+      color: white;
+    }
+
+    .action-btn.primary:hover {
+      background: var(--green-700);
+    }
+
+    .action-btn.secondary {
+      background: var(--surface-2);
+      color: var(--text-main);
+    }
+
+    .action-btn.secondary:hover {
+      background: var(--surface-3);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      display: none;
+      margin: 4px 0 2px;
+    }
+
+    .progress-track {
+      height: 4px;
+      background: var(--surface-3);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--green-500);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    .progress-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Status box */
+    .status-box {
+      background: var(--green-50);
+      border: 1px solid var(--green-200);
+      border-radius: var(--radius);
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    .status-label {
+      font-size: 10px;
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--green-700);
+      margin-bottom: 10px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .status-row:last-child { margin-bottom: 0; }
+    .status-key { color: var(--text-muted); }
+    .status-val { font-weight: var(--fw-semibold); color: var(--text-main); }
+    .status-val.ok { color: var(--green-700); }
+
+    .storage-note {
+      font-size: 11px;
+      color: var(--blue-700);
+      background: var(--blue-50);
+      border: 1px solid var(--blue-200);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      margin-top: 12px;
+    }
+
+    /* Backup list */
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .list-count {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .backup-list {
+      display: flex;
+      flex-direction: column;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .backup-item {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.12s;
+    }
+
+    .backup-item:last-child {
+      border-bottom: none;
+    }
+
+    .backup-item:hover {
+      background: var(--surface-2);
+      border-radius: 8px;
+    }
+
+    .backup-info-name {
+      font-weight: var(--fw-semibold);
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-family: monospace;
+      word-break: break-all;
+    }
+
+    .backup-info-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-latest,
+    .badge-source {
+      font-size: 10px;
+      font-weight: var(--fw-bold);
+      padding: 2px 7px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .badge-latest {
+      background: var(--green-100);
+      color: var(--green-700);
+    }
+
+    .badge-source {
+      background: #eef2ff;
+      color: #3730a3;
+    }
+
+    .badge-source.warning {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .backup-size {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .backup-actions-cell {
+      display: flex;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      transition: var(--transition-fast);
+    }
+
+    .icon-btn:hover {
+      background: var(--green-50);
+      border-color: var(--green-200);
+    }
+
+    .icon-btn.delete:hover {
+      background: var(--red-50);
+      border-color: var(--red-200);
+    }
+
+    .icon-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Empty / loading states */
+    .empty-state {
+      padding: 36px 16px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state-title {
+      font-weight: var(--fw-bold);
+      color: var(--text-main);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .empty-state-desc {
+      font-size: 12px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid var(--surface-3);
+      border-top-color: var(--green-600);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 11px 15px;
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: slideDown 0.22s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .alert.success {
+      background: var(--green-50);
+      border: 1px solid var(--green-200);
+      color: var(--green-900);
+    }
+
+    .alert.error {
+      background: var(--red-50);
+      border: 1px solid var(--red-200);
+      color: var(--red-700);
+    }
+
+    .alert.info {
+      background: var(--blue-50);
+      border: 1px solid var(--blue-200);
+      color: var(--blue-700);
+    }
+
+    /* Confirm modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 30, 15, 0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.18s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 26px 28px;
+      max-width: 380px;
+      width: 92%;
+      box-shadow: var(--shadow-xl);
+      animation: popIn 0.2s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.96); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .modal-icon {
+      font-size: 26px;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: var(--fw-bold);
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .modal-filename {
+      font-family: monospace;
+      font-size: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      color: var(--text-main);
+      word-break: break-all;
+      margin-bottom: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .modal-btn {
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: var(--fw-semibold);
+      cursor: pointer;
+      border: none;
+      transition: var(--transition-fast);
+    }
+
+    .modal-btn.cancel {
+      background: var(--surface-2);
+      color: var(--text-main);
+    }
+
+    .modal-btn.cancel:hover {
+      background: var(--surface-3);
+    }
+
+    .modal-btn.confirm-green {
+      background: var(--green-600);
+      color: white;
+    }
+
+    .modal-btn.confirm-green:hover {
+      background: var(--green-700);
+    }
+
+    .modal-btn.confirm-red {
+      background: var(--red-500);
+      color: white;
+    }
+
+    .modal-btn.confirm-red:hover {
+      background: var(--red-700);
+    }
+
+    /* Settings Modal */
+    .settings-modal {
+      max-width: 460px;
+    }
+
+    .settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: var(--fw-semibold);
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input, .form-select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      background: white;
+      color: var(--text-main);
+      font-family: inherit;
+      transition: var(--transition-fast);
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
+
+    .form-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .settings-section {
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .settings-section:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .page-sub {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Folder Browser Modal */
+    .folder-browser-modal {
+      max-width: 700px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .folder-browser-modal .modal-icon {
+      display: none;
+    }
+
+    .folder-browser-modal .modal-title {
+      margin-bottom: 16px;
+    }
+
+    .folder-browser-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+      min-height: 500px;
+    }
+
+    .folder-path-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .folder-breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .breadcrumb-item {
+      padding: 6px 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .breadcrumb-item:hover {
+      background: var(--surface-3);
+      border-color: var(--green-500);
+    }
+
+    .breadcrumb-separator {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .folder-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .folder-search-bar:focus-within {
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
+
+    .search-icon {
+      font-size: 14px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .folder-search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text-main);
+      font-family: inherit;
+      padding: 0;
+    }
+
+    .folder-search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .folder-search-input:focus {
+      outline: none;
+    }
+
+    .search-clear {
+      padding: 4px 8px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      transition: var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .search-clear:hover {
+      color: var(--text-main);
+    }
+
+    .folder-item.hidden {
+      display: none;
+    }
+
+    .folder-list.no-results::after {
+      content: "📭 No folders match your search";
+      display: block;
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .folder-list-container {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow-y: auto;
+      background: white;
+      min-height: 350px;
+    }
+
+    .folder-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .folder-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition-fast);
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .folder-item:last-child {
+      border-bottom: none;
+    }
+
+    .folder-item:hover {
+      background: var(--surface-2);
+      padding-left: 20px;
+    }
+
+    .folder-item.parent {
+      font-weight: 600;
+      color: var(--green-600);
+    }
+
+    .folder-item.parent:hover {
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .folder-item-icon {
+      font-size: 16px;
+    }
+
+    .folder-item.empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      cursor: default;
+    }
+
+    .folder-item.empty:hover {
+      background: white;
+      padding-left: 16px;
+    }
+
+    .folder-actions {
+      padding: 12px;
+      background: var(--surface-1);
+      border-radius: var(--radius-sm);
+    }
+
+
+
+    .backup-path-control {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .backup-path-control .form-input {
+      min-width: 0;
+    }
+
+    .path-btn {
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-weight: var(--fw-semibold);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition-fast);
+    }
+
+    .path-btn:hover {
+      background: var(--surface-3);
+      border-color: var(--green-500);
+    }
+
+    .folder-browser-modal {
+      width: min(820px, 94vw);
+      max-width: 820px;
+      padding: 22px;
+    }
+
+    .folder-browser-modal .modal-actions {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    .folder-list-container {
+      max-height: 360px;
+    }
+
+    #selectedFolderPath {
+      font-family: Consolas, monospace;
+      font-size: 12px;
+    }
+
+    @media (max-width: 720px) {
+      .backup-section {
+        grid-template-columns: 1fr;
+      }
+
+      .backup-path-control {
+        grid-template-columns: 1fr;
+      }
+
+      .folder-browser-content {
+        min-height: 360px;
+      }
+
+      .folder-browser-modal .modal-actions {
+        flex-wrap: wrap;
+      }
+    }
+    /* ────────────────────────────────────────────────────────
+       DARK MODE - Backup Page Specific
+       ──────────────────────────────────────────────────────── */
+    body.dark .backup-panel {
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    body.dark .backup-panel-title {
+      color: #5ab87c;
+      border-bottom-color: var(--border);
+    }
+
+    body.dark .action-btn.primary {
+      background: var(--green-700);
+    }
+
+    body.dark .action-btn.primary:hover {
+      background: var(--green-800);
+    }
+
+    body.dark .action-btn.secondary {
+      background: var(--surface-3);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    body.dark .action-btn.secondary:hover {
+      background: #1f2b26;
+    }
+
+    body.dark .path-btn {
+      background: var(--surface-3);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    body.dark .folder-browser-modal .modal-actions {
+      background: var(--surface-2);
+      border-top-color: var(--border);
+    }
+
+    body.dark .progress-track {
+      background: var(--surface-3);
+    }
+
+    body.dark .status-box {
+      background: #112016;
+      border-color: #183224;
+    }
+
+    body.dark .status-label {
+      color: #5ab87c;
+    }
+
+    body.dark .status-key {
+      color: var(--text-muted);
+    }
+
+    body.dark .status-val {
+      color: var(--text-main);
+    }
+
+    body.dark .status-val.ok {
+      color: #5ab87c;
+    }
+
+    body.dark .storage-note {
+      background: #0f2040;
+      border-color: #1a3a60;
+      color: #5aa0d6;
+    }
+
+    body.dark .backup-item {
+      border-bottom-color: var(--border);
+    }
+
+    body.dark .backup-item:hover {
+      background: var(--surface-3);
+    }
+
+    body.dark .backup-info-name {
+      color: var(--text-main);
+    }
+
+    body.dark .backup-info-meta {
+      color: var(--text-muted);
+    }
+
+    body.dark .badge-latest {
+      background: #112016;
+      color: #5ab87c;
+    }
+
+    body.dark .badge-source {
+      background: #1e1b4b;
+      color: #c4b5fd;
+    }
+
+    body.dark .badge-source.warning {
+      background: #431407;
+      color: #fdba74;
+    }
+
+    body.dark .backup-size {
+      color: var(--text-muted);
+    }
+
+    body.dark .icon-btn {
+      background: var(--surface-3);
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    body.dark .icon-btn:hover {
+      background: #1a3a2a;
+      border-color: #2a5a40;
+    }
+
+    body.dark .icon-btn.delete:hover {
+      background: #3a1a1a;
+      border-color: #6a2a2a;
+    }
+
+    body.dark .folder-search-bar {
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    body.dark .folder-search-bar:focus-within {
+      border-color: var(--green-400);
+      box-shadow: 0 0 0 3px rgba(90, 184, 124, 0.1);
+    }
+
+    body.dark .form-input,
+    body.dark .form-select {
+      background: var(--surface-3);
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    body.dark .form-input:focus,
+    body.dark .form-select:focus {
+      border-color: var(--green-500);
+    }
+
+    body.dark .form-desc {
+      color: var(--text-muted);
+    }
+
+    body.dark .settings-section {
+      border-top-color: var(--border);
+    }
+
+    body.dark .modal-overlay {
+      background: rgba(0,0,0,.6);
+    }
+
+    body.dark .modal-box {
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    body.dark .modal-header {
+      border-bottom-color: var(--border);
+    }
+
+    body.dark .modal-title {
+      color: var(--text-main);
+    }
+
+    body.dark .modal-footer {
+      background: var(--surface-3);
+      border-top-color: var(--border);
+    }
+
+    body.dark .modal-btn {
+      background: var(--surface-3);
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    body.dark .modal-btn:hover {
+      background: #1f2b26;
+    }
+
+    body.dark .modal-btn.confirm-green {
+      background: var(--green-700);
+      color: white;
+      border-color: var(--green-700);
+    }
+
+    body.dark .modal-btn.confirm-green:hover {
+      background: var(--green-800);
+    }
+
+    body.dark .folder-browser-content {
+      background: var(--surface-2);
+    }
+
+    body.dark .folder-breadcrumb-item {
+      color: var(--text-main);
+    }
+
+    body.dark .folder-item {
+      background: var(--surface-2);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    body.dark .folder-item:hover {
+      background: var(--surface-3);
+    }
+
+    body.dark .folder-item.empty {
+      background: var(--surface-2);
+      color: var(--text-muted);
+    }
+
+    body.dark .folder-item.empty:hover {
+      background: var(--surface-2);
+    }
+
+    body.dark .folder-actions {
+      background: var(--surface-3);
+      border-color: var(--border);
+    }
+
+  </style>
+  <script src="/messagebox.js"></script>
+</head>
+<body class="app-body">
+  <!-- Apply cached theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const cachedTheme = sessionStorage.getItem('cached_theme');
+      if (cachedTheme === 'dark') {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <a href="overview.html" class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </a>
+        <a href="residents.html" class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </a>
+        <a href="documents.html" class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </a>
+        <a href="file-manager.html" class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </a>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <a href="activity-logs.html" class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </a>
+        <a href="backup.html" class="menu-item active">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </a>
+        <a href="settings.html" class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </a>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="app-content">
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Backup & Recovery</h1>
+          <p class="page-sub">Manage backups saved silently to the PC/server backup folder and MongoDB. No Save As window will open when creating a backup.</p>
+          <div class="page-breadcrumb" style="margin-top:6px;">Dashboard › <span>Backup</span></div>
+        </div>
+      </div>
+
+      <div id="alertContainer"></div>
+
+      <div class="backup-section">
+
+        <!-- Left: Actions + Status -->
+        <div class="backup-panel">
+          <div class="backup-panel-title">📋 Actions</div>
+          <div class="backup-actions">
+            <button class="action-btn primary" onclick="createBackup()" id="createBtn">
+              ⚙️ Create Backup Now
+            </button>
+            <div class="progress-wrap" id="progressWrap">
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="progress-label" id="progressLabel">Preparing…</div>
+            </div>
+            <button class="action-btn secondary" onclick="openImportBackupPicker()" id="importBtn">
+              📂 Import Backup File & Restore
+            </button>
+            <input type="file" id="importBackupFile" accept=".tar.gz,application/gzip,application/x-gzip" style="display:none;" onchange="restoreImportedBackup(this)">
+            <div class="storage-note">Use Import Backup File & Restore only when the backup is missing from both Recent Backups and MongoDB, but you still have a saved .tar.gz copy on your PC.</div>
+            <button class="action-btn secondary" onclick="refreshBackups()">
+              🔄 Refresh List
+            </button>
+            <button class="action-btn secondary" onclick="openSettingsModal()">
+              ⚙️ Settings
+            </button>
+          </div>
+
+          <div class="status-box">
+            <div class="status-label">Backup Status</div>
+            <div class="status-row">
+              <span class="status-key">Configured</span>
+              <span class="status-val ok" id="statusConfigured">—</span>
+            </div>
+            <div class="status-row">
+              <span class="status-key">Total Backups</span>
+              <span class="status-val" id="statusTotal">0</span>
+            </div>
+            <div class="status-row">
+              <span class="status-key">Last Backup</span>
+              <span class="status-val" id="statusLastBackup">None</span>
+            </div>
+            <div class="status-row">
+              <span class="status-key">Schedule</span>
+              <span class="status-val">Daily 2:00 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Backup list -->
+        <div class="backup-panel">
+          <div class="list-header">
+            <div class="backup-panel-title" style="margin-bottom:0; padding-bottom:0; border-bottom:none;">
+              💾 Recent Backups
+            </div>
+            <span class="list-count" id="listCount"></span>
+          </div>
+          <hr style="border:none; border-top:1px solid var(--border); margin:12px 0 0;">
+          <div id="backupsList" class="backup-list">
+            <div class="loading">
+              <div class="spinner"></div>
+              Loading backups...
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-icon" id="modalIcon">⚠️</div>
+      <div class="modal-title" id="modalTitle">Confirm</div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-filename" id="modalFilename"></div>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn" id="modalConfirmBtn" onclick="runModalAction()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModalOverlay">
+    <div class="modal-box settings-modal">
+      <div class="modal-icon">⚙️</div>
+      <div class="modal-title">Backup Settings</div>
+      <form class="settings-form" id="settingsForm">
+        
+        <div class="settings-section">
+          <div class="form-group">
+            <label class="form-label">📅 Backup Schedule</label>
+            <select class="form-select" id="scheduleFreq">
+              <option value="disabled">Disabled</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+            <div class="form-desc">Automatic backup frequency</div>
+          </div>
+
+          <div class="form-group" id="timeGroup" style="display:none;">
+            <label class="form-label">⏰ Backup Time</label>
+            <input type="time" class="form-input" id="scheduleTime" value="02:00">
+            <div class="form-desc">Time to run automatic backup</div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="form-group">
+            <label class="form-label">📁 Backup Location</label>
+            <div class="backup-path-control">
+              <input type="text" class="form-input" id="backupPath" placeholder="C:\Users\YourName\Documents\Barangay Management System\Backups">
+              <button type="button" class="path-btn" onclick="useDefaultBackupPath()">Use Default</button>
+              <button type="button" class="path-btn" onclick="openFolderBrowser()">Browse</button>
+            </div>
+            <div class="form-desc">Default Windows location: Documents\Barangay Management System\Backups. Create Backup Now saves here automatically without opening a Windows Save As dialog.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">💾 Max Backups to Keep</label>
+            <input type="number" class="form-input" id="maxBackups" min="10" max="10" value="10" readonly>
+            <small class="form-help">The system keeps only the latest 10 backups. Older backups are removed automatically.</small>
+            <div class="form-desc">Oldest backups are deleted when limit reached</div>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button type="button" class="modal-btn cancel" onclick="closeSettingsModal()">Cancel</button>
+          <button type="button" class="modal-btn confirm-green" onclick="saveSettings()">Save Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Folder Browser Modal -->
+  <div class="modal-overlay" id="folderBrowserOverlay">
+    <div class="modal-box folder-browser-modal">
+      <div class="modal-title">Select Server Backup Folder</div>
+      
+      <div class="folder-browser-content">
+        <div class="folder-path-bar">
+          <label class="form-label" style="margin: 0;">Current Path:</label>
+          <div id="folderBreadcrumb" class="folder-breadcrumb">
+            <button type="button" class="breadcrumb-item" data-path="/">Root</button>
+          </div>
+        </div>
+
+        <div class="folder-search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="folder-search-input" id="folderSearchInput" placeholder="Search folders..." autocomplete="off">
+          <button type="button" class="search-clear" id="searchClearBtn" onclick="clearFolderSearch()" style="display:none;">✕</button>
+        </div>
+
+        <div class="folder-list-container">
+          <div id="folderList" class="folder-list">
+            <div class="loading"><div class="spinner"></div>Loading folders...</div>
+          </div>
+        </div>
+
+        <div class="folder-actions" style="display: none;">
+          <div class="form-group" style="margin: 0;">
+            <input type="text" class="form-input" id="selectedFolderPath" placeholder="C:\\Users\\YourName\\Documents\\Barangay Management System\\Backups" style="margin-top: 4px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 0px; gap: 10px;">
+        <button type="button" class="modal-btn secondary" style="background: var(--green-50); color: var(--green-600); border: 1px solid var(--green-200); font-weight: var(--fw-semibold);" onclick="openCreateFolderDialog()" title="Create a new folder in current location">
+          ➕ New Folder
+        </button>
+        <div style="flex: 1;"></div>
+        <button type="button" class="modal-btn cancel" onclick="closeFolderBrowser()">Cancel</button>
+        <button type="button" class="modal-btn confirm-green" onclick="selectFolder()">Select This Path</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    document.getElementById('topbarUserName').textContent = CURRENT_USER.name;
+
+    let isLoading = false;
+    let pendingAction = null; // { type: 'restore'|'delete', fileName }
+
+    /* ── Alerts ─────────────────────────────────── */
+    function showAlert(message, type = 'success') {
+      const container = document.getElementById('alertContainer');
+      const el = document.createElement('div');
+      el.className = `alert ${type}`;
+      const icons = { success: '✓', error: '✗', info: 'ℹ' };
+      el.innerHTML = `<span>${icons[type] || '•'}</span><span>${message}</span>`;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }
+
+    /* ── Helpers ─────────────────────────────────── */
+    function timeAgo(isoDate) {
+      const diff = Date.now() - new Date(isoDate).getTime();
+      const m = Math.floor(diff / 60000);
+      if (m < 1) return 'just now';
+      if (m < 60) return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h}h ago`;
+      return `${Math.floor(h / 24)}d ago`;
+    }
+
+    /* ── Progress bar ────────────────────────────── */
+    let progressInterval = null;
+
+    function startProgress(label1, label2, onComplete) {
+      const wrap  = document.getElementById('progressWrap');
+      const fill  = document.getElementById('progressFill');
+      const lbl   = document.getElementById('progressLabel');
+      wrap.style.display = 'block';
+      fill.style.width = '0%';
+      lbl.textContent = label1;
+      let pct = 0;
+      progressInterval = setInterval(() => {
+        pct += Math.random() * 11;
+        if (pct >= 60) lbl.textContent = label2;
+        if (pct >= 99) {
+          pct = 100;
+          fill.style.width = '100%';
+          clearInterval(progressInterval);
+          setTimeout(() => {
+            wrap.style.display = 'none';
+            fill.style.width = '0%';
+            onComplete();
+          }, 350);
+          return;
+        }
+        fill.style.width = Math.min(pct, 98) + '%';
+      }, 220);
+    }
+
+    /* ── Modal ───────────────────────────────────── */
+    function openModal({ icon, title, desc, fileName, btnLabel, btnClass, action }) {
+      pendingAction = action;
+      document.getElementById('modalIcon').textContent = icon;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalDesc').textContent = desc;
+      document.getElementById('modalFilename').textContent = fileName;
+      const btn = document.getElementById('modalConfirmBtn');
+      btn.textContent = btnLabel;
+      btn.className = `modal-btn ${btnClass}`;
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      pendingAction = null;
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    async function runModalAction() {
+      if (!pendingAction) return;
+      const btn = document.getElementById('modalConfirmBtn');
+      btn.disabled = true;
+      
+      try {
+        await pendingAction();
+      } catch (error) {
+        console.error('Modal action error:', error);
+        showAlert(`✗ Error: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        closeModal();
+      }
+    }
+
+    // Close on backdrop click
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    /* ── Create Backup ───────────────────────────── */
+    async function createBackup() {
+      if (isLoading) return;
+      isLoading = true;
+
+      const btn = document.getElementById('createBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;"></div> Creating backup…';
+
+      startProgress('Dumping database…', 'Compressing archive…', async () => {
+        try {
+          const response = await fetch('/api/backup/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            const dbStatus = data.backup.databaseBackup && data.backup.databaseBackup.saved
+              ? ' Also saved in MongoDB.'
+              : ' Local backup saved, but MongoDB copy was not saved.';
+
+            showAlert(`✓ Backup created: ${data.backup.fileName}. Saved to backup folder.${dbStatus}`, 'success');
+            Logger.log('Created Backup', data.backup.fileName, 'Backup');
+
+            // Do not auto-download the backup here. The backup is already saved in the
+            // configured PC/server folder. Auto-download opens the Windows Save As dialog.
+            // Users can click the download button in the backup list if they need another copy.
+            await refreshBackups();
+          } else {
+            showAlert(`✗ Error: ${data.error}`, 'error');
+          }
+        } catch (error) {
+          showAlert(`✗ Error: ${error.message}`, 'error');
+        } finally {
+          isLoading = false;
+          btn.disabled = false;
+          btn.innerHTML = '⚙️ Create Backup Now';
+        }
+      });
+    }
+
+    function downloadBackup(event) {
+      const fileName = event.target.closest('button').getAttribute('data-filename');
+      if (!fileName) return;
+      window.location.href = `/api/backup/download/${encodeURIComponent(fileName)}`;
+    }
+
+    function openImportBackupPicker() {
+      const input = document.getElementById('importBackupFile');
+      input.value = '';
+      input.click();
+    }
+
+    async function restoreImportedBackup(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+
+      const validName = file.name.toLowerCase().endsWith('.tar.gz');
+      if (!validName) {
+        showAlert('✗ Please select a valid .tar.gz backup file.', 'error');
+        return;
+      }
+
+      const confirmed = await BrgyMessageBox.confirm(
+        `IMPORT AND RESTORE BACKUP?\n\n` +
+        `File: ${file.name}\n\n` +
+        `⚠️ WARNING: This will REPLACE ALL current household/member data with the imported backup.\n` +
+        `After restore, the imported backup will be saved again to the PC/server backup folder and MongoDB.\n\n` +
+        `Click OK to proceed or Cancel to abort.`
+      );
+
+      if (!confirmed) return;
+
+      const btn = document.getElementById('importBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div style="width:14px;height:14px;border:2px solid rgba(0,0,0,0.25);border-top-color:#333;border-radius:50%;animation:spin .6s linear infinite;"></div> Importing and restoring…';
+
+      try {
+        const response = await fetch('/api/backup/import-restore', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            'X-Backup-Filename': encodeURIComponent(file.name)
+          },
+          body: file
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const savedName = data.backup && data.backup.fileName ? data.backup.fileName : file.name;
+          const dbStatus = data.backup && data.backup.databaseBackup && data.backup.databaseBackup.saved
+            ? ' Also saved in MongoDB.'
+            : ' Restored and saved locally, but MongoDB copy was not saved.';
+          showAlert(`✓ Imported backup restored: ${savedName}.${dbStatus} Page will reload in 3 seconds...`, 'success');
+          Logger.log('Imported and Restored Backup', savedName, 'Backup');
+          await refreshBackups();
+          setTimeout(() => window.location.reload(), 3000);
+        } else {
+          showAlert(`✗ Import restore error: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Import restore error:', error);
+        showAlert(`✗ Import restore failed: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📂 Import Backup File & Restore';
+        input.value = '';
+      }
+    }
+
+    /* ── Restore Backup ──────────────────────────── */
+    async function restoreBackup(fileName) {
+      // Use browser confirm dialog with detailed warning
+      const confirmed = await BrgyMessageBox.confirm(
+        `RESTORE BACKUP?\n\n` +
+        `File: ${fileName}\n\n` +
+        `⚠️ WARNING: This will REPLACE ALL current data with the backup!\n` +
+        `This action cannot be undone.\n\n` +
+        `Click OK to proceed or Cancel to abort.`
+      );
+
+      if (!confirmed) {
+        console.log('Restore cancelled');
+        return;
+      }
+
+      // Proceed with restore
+      performRestore(fileName);
+    }
+
+    async function performRestore(fileName) {
+      try {
+        console.log('Restoring backup:', fileName);
+        const response = await fetch('/api/backup/restore', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileName })
+        });
+
+        const data = await response.json();
+        console.log('Restore response:', data);
+
+        if (data.success) {
+          showAlert(`✓ Backup restored: ${fileName}. Page will reload in 3 seconds...`, 'success');
+          Logger.log('Restored Backup', fileName, 'Backup');
+          
+          // Wait a moment then reload the page to reflect restored data
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        } else {
+          showAlert(`✗ Restore error: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Restore error:', error);
+        showAlert(`✗ Restore failed: ${error.message}`, 'error');
+      }
+    }
+
+    /* ── Delete Backup ───────────────────────────── */
+    async function deleteBackup(fileName) {
+      // Use browser confirm dialog
+      const confirmed = await BrgyMessageBox.confirm(`Delete backup "${fileName}"?\n\nThis action cannot be undone.`);
+      
+      if (!confirmed) {
+        console.log('Delete cancelled');
+        return;
+      }
+
+      try {
+        console.log('Deleting backup:', fileName);
+        const response = await fetch(`/api/backup/delete/${encodeURIComponent(fileName)}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+        console.log('Delete response:', data);
+
+        if (data.success) {
+          showAlert(`✓ Backup deleted: ${fileName}`, 'success');
+          Logger.log('Deleted Backup', fileName, 'Backup');
+          await refreshBackups();
+        } else {
+          showAlert(`✗ Error: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        showAlert(`✗ Error: ${error.message}`, 'error');
+      }
+    }
+
+    /* ── Status ──────────────────────────────────── */
+    async function loadBackupStatus() {
+      try {
+        const response = await fetch('/api/backup/status');
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById('statusConfigured').textContent =
+            data.configured ? '✓ Yes' : '✗ No (Check credentials)';
+          document.getElementById('statusTotal').textContent = data.totalBackups;
+          document.getElementById('statusLastBackup').textContent =
+            data.lastBackup ? data.lastBackup.createdDate : 'None yet';
+          document.getElementById('listCount').textContent =
+            `${data.totalBackups} backup${data.totalBackups !== 1 ? 's' : ''}`;
+        }
+      } catch (error) {
+        console.error('Failed to load backup status:', error);
+      }
+    }
+
+    /* ── Event Handlers ──────────────────────────── */
+    function handleRestoreClick(event) {
+      const fileName = event.target.closest('button').getAttribute('data-filename');
+      if (fileName) {
+        console.log('Restore clicked:', fileName);
+        restoreBackup(fileName);
+      }
+    }
+
+    function handleDeleteClick(event) {
+      const fileName = event.target.closest('button').getAttribute('data-filename');
+      if (fileName) {
+        console.log('Delete clicked:', fileName);
+        deleteBackup(fileName);
+      }
+    }
+
+    /* ── Settings ────────────────────────────────── */
+    async function loadSettings() {
+      try {
+        const response = await fetch('/api/backup/settings');
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById('scheduleFreq').value = data.schedule.frequency || 'daily';
+          document.getElementById('scheduleTime').value = data.schedule.time || '02:00';
+          document.getElementById('backupPath').value = data.backupPath || data.defaultBackupPath || '';
+          document.getElementById('maxBackups').value = data.maxBackups || 10;
+
+          // Show/hide time picker
+          toggleTimeGroup();
+        }
+      } catch (error) {
+        console.error('Failed to load settings:', error);
+        showAlert('Failed to load settings', 'error');
+      }
+    }
+
+    function toggleTimeGroup() {
+      const freq = document.getElementById('scheduleFreq').value;
+      const timeGroup = document.getElementById('timeGroup');
+      timeGroup.style.display = freq === 'disabled' ? 'none' : 'flex';
+    }
+
+    async function saveSettings() {
+      try {
+        const settings = {
+          schedule: {
+            frequency: document.getElementById('scheduleFreq').value,
+            time: document.getElementById('scheduleTime').value
+          },
+          backupPath: document.getElementById('backupPath').value || '',
+          maxBackups: 10
+        };
+
+        const response = await fetch('/api/backup/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert('✓ Settings saved successfully', 'success');
+          const settingsDesc = `Frequency: ${settings.schedule.frequency}, Time: ${settings.schedule.time}, Path: ${settings.backupPath}, Max Backups: ${settings.maxBackups}`;
+          Logger.log('Updated Backup Settings', settingsDesc, 'Backup');
+          closeSettingsModal();
+          loadBackupStatus();
+        } else {
+          showAlert(`✗ Error: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Failed to save settings:', error);
+        showAlert(`✗ Error: ${error.message}`, 'error');
+      }
+    }
+
+    function openSettingsModal() {
+      document.getElementById('settingsModalOverlay').classList.add('active');
+      loadSettings();
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settingsModalOverlay').classList.remove('active');
+    }
+
+    /* ── Folder Browser ──────────────────────────── */
+        async function useDefaultBackupPath() {
+      try {
+        const response = await fetch('/api/backup/default-path');
+        const data = await response.json();
+        if (data.success && data.path) {
+          document.getElementById('backupPath').value = data.path;
+          showAlert('Default backup location selected', 'info');
+        } else {
+          showAlert('Could not load default backup location', 'error');
+        }
+      } catch (error) {
+        showAlert(`✗ Error: ${error.message}`, 'error');
+      }
+    }
+
+    let currentBrowsePath = '';
+    let currentFolderItems = []; // Store folder items for search
+
+    async function openFolderBrowser() {
+      const inputPath = document.getElementById('backupPath').value.trim();
+
+      if (inputPath) {
+        currentBrowsePath = inputPath;
+      } else {
+        try {
+          const response = await fetch('/api/backup/default-path');
+          const data = await response.json();
+          currentBrowsePath = data.success && data.path ? data.path : '';
+        } catch (error) {
+          console.error('Failed to get default path:', error);
+          currentBrowsePath = '';
+        }
+      }
+      
+      document.getElementById('selectedFolderPath').value = currentBrowsePath;
+      document.getElementById('folderSearchInput').value = '';
+      document.getElementById('searchClearBtn').style.display = 'none';
+      document.getElementById('folderBrowserOverlay').classList.add('active');
+      await browseFolders(currentBrowsePath || 'root');
+    }
+
+    function closeFolderBrowser() {
+      document.getElementById('folderBrowserOverlay').classList.remove('active');
+      document.getElementById('folderSearchInput').value = '';
+      document.getElementById('searchClearBtn').style.display = 'none';
+    }
+
+    async function browseFolders(folderPath) {
+      try {
+        document.getElementById('folderList').innerHTML = '<div class="loading"><div class="spinner"></div>Loading folders...</div>';
+        document.getElementById('folderSearchInput').value = '';
+        document.getElementById('searchClearBtn').style.display = 'none';
+        
+        const response = await fetch(`/api/backup/folders?path=${encodeURIComponent(folderPath)}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          showAlert(`✗ Error: ${data.error}`, 'error');
+          return;
+        }
+
+        currentBrowsePath = data.currentPath;
+        document.getElementById('selectedFolderPath').value = data.currentPath;
+
+        // Update breadcrumb
+        updateBreadcrumb(data.currentPath);
+
+        // Render folder list
+        const listContainer = document.getElementById('folderList');
+        listContainer.innerHTML = '';
+        currentFolderItems = []; // Reset folder items
+
+        // Add "Go up" button if not at root
+        if (data.canGoUp && data.parentPath) {
+          const upItem = document.createElement('div');
+          upItem.className = 'folder-item parent';
+          upItem.dataset.searchName = '..';
+          upItem.onclick = () => browseFolders(data.parentPath);
+          upItem.innerHTML = '<span class="folder-item-icon">⬅️</span><span>.. (Parent Folder)</span>';
+          listContainer.appendChild(upItem);
+          currentFolderItems.push({ element: upItem, searchName: '..' });
+        }
+
+        // Add folders
+        if (data.folders && data.folders.length > 0) {
+          data.folders.forEach(folder => {
+            const item = document.createElement('div');
+            item.className = 'folder-item';
+            item.dataset.searchName = folder.name.toLowerCase();
+            item.onclick = () => browseFolders(folder.path);
+            item.innerHTML = `<span class="folder-item-icon">📁</span><span>${folder.name}</span>`;
+            listContainer.appendChild(item);
+            currentFolderItems.push({ element: item, searchName: folder.name.toLowerCase() });
+          });
+        } else if (!data.canGoUp) {
+          // No folders and at root - show empty state
+          const emptyItem = document.createElement('div');
+          emptyItem.className = 'folder-item empty';
+          emptyItem.innerHTML = '📭 No folders available';
+          listContainer.appendChild(emptyItem);
+        }
+      } catch (error) {
+        console.error('Failed to browse folders:', error);
+        showAlert(`✗ Error browsing folders: ${error.message}`, 'error');
+      }
+    }
+
+    function updateBreadcrumb(currentPath) {
+      const breadcrumb = document.getElementById('folderBreadcrumb');
+      breadcrumb.innerHTML = '';
+
+      const isWindowsPath = /^[a-zA-Z]:\\/.test(currentPath);
+      const rootBtn = document.createElement('button');
+      rootBtn.className = 'breadcrumb-item';
+      rootBtn.type = 'button';
+      rootBtn.textContent = isWindowsPath ? 'This PC' : 'Root';
+      rootBtn.onclick = () => browseFolders(isWindowsPath ? 'root' : '/');
+      breadcrumb.appendChild(rootBtn);
+
+      if (isWindowsPath) {
+        const parts = currentPath.split('\\').filter(Boolean);
+        let pathSoFar = '';
+        parts.forEach((part, index) => {
+          const sep = document.createElement('span');
+          sep.className = 'breadcrumb-separator';
+          sep.textContent = index === 0 ? '' : '\\';
+          breadcrumb.appendChild(sep);
+
+          pathSoFar = index === 0 ? part + '\\' : pathSoFar + part + '\\';
+          const btn = document.createElement('button');
+          btn.className = 'breadcrumb-item';
+          btn.type = 'button';
+          btn.textContent = part;
+          btn.onclick = () => browseFolders(pathSoFar);
+          breadcrumb.appendChild(btn);
+        });
+        return;
+      }
+
+      const pathParts = currentPath.split('/').filter(p => p);
+      let pathSoFar = '';
+      pathParts.forEach(part => {
+        const sep = document.createElement('span');
+        sep.className = 'breadcrumb-separator';
+        sep.textContent = '/';
+        breadcrumb.appendChild(sep);
+
+        pathSoFar += '/' + part;
+        const btn = document.createElement('button');
+        btn.className = 'breadcrumb-item';
+        btn.type = 'button';
+        btn.textContent = part;
+        btn.dataset.path = pathSoFar;
+        btn.onclick = () => browseFolders(pathSoFar);
+        breadcrumb.appendChild(btn);
+      });
+    }
+
+    function filterFoldersBySearch(searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
+      const listContainer = document.getElementById('folderList');
+      let visibleCount = 0;
+
+      currentFolderItems.forEach(item => {
+        if (term === '' || item.searchName.includes(term)) {
+          item.element.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.element.classList.add('hidden');
+        }
+      });
+
+      // Show/hide no-results message
+      if (visibleCount === 0 && currentFolderItems.length > 0 && term !== '') {
+        listContainer.classList.add('no-results');
+      } else {
+        listContainer.classList.remove('no-results');
+      }
+    }
+
+    async function searchFoldersRecursive(searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
+      
+      if (!term) {
+        // If search is cleared, show current directory contents
+        filterFoldersBySearch('');
+        return;
+      }
+
+      const listContainer = document.getElementById('folderList');
+      listContainer.innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
+
+      try {
+        const response = await fetch(`/api/backup/search-folders?term=${encodeURIComponent(term)}&path=${encodeURIComponent(currentBrowsePath)}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          listContainer.innerHTML = '<div class="folder-item empty">⚠️ Search failed</div>';
+          return;
+        }
+
+        listContainer.innerHTML = '';
+        currentFolderItems = [];
+
+        if (data.results && data.results.length > 0) {
+          data.results.forEach(result => {
+            const item = document.createElement('div');
+            item.className = 'folder-item';
+            item.dataset.searchName = result.name.toLowerCase();
+            item.title = result.path; // Show full path on hover
+            item.onclick = () => browseFolders(result.path);
+            
+            // Add indentation based on depth for visual hierarchy
+            const indent = result.depth > 0 ? '    '.repeat(Math.min(result.depth, 3)) : '';
+            item.innerHTML = `<span class="folder-item-icon">📁</span><span>${indent}${result.name}</span><span class="folder-breadcrumb-path" style="font-size: 11px; color: var(--text-muted); margin-left: 8px; flex: 1;">${result.path}</span>`;
+            
+            listContainer.appendChild(item);
+            currentFolderItems.push({ element: item, searchName: result.name.toLowerCase() });
+          });
+        } else {
+          const emptyItem = document.createElement('div');
+          emptyItem.className = 'folder-item empty';
+          emptyItem.innerHTML = '📭 No folders match your search';
+          listContainer.appendChild(emptyItem);
+        }
+      } catch (error) {
+        console.error('Search failed:', error);
+        listContainer.innerHTML = '<div class="folder-item empty">❌ Error searching folders</div>';
+      }
+    }
+
+    function clearFolderSearch() {
+      document.getElementById('folderSearchInput').value = '';
+      document.getElementById('searchClearBtn').style.display = 'none';
+      filterFoldersBySearch('');
+    }
+
+    function selectFolder() {
+      const selectedPath = document.getElementById('selectedFolderPath').value;
+      if (selectedPath && selectedPath.trim()) {
+        document.getElementById('backupPath').value = selectedPath;
+        closeFolderBrowser();
+        showAlert('✓ Backup location updated', 'success');
+      } else {
+        showAlert('✗ Please select a valid path', 'error');
+      }
+    }
+
+    async function openCreateFolderDialog() {
+      const folderName = await BrgyMessageBox.prompt('Enter the name for the new folder:', '');
+      
+      if (folderName === null) {
+        return; // User cancelled
+      }
+      
+      if (!folderName || !folderName.trim()) {
+        showAlert('✗ Please enter a folder name', 'error');
+        return;
+      }
+
+      // Validate folder name (no special characters like / or \)
+      if (folderName.includes('/') || folderName.includes('\\') || folderName.includes('\0')) {
+        showAlert('✗ Folder name cannot contain: / \\ or null character', 'error');
+        return;
+      }
+
+      await createFolder(folderName.trim());
+    }
+
+    async function createFolder(folderName) {
+      try {
+        const response = await fetch('/api/backup/create-folder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: currentBrowsePath,
+            folderName: folderName
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert(`✓ Folder "${folderName}" created successfully`, 'success');
+          // Refresh the folder list
+          await browseFolders(currentBrowsePath);
+        } else {
+          showAlert(`✗ Error: ${data.error || 'Failed to create folder'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Failed to create folder:', error);
+        showAlert(`✗ Error: ${error.message}`, 'error');
+      }
+    }
+
+    // Handle folder path input change
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectedPathInput = document.getElementById('selectedFolderPath');
+      if (selectedPathInput) {
+        selectedPathInput.addEventListener('change', function() {
+          if (this.value && this.value.trim()) {
+            browseFolders(this.value);
+          }
+        });
+      }
+
+      // Handle folder search input
+      const folderSearchInput = document.getElementById('folderSearchInput');
+      const searchClearBtn = document.getElementById('searchClearBtn');
+      if (folderSearchInput) {
+        folderSearchInput.addEventListener('input', function() {
+          const searchTerm = this.value.trim();
+          
+          if (searchTerm) {
+            searchClearBtn.style.display = 'block';
+            searchFoldersRecursive(searchTerm);
+          } else {
+            searchClearBtn.style.display = 'none';
+            filterFoldersBySearch('');
+          }
+        });
+      }
+    });
+
+    // Handle schedule frequency change
+    document.addEventListener('DOMContentLoaded', function() {
+      const scheduleFreq = document.getElementById('scheduleFreq');
+      if (scheduleFreq) {
+        scheduleFreq.addEventListener('change', toggleTimeGroup);
+      }
+    });
+
+    /* ── Refresh / Render list ───────────────────── */
+    async function refreshBackups() {
+      const container = document.getElementById('backupsList');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading backups...</div>';
+
+      try {
+        const response = await fetch('/api/backup/list');
+        const data = await response.json();
+
+        if (data.success && data.backups.length > 0) {
+          container.innerHTML = '';
+          data.backups.forEach((backup, index) => {
+            const item = document.createElement('div');
+            item.className = 'backup-item';
+            const isLatest = index === 0;
+            const availability = backup.availabilityLabel || 'PC/server only';
+            const sourceWarning = availability !== 'PC/server + Database';
+            const downloadTitle = backup.availableLocal
+              ? 'Download local PC/server backup copy'
+              : 'Download MongoDB backup copy because the PC/server file is missing';
+            const restoreTitle = backup.availableLocal
+              ? 'Restore this backup from the PC/server file'
+              : 'Restore this backup from MongoDB because the PC/server file is missing';
+
+            item.innerHTML = `
+              <div>
+                <div class="backup-info-name">${backup.fileName}</div>
+                <div class="backup-info-meta">
+                  <span>${backup.createdDate}</span>
+                  <span>${timeAgo(backup.created)}</span>
+                  ${isLatest ? '<span class="badge-latest">Latest</span>' : ''}
+                  <span class="badge-source ${sourceWarning ? 'warning' : ''}">${availability}</span>
+                </div>
+              </div>
+              <div class="backup-size">${backup.sizeFormatted}</div>
+              <div class="backup-actions-cell">
+                <button class="icon-btn" onclick="downloadBackup(event)" data-filename="${backup.fileName}" title="${downloadTitle}">⬇️</button>
+                <button class="icon-btn restore" onclick="handleRestoreClick(event)" data-filename="${backup.fileName}" title="${restoreTitle}">↩️</button>
+                <button class="icon-btn delete" onclick="handleDeleteClick(event)" data-filename="${backup.fileName}" title="Delete this backup from all available storage copies">🗑</button>
+              </div>
+            `;
+            container.appendChild(item);
+          });
+        } else {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <div class="empty-state-title">No backups yet</div>
+              <div class="empty-state-desc">Create your first backup to get started</div>
+            </div>
+          `;
+        }
+
+        await loadBackupStatus();
+      } catch (error) {
+        container.innerHTML = `
+          <div class="alert error">
+            ✗ Failed to load backups: ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // Init
+    window.addEventListener('load', () => {
+      refreshBackups();
+    });
+  </script>
+
+</body>
+</html>
