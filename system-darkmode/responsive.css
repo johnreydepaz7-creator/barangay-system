@@ -1767,3 +1767,335 @@ body.dark .sidebar .menu-item.active .menu-icon svg {
     padding-right: 8px !important;
   }
 }
+
+
+/* ============================================================
+   MOBILE APP SHELL OVERRIDE — final fixed alignment
+   Forces the sidebar to become a horizontal top menu on phones
+   and prevents the dashboard content from being squeezed.
+   ============================================================ */
+@media screen and (max-width: 1024px) {
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .app-body {
+    width: 100% !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .topbar {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 62px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+    padding: 10px 14px !important;
+    position: relative !important;
+    z-index: 50 !important;
+  }
+
+  .topbar-left {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .topbar-logo {
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px !important;
+  }
+
+  .topbar-titles {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .topbar-main,
+  .topbar-sub {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .topbar-main {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+  }
+
+  .topbar-sub {
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+    letter-spacing: .7px !important;
+    white-space: normal !important;
+  }
+
+  .topbar-right {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+  }
+
+  .topbar-user {
+    max-width: 150px !important;
+    padding: 6px 10px !important;
+    gap: 7px !important;
+  }
+
+  .topbar-user span,
+  #topbarUserName {
+    max-width: 92px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+  }
+
+  .topbar-logout-btn {
+    padding: 6px 9px !important;
+    min-height: 34px !important;
+  }
+
+  .app-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: calc(100vh - 62px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    overflow: visible !important;
+  }
+
+  .sidebar {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    flex: 0 0 auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--green-700) !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin !important;
+  }
+
+  .sidebar-section {
+    display: contents !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .sidebar-label,
+  .sidebar-divider,
+  .sidebar-widget,
+  .sidebar-footer {
+    display: none !important;
+  }
+
+  .menu-item {
+    width: auto !important;
+    min-width: max-content !important;
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 10px 13px !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  .menu-item::before {
+    display: none !important;
+  }
+
+  .menu-item .menu-icon,
+  .menu-icon {
+    width: 28px !important;
+    height: 28px !important;
+    flex: 0 0 28px !important;
+    margin: 0 !important;
+  }
+
+  .menu-label {
+    display: inline-block !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .app-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    padding: 22px 16px !important;
+  }
+
+  .page-header,
+  .toolbar,
+  .filter-bar {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .welcome-banner {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    display: block !important;
+    padding: 22px 20px !important;
+    overflow: hidden !important;
+  }
+
+  .welcome-banner h2,
+  .welcome-title,
+  .welcome-name {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+  }
+
+  .overview-stats,
+  .documents-grid,
+  .card-grid,
+  .quick-grid,
+  .overview-grid,
+  .household-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .card,
+  .stat-card,
+  .doc-card,
+  .section-card,
+  .table-card,
+  .form-card,
+  .scard {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .topbar {
+    padding: 9px 10px !important;
+    gap: 8px !important;
+  }
+
+  .topbar-logo {
+    width: 34px !important;
+    height: 34px !important;
+    flex-basis: 34px !important;
+  }
+
+  .topbar-main {
+    font-size: 13px !important;
+  }
+
+  .topbar-sub {
+    font-size: 8.5px !important;
+  }
+
+  .topbar-user {
+    max-width: 126px !important;
+    padding: 5px 8px !important;
+  }
+
+  .topbar-user span,
+  #topbarUserName {
+    max-width: 70px !important;
+  }
+
+  .topbar-logout-btn {
+    font-size: 11px !important;
+    padding: 5px 8px !important;
+  }
+
+  .sidebar {
+    padding: 7px 10px !important;
+    gap: 7px !important;
+  }
+
+  .menu-item {
+    padding: 9px 11px !important;
+    gap: 7px !important;
+  }
+
+  .menu-icon,
+  .menu-item .menu-icon {
+    width: 26px !important;
+    height: 26px !important;
+    flex-basis: 26px !important;
+  }
+
+  .menu-label {
+    font-size: 11.5px !important;
+  }
+
+  .app-content {
+    padding: 20px 14px !important;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .menu-label {
+    display: none !important;
+  }
+
+  .menu-item {
+    min-width: 48px !important;
+    padding: 9px 10px !important;
+  }
+}
+
+
+/* JS fallback when body.mobile-app-layout is applied */
+body.mobile-app-layout .app-body { height:auto !important; min-height:100vh !important; overflow-x:hidden !important; overflow-y:auto !important; }
+body.mobile-app-layout .app-container { display:flex !important; flex-direction:column !important; width:100% !important; height:auto !important; overflow:visible !important; }
+body.mobile-app-layout .sidebar { width:100% !important; max-width:100% !important; height:auto !important; flex-direction:row !important; align-items:center !important; gap:8px !important; padding:8px 12px !important; overflow-x:auto !important; overflow-y:hidden !important; border-right:0 !important; border-bottom:1px solid var(--green-700) !important; }
+body.mobile-app-layout .sidebar-section { display:contents !important; padding:0 !important; margin:0 !important; }
+body.mobile-app-layout .sidebar-label, body.mobile-app-layout .sidebar-divider, body.mobile-app-layout .sidebar-widget, body.mobile-app-layout .sidebar-footer { display:none !important; }
+body.mobile-app-layout .menu-item { width:auto !important; min-width:max-content !important; flex:0 0 auto !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; gap:8px !important; margin:0 !important; padding:10px 13px !important; white-space:nowrap !important; }
+body.mobile-app-layout .menu-item::before { display:none !important; }
+body.mobile-app-layout .menu-icon { width:28px !important; height:28px !important; flex:0 0 28px !important; margin:0 !important; }
+body.mobile-app-layout .menu-label { display:inline-block !important; white-space:nowrap !important; }
+body.mobile-app-layout .app-content { width:100% !important; max-width:100% !important; min-width:0 !important; padding:22px 16px !important; overflow-x:hidden !important; overflow-y:visible !important; }
+body.mobile-app-layout .overview-stats, body.mobile-app-layout .documents-grid, body.mobile-app-layout .card-grid, body.mobile-app-layout .quick-grid, body.mobile-app-layout .overview-grid, body.mobile-app-layout .household-grid { grid-template-columns:1fr !important; width:100% !important; max-width:100% !important; }
+body.mobile-app-layout .card, body.mobile-app-layout .stat-card, body.mobile-app-layout .doc-card, body.mobile-app-layout .section-card, body.mobile-app-layout .table-card, body.mobile-app-layout .form-card, body.mobile-app-layout .scard { width:100% !important; max-width:100% !important; min-width:0 !important; }

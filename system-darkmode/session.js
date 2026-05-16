@@ -244,3 +244,24 @@ async function logout() {
 
   window.location.replace('/');
 }
+
+
+/* Mobile layout helper: adds a class based on real browser width.
+   This supports devices whose CSS media query viewport behaves differently. */
+(function () {
+  function applyMobileLayoutClass() {
+    var width = window.innerWidth || document.documentElement.clientWidth || screen.width || 0;
+    document.body.classList.toggle('mobile-app-layout', width <= 1024);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyMobileLayoutClass);
+  } else {
+    applyMobileLayoutClass();
+  }
+
+  window.addEventListener('resize', applyMobileLayoutClass);
+  window.addEventListener('orientationchange', function () {
+    setTimeout(applyMobileLayoutClass, 150);
+  });
+})();
