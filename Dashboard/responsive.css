@@ -2074,7 +2074,7 @@ body.dark .sidebar .menu-item.active .menu-icon svg {
   }
 }
 
-@media screen and (max-width: 380px) {
+@media screen and (max-width: 430px) {
   .menu-label {
     display: none !important;
   }
@@ -2082,6 +2082,7 @@ body.dark .sidebar .menu-item.active .menu-icon svg {
   .menu-item {
     min-width: 48px !important;
     padding: 9px 10px !important;
+    justify-content: center !important;
   }
 }
 
@@ -2095,7 +2096,7 @@ body.mobile-app-layout .sidebar-label, body.mobile-app-layout .sidebar-divider, 
 body.mobile-app-layout .menu-item { width:auto !important; min-width:max-content !important; flex:0 0 auto !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; gap:8px !important; margin:0 !important; padding:10px 13px !important; white-space:nowrap !important; }
 body.mobile-app-layout .menu-item::before { display:none !important; }
 body.mobile-app-layout .menu-icon { width:28px !important; height:28px !important; flex:0 0 28px !important; margin:0 !important; }
-body.mobile-app-layout .menu-label { display:inline-block !important; white-space:nowrap !important; }
+body.mobile-app-layout .menu-label { display:inline-block; white-space:nowrap !important; }
 body.mobile-app-layout .app-content { width:100% !important; max-width:100% !important; min-width:0 !important; padding:22px 16px !important; overflow-x:hidden !important; overflow-y:visible !important; }
 body.mobile-app-layout .overview-stats, body.mobile-app-layout .documents-grid, body.mobile-app-layout .card-grid, body.mobile-app-layout .quick-grid, body.mobile-app-layout .overview-grid, body.mobile-app-layout .household-grid { grid-template-columns:1fr !important; width:100% !important; max-width:100% !important; }
 body.mobile-app-layout .card, body.mobile-app-layout .stat-card, body.mobile-app-layout .doc-card, body.mobile-app-layout .section-card, body.mobile-app-layout .table-card, body.mobile-app-layout .form-card, body.mobile-app-layout .scard { width:100% !important; max-width:100% !important; min-width:0 !important; }
