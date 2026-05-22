@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Code — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="auth-responsive.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="/messagebox.js"></script>
+<script src="auth-validation.js"></script>
+</head>
+<body>
+<div class="auth-screen">
+
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-right-inner">
+
+      <div class="step-indicator">
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <button class="btn-back" onclick="location.href='login.html'">← Back</button>
+
+      <h1 class="auth-heading">Enter your code</h1>
+      <p class="auth-subheading" id="otpSubtext">
+        A 6-digit code has been sent to your phone.
+      </p>
+
+      <div class="auth-alert" id="otpAlert"></div>
+
+      <div id="qrcodeContainer" style="text-align:center; margin:20px 0; display:none;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"><strong>Scan or Verify Code</strong></div>
+        <div id="qrcode" style="display:inline-block; background:white; padding:10px; border-radius:8px;"></div>
+        <div id="encodedText" style="display:none !important;"></div>
+      </div>
+
+      <div class="otp-wrap">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="o1">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="o2">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="o3">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="o4">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="o5">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" id="o6">
+      </div>
+
+      <button class="btn-primary" onclick="verifyOTP()" id="verifyBtn" style="margin-top:20px;">
+        Verify & Login →
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase SDKs — uncomment when ready to enable real OTP
+<script type="module">
+  import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, RecaptchaVerifier, signInWithPhoneNumber }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+  const firebaseConfig = {
+    apiKey:            'AIzaSyCLDFLH_ATQp_RMAA5uiUApd9MmbYq-5S0',
+    authDomain:        'barangay-59a.firebaseapp.com',
+    projectId:         'barangay-59a',
+    storageBucket:     'barangay-59a.firebasestorage.app',
+    messagingSenderId: '813971923947',
+    appId:             '1:813971923947:web:10a393694e8b4893f8afae',
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // REAL verifyOTP — replace the test version below with this when ready:
+  // window.verifyOTP = async function () {
+  //   const code = [...inputs].map(i => i.value).join('');
+  //   if (code.length < 6) { showAlert('Please enter all 6 digits.', 'error'); return; }
+  //   const confirmationResult = window._confirmationResult;
+  //   if (!confirmationResult) {
+  //     showAlert('Session expired. Please go back and request a new code.', 'error');
+  //     setTimeout(() => { location.href = 'login.html'; }, 2500);
+  //     return;
+  //   }
+  //   const btn = document.getElementById('verifyBtn');
+  //   btn.disabled = true; btn.textContent = 'Verifying…';
+  //   try {
+  //     const result  = await confirmationResult.confirm(code);
+  //     const idToken = await result.user.getIdToken();
+  //     const user    = JSON.parse(sessionStorage.getItem('otp_user') || '{}');
+  //     sessionStorage.setItem('current_user', JSON.stringify(user));
+  //     showAlert('Verified! Redirecting…', 'success');
+  //     setTimeout(() => { location.href = 'role-select.html'; }, 900);
+  //   } catch (err) {
+  //     const messages = {
+  //       'auth/invalid-verification-code': 'Incorrect code. Please try again.',
+  //       'auth/code-expired':              'Code has expired. Please request a new one.',
+  //       'auth/too-many-requests':         'Too many attempts. Please wait and try again.',
+  //     };
+  //     showAlert(messages[err.code] || 'Verification failed. Please try again.', 'error');
+  //     inputs.forEach(i => { i.value = ''; i.classList.remove('filled'); });
+  //     inputs[0].focus();
+  //     btn.disabled = false; btn.textContent = 'Verify & Login →';
+  //   }
+  // };
+
+  // REAL resendCode — replace the test version below with this when ready:
+  // window.resendCode = async function () { location.href = 'login.html'; };
+</script>
+-->
+
+<script>
+  const inputs = document.querySelectorAll('.otp-input');
+  const SECRET = "l69xAAm3"; // Hidden secret key
+  let currentEncoded = ""; // Store encoded string for verification
+
+  // Base64 encode function
+  function encodeBase64(str) {
+    return btoa(str);
+  }
+
+  // SHA-256 hash function
+  async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Generate OTP based on encoded string and time window (accepts current + previous window)
+  async function generateCode(encoded, timeWindow = null) {
+    try {
+      const decoded = atob(encoded);
+      if (timeWindow === null) {
+        const now = Math.floor(Date.now() / 1000);
+        timeWindow = Math.floor(now / 60);
+      }
+      const combined = decoded + "|" + timeWindow;
+      const hash = await sha256(combined);
+      const code = parseInt(hash.slice(-8), 16) % 1000000;
+      return code.toString().padStart(6, '0');
+    } catch (error) {
+      console.error('Error generating OTP:', error);
+      return null;
+    }
+  }
+
+  // Verify OTP against current and previous time windows
+  async function verifyCode(encoded, userCode) {
+    const now = Math.floor(Date.now() / 1000);
+    const currentWindow = Math.floor(now / 60);
+    const previousWindow = currentWindow - 1;
+
+    // Try current time window
+    const currentOtp = await generateCode(encoded, currentWindow);
+    if (userCode === currentOtp) {
+      return true;
+    }
+
+    // Try previous time window (handles codes entered near time boundary)
+    const previousOtp = await generateCode(encoded, previousWindow);
+    if (userCode === previousOtp) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Show masked phone number and generate QR code
+  const phone = sessionStorage.getItem('otp_phone');
+  const user = JSON.parse(sessionStorage.getItem('otp_user') || '{}');
+  
+  if (!phone) {
+    location.href = 'login.html';
+  } else {
+    const masked = phone.slice(0, 4) + '****' + phone.slice(-3);
+    
+    // Normalize phone: remove leading 0 if present to match admin-accounts format
+    const normalizedPhone = phone.startsWith('0') ? phone.substring(1) : phone;
+    
+    // Generate encoded string: firstName + middleName + lastName + "|" + phone + "|" + SECRET
+    const fullName = ((user.firstName || '') + ' ' + (user.middleName || '') + ' ' + (user.lastName || '')).trim();
+    const combined = fullName + '|' + normalizedPhone + '|' + SECRET;
+    currentEncoded = encodeBase64(combined);
+
+    // Encoded string is used internally for OTP verification only and is not displayed.
+    const encodedText = document.getElementById('encodedText');
+    if (encodedText) {
+      encodedText.textContent = '';
+      encodedText.style.display = 'none';
+    }
+
+    // All users receive OTP via SMS/phone
+    document.getElementById('otpSubtext').textContent =
+      'A 6-digit code has been sent to ' + masked + '.';
+    // Hide QR code container (not needed for production OTP verification)
+    document.getElementById('qrcodeContainer').style.display = 'none';
+  }
+
+  // Auto-advance between boxes
+  inputs.forEach((inp, i) => {
+    inp.addEventListener('input', () => {
+      inp.value = inp.value.replace(/\D/, '');
+      if (inp.value) inp.classList.add('filled'); else inp.classList.remove('filled');
+      if (inp.value && i < inputs.length - 1) inputs[i + 1].focus();
+      if ([...inputs].every(x => x.value)) verifyOTP();
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !inp.value && i > 0) {
+        inputs[i - 1].focus();
+        inputs[i - 1].classList.remove('filled');
+      }
+    });
+    inp.addEventListener('paste', e => {
+      e.preventDefault();
+      const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+      [...text].forEach((ch, j) => {
+        if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add('filled'); }
+      });
+      if (inputs[text.length - 1]) inputs[text.length - 1].focus();
+      if (text.length === 6) setTimeout(verifyOTP, 100);
+    });
+  });
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('otpAlert');
+    el.textContent = msg;
+    el.className = 'auth-alert show ' + type;
+  }
+
+  async function verifyOTP() {
+    const code = [...inputs].map(i => i.value).join('');
+
+    if (!BrgyAuthValidation.validateOTP(inputs) || code.length < 6) {
+      showAlert('Please enter all 6 digits.', 'error');
+      return;
+    }
+
+    const userSession = JSON.parse(sessionStorage.getItem('otp_user') || 'null');
+    if (!userSession) {
+      showAlert('Session expired. Please log in again.', 'error');
+      setTimeout(() => { location.href = 'login.html'; }, 1500);
+      return;
+    }
+
+    const btn = document.getElementById('verifyBtn');
+    btn.disabled = true;
+    btn.textContent = 'Verifying…';
+
+    try {
+      // Verify OTP using SHA-256 based on encoded string
+      const isValid = await verifyCode(currentEncoded, code);
+
+      if (isValid) {
+        sessionStorage.setItem('current_user', JSON.stringify(userSession));
+        showAlert('✅ Verified!', 'success');
+        setTimeout(() => { location.href = 'role-select.html'; }, 900);
+      } else {
+        showAlert('❌ Incorrect code. Please try again.', 'error');
+        inputs.forEach(i => { i.value = ''; i.classList.remove('filled'); });
+        inputs[0].focus();
+        btn.disabled = false;
+        btn.textContent = 'Verify & Login →';
+      }
+    } catch (error) {
+      console.error('Verification error:', error);
+      showAlert('Verification failed. Please try again.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Verify & Login →';
+    }
+  }
+
+  inputs[0].focus();
+</script>
+</body>
+</html>

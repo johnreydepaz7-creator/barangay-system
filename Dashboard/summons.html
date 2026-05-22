@@ -1,0 +1,389 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Summons - Barangay 59-A</title><style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#d7d7d7;padding:32px 20px 48px;font-family:'Times New Roman',Times,serif;color:#000;display:flex;flex-direction:column;align-items:center}
+.action-bar{width:100%;max-width:816px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.back-btn,.print-btn{display:flex;align-items:center;gap:7px;border-radius:6px;border:1px solid #ccc;padding:8px 14px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.back-btn{background:white;color:#555}
+.print-btn{background:#1a6b42;color:white;border-color:#1a6b42;padding:10px 20px;box-shadow:0 2px 10px rgba(31,111,67,.35)}
+.paper{width:816px;min-height:1056px;background:#fff;border:1px solid #ccc;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:60px 72px 68px;font-family:'Times New Roman',Times,serif;font-size:13.5px;color:#000;margin-bottom:24px;line-height:1.5;position:relative;overflow:hidden;isolation:isolate}
+.paper:last-child{margin-bottom:0}
+.paper::before{content:"";position:absolute;inset:0;background-image:url("images/barangay-logo.png");background-repeat:no-repeat;background-position:center 52%;background-size:475px auto;opacity:0.08;z-index:0;pointer-events:none;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+.paper > *{position:relative;z-index:1}
+
+/* PAGE 1 — SUMMONS */
+.doc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.doc-header img{width:80px;height:80px;object-fit:contain;flex-shrink:0}
+.header-text{flex:1;text-align:center;padding:0 12px;line-height:1.5}
+.republic{font-style:italic;font-size:12.5px}
+.office{font-size:16px;font-weight:bold;letter-spacing:.01em}
+.address{font-style:italic;font-size:12.5px;line-height:1.55}
+
+/* Case block — right aligned */
+.case-block{display:flex;flex-direction:column;align-items:flex-end;gap:5px;margin-bottom:14px}
+.case-row{display:flex;align-items:flex-end;gap:4px;font-size:13px}
+
+/* Party section — left aligned */
+.party-section{margin-bottom:4px}
+.party-rows{display:flex;align-items:flex-start;gap:5px}
+.party-label{font-size:13px;white-space:nowrap}
+.party-inputs{display:flex;flex-direction:column;gap:9px;flex:1}
+.against{font-size:13px;margin:10px 0;padding-left:0}
+
+/* SUMMONS title — centered */
+.summons-title{text-align:center;font-size:26px;font-weight:bold;text-transform:uppercase;margin:22px 0 18px}
+.summons-title span{display:inline-block;border-bottom:2px solid #000;line-height:1;margin:0 5px}
+
+/* To section — left, with indent for lines 2-3 */
+.to-section{margin-bottom:18px}
+.to-row{display:flex;align-items:flex-end;gap:6px;margin-bottom:8px;font-size:13px}
+.to-indent{display:inline-block;width:32px}
+
+/* Body paragraphs — justified, indented */
+.body-para{font-size:13px;line-height:1.8;text-align:justify;text-indent:3em;margin-bottom:16px}
+.no-indent{text-indent:0;padding-left:0}
+.bold-text{font-weight:bold}
+
+/* Date row — left aligned with indent matching body */
+.date-row{font-size:13px;margin:20px 0 40px;padding-left:3em}
+
+/* Signature — right aligned */
+.sig-right{display:flex;justify-content:flex-end;margin-bottom:10px}
+.sig-block{width:260px;text-align:center}
+.sig-name{font-weight:bold;font-size:13px;text-transform:uppercase;text-decoration:underline;letter-spacing:.01em;white-space:nowrap}
+.sig-title{font-size:12.5px;margin-top:3px}
+
+/* PAGE 2 — OFFICER'S RETURN */
+/* Header: "OFFICER'S RETURN" centered text between two logos */
+.return-doc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+.return-doc-header img{width:80px;height:80px;object-fit:contain;flex-shrink:0}
+.return-header-center{flex:1;text-align:center;padding:0 12px}
+.return-title{font-size:17px;font-weight:bold;text-transform:uppercase;letter-spacing:.04em}
+
+/* Return body — left aligned */
+.return-body{font-size:13px;line-height:2;margin-bottom:8px}
+.return-note{font-size:12px;font-style:italic;margin:4px 0 16px 2em;color:#333}
+
+/* Service items — check line LEFT, text RIGHT */
+.service-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.service-check{width:220px;border-bottom:1px solid #000;height:20px;flex-shrink:0}
+.service-text{font-size:13px;line-height:1.65}
+
+/* Officer signature — right aligned */
+.officer-sig{display:flex;justify-content:flex-end;margin:20px 0 28px}
+.officer-block{width:200px;text-align:center}
+.sig-line{border-bottom:1px solid #000;height:28px;margin-bottom:4px;width:100%}
+
+/* Received section */
+.received-label{font-size:13px;margin-bottom:16px}
+.received-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:32px;font-size:13px;text-align:center;margin-bottom:32px}
+.received-cell .sig-line{height:24px}
+
+/* Bottom case info — left aligned */
+.bottom-case{font-size:13px;line-height:2.2}
+.bottom-row{display:flex;align-items:flex-end;gap:4px;margin-bottom:2px}
+.bottom-on-indent{display:inline-block;width:28px}
+
+/* Fill spans */
+.fill{display:inline-block;border-bottom:1px solid #000;min-width:var(--w,90px);padding:0 2px;line-height:1.25;vertical-align:baseline;white-space:pre-wrap;overflow-wrap:anywhere}
+.fill:empty::before{content:'\00a0'}
+.fill.filled{border-bottom:none;min-width:0;padding:0;white-space:normal;font-weight:bold}
+.fill.unfilled{border-bottom:none!important;min-width:0!important;padding:0!important}
+.body-para .fill.filled{display:inline;white-space:nowrap}
+.bottom-case .fill.filled{display:inline-block;min-width:0;white-space:nowrap}
+.bottom-on-row{display:block;line-height:2.1}
+.date-inline{white-space:nowrap}
+.inline-value{display:inline!important;white-space:nowrap}
+.fill.inline-value.filled{display:inline!important;min-width:0!important;padding:0 2px!important;border-bottom:none!important;white-space:nowrap!important}
+
+/* Dark mode */
+body.dark{background:#162019}
+body.dark .back-btn{background:#1d2b21;border-color:#28392c;color:#c2d4c8}
+body.dark .print-btn{background:#1f6f43;color:#fff;border-color:#2f7d4f;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+body.dark .paper{background:#fff;border-color:#cfcfcf;color:#000}
+body.dark .paper,body.dark .paper *{color:#000}
+body.dark .fill,body.dark .sig-line,.summons-title span{border-bottom-color:#000}
+
+/* Print */
+@page{size:letter;margin:0}
+@media print{
+  html,body{width:8.5in!important;min-height:11in!important;margin:0!important;padding:0!important;background:white!important;overflow:visible!important;display:block!important}
+  .action-bar{display:none!important}
+  .paper{width:8.5in!important;min-height:11in!important;box-shadow:none!important;border:none!important;padding:.55in .68in .62in!important;margin:0!important;page-break-after:always;background:#fff!important;color:#000!important}
+  .paper,.paper *{color:#000!important}
+  .paper:last-child{page-break-after:auto}
+  .paper::before{opacity:0.08!important;background-size:475px auto!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .body-para,.return-body{text-align:left!important}
+}
+html,body{color-scheme:light!important}
+.paper{background:#ffffff!important;color:#000000!important;font-family:"Times New Roman",Times,serif!important;letter-spacing:0!important;word-spacing:0!important}
+.paper *{letter-spacing:0!important;word-spacing:0!important;text-shadow:none!important;filter:none!important}
+</style>
+<!-- DOCUMENT FILES REPLACED EXACT 20260521 -->
+</head><body>
+
+<div class="action-bar">
+  <button class="back-btn" onclick="location.href='/doc-form.html?doc=summons&reset=1'">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    Back to Form
+  </button>
+  <div style="display:flex;gap:10px;">
+    <button class="print-btn" onclick="window.print()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print Document
+    </button>
+  </div>
+</div>
+
+<!-- PAGE 1: SUMMONS -->
+<div class="paper">
+  <!-- Header: logos on sides, text centered -->
+  <div class="doc-header">
+    <img src="images/barangay-logo.png" alt="Barangay Seal">
+    <div class="header-text">
+      <div class="republic">Republic of the Philippines</div>
+      <div class="office">OFFICE OF THE PUNONG BARANGAY</div>
+      <div class="address">Barangay 59 - A, Sampaguita Village<br>Tacloban City</div>
+    </div>
+    <img src="images/bagong-pilipinas.png" alt="Bagong Pilipinas">
+  </div>
+
+  <!-- Case block: right-aligned -->
+  <div class="case-block">
+    <div class="case-row">Barangay Case No.:&nbsp;<span class="fill" style="--w:160px" data-field="caseNo"></span></div>
+    <div class="case-row">For:&nbsp;<span class="fill" style="--w:200px" data-field="caseFor1"></span></div>
+    <div class="case-row"><span class="fill" style="--w:200px" data-field="caseFor2"></span></div>
+  </div>
+
+  <!-- Complainant/s: left-aligned -->
+  <div class="party-section">
+    <div class="party-rows">
+      <span class="party-label">Complainant/s:</span>
+      <div class="party-inputs">
+        <span class="fill" style="--w:220px" data-field="complainant1"></span>
+        <span class="fill" style="--w:220px" data-field="complainant2"></span>
+        <span class="fill" style="--w:220px" data-field="complainant3"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="against">-against-</div>
+
+  <!-- Respondent/s: left-aligned -->
+  <div class="party-section" style="margin-bottom:20px;">
+    <div class="party-rows">
+      <span class="party-label">Respondent/s:</span>
+      <div class="party-inputs">
+        <span class="fill" style="--w:220px" data-field="respondent1"></span>
+        <span class="fill" style="--w:220px" data-field="respondent2"></span>
+        <span class="fill" style="--w:220px" data-field="respondent3"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMONS title: centered, each letter underlined -->
+  <div class="summons-title">
+    <span>S</span><span>U</span><span>M</span><span>M</span><span>O</span><span>N</span><span>S</span>
+  </div>
+
+  <!-- To: left-aligned, subsequent lines indented -->
+  <div class="to-section">
+    <div class="to-row">
+      <span>To:</span>
+      <span class="fill" style="--w:280px;margin-left:16px" data-field="respondent1"></span>
+    </div>
+    <div class="to-row">
+      <span class="to-indent"></span>
+      <span class="fill" style="--w:280px" data-field="respondent2"></span>
+    </div>
+    <div class="to-row">
+      <span class="to-indent"></span>
+      <span class="fill" style="--w:280px" data-field="respondent3"></span>
+    </div>
+  </div>
+
+  <!-- Body: indented paragraphs, justified -->
+  <p class="body-para">You are hereby summoned to appear before me in person together with your witness/s, at the Barangay 59 - A Hall on the <span class="fill inline-value" style="--w:50px" data-field="hearingDay"></span> day of <span class="fill inline-value" style="--w:140px" data-field="hearingMonth"></span>, <span class="fill inline-value" style="--w:55px" data-field="hearingYear"></span> at <span class="fill inline-value" style="--w:50px" data-field="hearingTime"></span> o'clock in the morning/afternoon then and there to answer to a complaint made before me for mediation/conciliation of a dispute with the above-named complainant/s.</p>
+
+  <p class="body-para">You are hereby warned if you refuse or fail to appear to this summons, you will be barred from filing any counter claim arising from said complaint.</p>
+
+  <p class="body-para no-indent"><span class="bold-text">FAIL NOT</span> or else face punishment as for contempt of court.</p>
+
+  <!-- Date row: left-aligned with body indent -->
+  <div class="date-row">This <span class="fill inline-value" style="--w:50px" data-field="madeDay"></span> day of <span class="fill inline-value" style="--w:160px" data-field="madeMonth"></span>, 2026.</div>
+
+  <!-- Signature: right-aligned -->
+  <div class="sig-right">
+    <div class="sig-block">
+      <div class="sig-name">HON. KENNETH R. MATE, RCE</div>
+      <div class="sig-title">Punong Barangay</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: OFFICER'S RETURN -->
+<div class="paper">
+  <!-- Header: logos on sides, "OFFICER'S RETURN" centered text only -->
+  <div class="return-doc-header">
+    <img src="images/barangay-logo.png" alt="Barangay Seal">
+    <div class="return-header-center">
+      <div class="return-title">OFFICER'S RETURN</div>
+    </div>
+    <img src="images/bagong-pilipinas.png" alt="Bagong Pilipinas">
+  </div>
+
+  <!-- Return body: left-aligned -->
+  <div class="return-body">
+    I serve this summons upon respondent/s <span class="fill" style="--w:300px" data-field="respondent1"></span><br>
+    <span class="fill" style="--w:280px" data-field="respondent2"></span>&nbsp;and&nbsp;<span class="fill" style="--w:200px" data-field="respondent3"></span><br>
+    on the <span class="fill inline-value" style="--w:50px" data-field="serviceDay"></span> day of <span class="fill inline-value" style="--w:180px" data-field="serviceMonth"></span>,<br>    2026, by:
+  </div>
+
+  <div class="return-note">(Write name/s of respondent/s before made by which this summons is served)</div>
+
+  <!-- Service items: check blank LEFT, description RIGHT -->
+  <div class="service-item">
+    <div class="service-check"></div>
+    <div class="service-text">1. Handling this summons in person;</div>
+  </div>
+  <div class="service-item">
+    <div class="service-check"></div>
+    <div class="service-text">2. Handling this summons but refused to receive it;</div>
+  </div>
+  <div class="service-item">
+    <div class="service-check"></div>
+    <div class="service-text">3. Leaving this summons to <span class="fill" style="--w:260px" data-field="leftTo"></span><br>
+      A person of suitable age and discretion and residing<br>
+      At the same dwelling place; or</div>
+  </div>
+  <div class="service-item">
+    <div class="service-check"></div>
+    <div class="service-text">4. Leaving this summons at the office/place of Business<br>
+      To <span class="fill" style="--w:290px" data-field="businessReceiver"></span>,<br>
+      A competent person in charge thereon.</div>
+  </div>
+
+  <!-- Officer signature: right-aligned -->
+  <div class="officer-sig">
+    <div class="officer-block">
+      <div class="sig-line"><span data-field="officer"></span></div>
+      <div>Officer</div>
+    </div>
+  </div>
+
+  <!-- Received section -->
+  <div class="received-label">Received by respondent/s or representative/s;</div>
+  <div class="received-grid">
+    <div class="received-cell">
+      <div class="sig-line"></div>
+      <div>Signature</div>
+    </div>
+    <div class="received-cell">
+      <div class="sig-line"></div>
+      <div>Date</div>
+    </div>
+    <div class="received-cell">
+      <div class="sig-line"></div>
+      <div>Signature</div>
+    </div>
+    <div class="received-cell">
+      <div class="sig-line"></div>
+      <div>Date</div>
+    </div>
+  </div>
+
+  <!-- Bottom case info: left-aligned -->
+  <div class="bottom-case">
+    <div class="bottom-row">Barangay Case No.: <span class="fill" style="--w:310px" data-field="caseNo"></span></div>
+    <div class="bottom-row">For: <span class="fill" style="--w:400px" data-field="caseFor1"></span></div>
+    <div class="bottom-row"><span style="display:inline-block;width:28px"></span><span class="fill" style="--w:400px" data-field="caseFor2"></span></div>
+    <div class="bottom-row">On: <span class="fill" style="--w:400px" data-field="hearingOn1"></span></div>
+    <div class="bottom-row"><span style="display:inline-block;width:28px"></span><span class="fill" style="--w:400px" data-field="hearingOn2"></span></div>
+  </div>
+</div>
+
+<script>
+function getParams(){return Object.fromEntries(new URLSearchParams(location.search).entries());}
+function setFill(field,val){document.querySelectorAll('[data-field="'+field+'"]').forEach(el=>{const clean=(val||'').trim();el.textContent=clean;if(clean){el.classList.add('filled');el.classList.remove('unfilled');const line=el.closest('.line-fill');if(line)line.classList.add('filled');}else{el.classList.remove('filled');el.classList.add('unfilled');const line=el.closest('.line-fill');if(line)line.classList.remove('filled');}});}
+function splitLines(text,count){const words=String(text||'').split(/\s+/).filter(Boolean);const lines=Array(count).fill('');let i=0;words.forEach(w=>{if((lines[i]+' '+w).trim().length>95 && i<count-1)i++;lines[i]=(lines[i]+' '+w).trim();});return lines;}
+function fillLineGroup(field,text,count){const holder=document.querySelector('[data-lines="'+field+'"]');if(!holder)return;holder.innerHTML='';splitLines(text,count).forEach(line=>{const d=document.createElement('div');d.className='line-fill';if(line)d.classList.add('filled');d.textContent=line;holder.appendChild(d);});}
+function buildDate(day,month,year,comma){
+  const d=(day||'').trim(), m=(month||'').trim(), y=(year||'').trim();
+  const parts=[];
+  if(d) parts.push(d + ' day of');
+  if(m) parts.push(m);
+  if(y) parts.push((comma && m ? ',' : '') + ' ' + y);
+  return parts.join(' ').replace(/\s+,/g, ',').replace(/\s+/g, ' ').trim();
+}
+function buildTime(time,period){
+  const t=(time||'').trim(), p=(period||'').trim();
+  if(t && p) return t + " o'clock in the " + p;
+  return (t || p).trim();
+}
+
+async function loadResidentsForDocument(){
+  try{
+    const response = await fetch('/api/members', { cache: 'no-store' });
+    if(!response.ok) throw new Error('Unable to load residents');
+    const data = await response.json();
+    return Array.isArray(data) ? data.map(normalizeResidentForDocument).filter(Boolean) : [];
+  }catch(error){
+    console.error('Unable to load resident records for document:', error);
+    return [];
+  }
+}
+function calculateResidentAgeForDocument(dateOfBirth){
+  if(!dateOfBirth) return '';
+  const birth = new Date(dateOfBirth);
+  if(Number.isNaN(birth.getTime())) return '';
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if(m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age >= 0 ? String(age) : '';
+}
+function buildResidentNameForDocument(r){
+  if(!r) return '';
+  if(r.name || r.fullName) return r.name || r.fullName;
+  const last = r.lastname || r.lastName || '';
+  const first = r.firstname || r.firstName || '';
+  const middle = r.middlename || r.middleName || '';
+  const ext = r.extensionName || r.ext || '';
+  const firstPart = [first, middle, ext].filter(Boolean).join(' ');
+  return [last, firstPart].filter(Boolean).join(', ');
+}
+function normalizeResidentForDocument(r){
+  if(!r) return null;
+  const name = buildResidentNameForDocument(r).trim();
+  if(!name) return null;
+  return { id: String(r._id || r.id || ''), name, age: String(r.age || calculateResidentAgeForDocument(r.dateOfBirth) || ''), purok: r.purok || r.zone || '', raw:r };
+}
+function applyResidentNamesToParams(p, residents){
+  ['complainant1','complainant2','complainant3','respondent1','respondent2','respondent3'].forEach(field => {
+    const id = p[field + 'Id'];
+    const current = String(p[field] || '').trim().toLowerCase();
+    const match = (id && residents.find(r => r.id === String(id))) || residents.find(r => r.name.trim().toLowerCase() === current);
+    if(match) p[field] = match.name;
+  });
+  return p;
+}
+
+async function fillCommon(){
+  let p=getParams();
+  p = applyResidentNamesToParams(p, await loadResidentsForDocument());
+  p.hearingDateText = buildDate(p.hearingDay,p.hearingMonth,p.hearingYear,false);
+  p.hearingTimeText = buildTime(p.hearingTime,p.hearingPeriod);
+  p.serviceDateText = buildDate(p.serviceDay,p.serviceMonth,p.serviceYear,true);
+  p.madeDateText = buildDate(p.madeDay,p.madeMonth,p.madeYear,true);
+
+  // Bottom Officer's Return "On:" line now uses the hearing date/time when available.
+  // If any field has no value, it is marked as unfilled so the long underline is removed.
+  p.hearingOn1 = [p.hearingDateText, p.hearingTimeText ? 'at ' + p.hearingTimeText : ''].filter(Boolean).join(' ');
+  p.hearingOn2 = p.hearingOn2 || '';
+
+  const allFields = new Set(Array.from(document.querySelectorAll('[data-field]')).map(el => el.dataset.field));
+  allFields.forEach(k => setFill(k, p[k] || ''));
+  ['complaintDetails','reliefs'].forEach(k=>fillLineGroup(k,p[k],k==='complaintDetails'?5:3));
+}
+(function(){document.body.classList.remove('dark');fillCommon();})();
+</script>
+</body></html>

@@ -1,0 +1,443 @@
+/* ============================================================
+   DASHBOARD / RESPONSIVE.CSS
+   Mobile-first fix: sidebar moves below topbar on small screens.
+   Includes full dark-mode overrides for all mobile-specific elements.
+   ============================================================ */
+
+/* 1. Box-sizing and overflow safety */
+*, *::before, *::after { box-sizing: border-box; }
+img, svg, canvas, video { max-width: 100%; }
+input, select, textarea, button { max-width: 100%; }
+
+/* 2. Prevent flex/grid children from forcing horizontal overflow */
+.topbar-left, .topbar-right { min-width: 0; }
+.topbar-titles { min-width: 0; }
+.topbar-main, .topbar-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── 3. ≤ 1180px: large tablet — shrink grids ─────────────── */
+@media (max-width: 1180px) {
+  .stats-grid,
+  .dashboard-grid,
+  .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+
+  .app-content { padding: 28px 24px !important; }
+}
+
+/* ─── 4. ≤ 1024px: sidebar goes below topbar ───────────────── */
+@media (max-width: 1024px) {
+
+  /* ── Reset html/body so the PAGE scrolls normally ── */
+  html {
+    height: 100%;
+    overflow: auto !important;
+  }
+
+  body, body.app-body, .app-body {
+    /* Kill the fixed 100vh + overflow:hidden from components.css */
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    overflow: auto !important;
+
+    /* Stack topbar → sidebar → content vertically */
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* ── app-container becomes a column too ── */
+  .app-container {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    /* MUST be visible — any overflow other than visible breaks sticky children */
+    overflow: visible !important;
+  }
+
+  /* ── Topbar: fixed to top of screen ── */
+  .topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 62px !important;
+    z-index: 1000 !important;
+    padding: 0 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  .topbar-left { flex: 1 1 auto !important; }
+  .topbar-right { flex: 0 0 auto !important; gap: 8px !important; }
+
+  /* ── Sidebar: fixed just below the topbar ── */
+  .sidebar {
+    position: fixed !important;
+    top: 62px !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    z-index: 999 !important;
+
+    /* Horizontal nav strip */
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 8px 12px !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    border-right: none !important;
+    border-bottom: 1px solid var(--green-700) !important;
+    box-shadow: 0 4px 14px rgba(13, 51, 32, .15) !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar { display: none; }
+
+  /* Push page content down to clear fixed topbar + sidebar */
+  .app-content {
+    order: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    overflow-x: hidden !important;
+    padding: 24px 18px !important;
+    /* 62px topbar + ~54px sidebar */
+    margin-top: 116px !important;
+  }
+
+  /* Hide sidebar labels/dividers/footer — show only icons+labels in strip */
+  .sidebar-section {
+    display: contents !important;
+    padding: 0 !important;
+  }
+
+  .sidebar-label,
+  .sidebar-divider,
+  .sidebar-widget,
+  .sidebar-footer { display: none !important; }
+
+  .menu-item {
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 8px 13px !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .menu-item::before { display: none !important; }
+
+  .menu-icon,
+  .menu-item .menu-icon {
+    width: 26px !important;
+    height: 26px !important;
+    flex: 0 0 26px !important;
+  }
+
+  .menu-label,
+  body.compact .menu-label {
+    display: inline-block !important;
+    font-size: 12.5px !important;
+    white-space: nowrap !important;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     DARK MODE — Mobile sidebar strip & topbar overrides
+     (base.css covers desktop dark; this covers mobile-specific
+      fixed-position elements that need explicit reinforcement)
+     ══════════════════════════════════════════════════════════ */
+
+  /* Mobile topbar — dark */
+  body.dark .topbar {
+    background: #09120b !important;
+    border-bottom-color: #1d3025 !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,.35) !important;
+  }
+
+  /* Mobile sidebar nav strip — dark */
+  body.dark .sidebar {
+    background: #0d1710 !important;
+    border-bottom-color: #1d3025 !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4) !important;
+  }
+
+  /* Mobile nav items — dark */
+  body.dark .menu-item {
+    color: rgba(255,255,255,.6) !important;
+    background: transparent !important;
+  }
+
+  body.dark .menu-item:hover {
+    background: rgba(255,255,255,.08) !important;
+    color: rgba(255,255,255,.9) !important;
+  }
+
+  body.dark .menu-item .menu-icon {
+    background: rgba(255,255,255,.05) !important;
+  }
+
+  body.dark .menu-item:hover .menu-icon {
+    background: rgba(255,255,255,.12) !important;
+  }
+
+  body.dark .menu-item .menu-icon svg {
+    stroke: rgba(255,255,255,.55) !important;
+  }
+
+  body.dark .menu-item:hover .menu-icon svg {
+    stroke: rgba(255,255,255,.85) !important;
+  }
+
+  /* Active nav item — dark */
+  body.dark .menu-item.active {
+    background: #112016 !important;
+    color: #5ab87c !important;
+  }
+
+  body.dark .menu-item.active .menu-icon {
+    background: transparent !important;
+  }
+
+  body.dark .menu-item.active .menu-icon svg {
+    stroke: #5ab87c !important;
+  }
+
+  /* Main content background — dark */
+  body.dark .app-content {
+    background: var(--surface) !important;
+  }
+
+  /* Cards, stats, panels inside content — dark on mobile */
+  body.dark .stat-card,
+  body.dark .section-card,
+  body.dark .widget-card,
+  body.dark [class*="card"],
+  body.dark [class*="box"],
+  body.dark .panel {
+    background: var(--surface-2) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+  }
+
+  /* Section card headers */
+  body.dark .section-card-header {
+    border-bottom-color: var(--border) !important;
+  }
+
+  /* Activity rows */
+  body.dark .activity-row {
+    border-bottom-color: var(--border) !important;
+  }
+
+  body.dark .activity-row:hover {
+    background: var(--surface-3) !important;
+  }
+
+  /* Quick access cards */
+  body.dark .quick-card {
+    background: var(--surface-3) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+  }
+
+  body.dark .quick-card:hover {
+    background: #112016 !important;
+    border-color: var(--green-700) !important;
+  }
+
+  /* Topbar user pill */
+  body.dark .topbar-user {
+    background: rgba(255,255,255,.06) !important;
+    border-color: rgba(255,255,255,.1) !important;
+    color: var(--text-main) !important;
+  }
+
+  /* Topbar logout button */
+  body.dark .topbar-logout-btn {
+    border-color: rgba(255,255,255,.1) !important;
+    color: rgba(255,255,255,.65) !important;
+    background: rgba(255,255,255,.04) !important;
+  }
+
+  body.dark .topbar-logout-btn:hover {
+    background: rgba(181,41,62,.15) !important;
+    border-color: var(--red-500) !important;
+    color: var(--red-500) !important;
+  }
+
+  /* Topbar avatar */
+  body.dark .topbar-avatar {
+    background: var(--green-800) !important;
+    color: var(--green-200) !important;
+    border-color: var(--green-700) !important;
+  }
+
+  /* Page title & breadcrumb */
+  body.dark .page-title  { color: var(--text-main) !important; }
+  body.dark .page-sub,
+  body.dark .page-breadcrumb { color: var(--text-muted) !important; }
+
+  /* Scrollbar tint in dark strip */
+  body.dark .sidebar::-webkit-scrollbar-track { background: #0d1710; }
+  body.dark .sidebar::-webkit-scrollbar-thumb { background: #1d3025; }
+}
+
+/* ─── 5. ≤ 760px: hide logout text, shrink topbar-user ─────── */
+@media (max-width: 760px) {
+  .topbar-logout-btn span,
+  .topbar-logout-btn .logout-text { display: none !important; }
+
+  .topbar-logout-btn {
+    padding: 8px !important;
+    min-width: 38px !important;
+    justify-content: center !important;
+  }
+
+  .topbar-user { gap: 6px !important; padding: 6px 10px !important; }
+
+  #topbarUserName {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ─── 6. ≤ 640px: mobile — stack page-header, full-width toolbar ─ */
+@media (max-width: 640px) {
+  .page-header,
+  .section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .page-header-actions,
+  .toolbar,
+  .search-bar { width: 100% !important; }
+
+  .stats-grid,
+  .dashboard-grid,
+  .overview-grid { grid-template-columns: 1fr !important; }
+
+  .card,
+  .widget-card { padding: 16px !important; }
+
+  .table-wrapper,
+  .table-scroll { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+
+  table { min-width: 560px; }
+
+  #topbarUserName { display: none !important; }
+
+  /* ── Dark mode: small-phone card & table refinements ── */
+  body.dark .card,
+  body.dark .widget-card {
+    background: var(--surface-2) !important;
+    border-color: var(--border) !important;
+  }
+
+  body.dark table {
+    background: var(--surface-2) !important;
+    color: var(--text-main) !important;
+  }
+
+  body.dark th {
+    background: #09120b !important;
+    color: var(--text-muted) !important;
+    border-color: var(--border) !important;
+  }
+
+  body.dark td {
+    border-color: var(--border) !important;
+  }
+
+  body.dark tr:hover {
+    background: var(--surface-3) !important;
+  }
+
+  /* Search & toolbar inputs — dark on mobile */
+  body.dark .search-bar input,
+  body.dark .toolbar input,
+  body.dark .toolbar select {
+    background: var(--surface-3) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+  }
+
+  body.dark .search-bar input::placeholder,
+  body.dark .toolbar input::placeholder {
+    color: var(--text-light) !important;
+  }
+}
+
+/* ─── 7. ≤ 430px: phones — icon-only nav ───────────────────── */
+@media (max-width: 430px) {
+  .menu-label,
+  body.compact .menu-label { display: none !important; }
+
+  .menu-item {
+    min-width: 46px !important;
+    padding: 9px 10px !important;
+    justify-content: center !important;
+  }
+
+  .app-content { padding: 16px 12px !important; }
+}
+
+/* ─── 8. ≤ 380px: tiny phones ──────────────────────────────── */
+@media (max-width: 380px) {
+  .topbar { padding: 0 10px !important; }
+
+  .topbar-main { font-size: 13px !important; }
+  .topbar-sub  { font-size: 10px !important; }
+
+  .topbar-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 11px !important;
+  }
+
+  .menu-item { min-width: 40px !important; padding: 8px !important; }
+  .menu-icon,
+  .menu-item .menu-icon { width: 22px !important; height: 22px !important; flex: 0 0 22px !important; }
+
+  .app-content { padding: 12px 8px !important; margin-top: 112px !important; }
+
+  /* ── Dark mode: tiny phone extras ── */
+  body.dark .topbar-main { color: var(--text-main) !important; }
+  body.dark .topbar-sub  { color: var(--text-muted) !important; }
+}
+
+/* ─── 9. ≥ 1440px: wide screens ────────────────────────────── */
+@media (min-width: 1440px) {
+  .app-content { padding: var(--space-8) 48px !important; }
+
+  .stats-grid,
+  .dashboard-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}

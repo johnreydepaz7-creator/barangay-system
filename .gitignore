@@ -1,0 +1,11 @@
+node_modules/
+.env
+temp/
+*.log
+.DS_Store
+uploads/residents/
+uploads/tmp/
+Backups/
+backups/
+*.zip
+*.rar

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: barangay-management-system
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      # Set these only if you attach a paid persistent disk mounted at /var/data.
+      # Free web services do not support persistent disks.
+      # - key: RENDER_DISK_MOUNT_PATH
+      #   value: /var/data
+      # - key: UPLOADS_ROOT_DIR
+      #   value: /var/data/uploads
+      # - key: BACKUP_DIR
+      #   value: /var/data/backups

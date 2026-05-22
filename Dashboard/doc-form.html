@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Document — Barangay 59-A</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    .form-page-wrap { max-width: 760px; margin: 0 auto; }
+    .hint { font-size: 11.5px; color: var(--text-light); margin-top: 2px; line-height: 1.4; }
+    textarea.form-input { resize: vertical; min-height: 74px; line-height: 1.45; }
+
+    .form-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .form-card-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+    .form-card-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green-700), var(--green-400));
+    }
+
+    .form-card-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--green-100);
+      border: 1px solid var(--green-200);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .form-card-icon svg { stroke: var(--green-400); }
+    body.dark .form-card-icon { background: rgba(90,184,124,.15); border-color: rgba(90,184,124,.25); }
+    body.dark .form-card-icon svg { stroke: var(--green-400); }
+
+    .form-card-title {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: var(--fw-bold); color: var(--text-main);
+    }
+
+    .form-card-subtitle {
+      font-size: 11.5px; color: var(--text-muted); margin-top: 2px;
+    }
+
+    .form-card-body { padding: 28px; }
+
+    .form-section-title {
+      font-size: var(--text-xs);
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--green-700);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row.single { grid-template-columns: 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .form-label {
+      font-size: var(--text-xs);
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--text-muted);
+    }
+
+    /* Resident search */
+    .resident-search-wrap { position: relative; }
+
+    .resident-dropdown {
+      position: absolute;
+      top: calc(100% + 4px); left: 0; right: 0;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      z-index: 50;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+    }
+    .resident-dropdown.open { display: block; }
+
+    .resident-option {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--surface-2);
+      transition: background .12s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .resident-option:last-child { border-bottom: none; }
+    .resident-option:hover { background: var(--green-50); }
+    .resident-option-name { font-weight: var(--fw-semibold); color: var(--text-main); }
+    .resident-option-meta { font-size: 12px; color: var(--text-muted); }
+
+    /* Selected resident card */
+    .resident-filled {
+      display: none;
+      background: var(--green-50);
+      border: 1px solid var(--green-200);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      align-items: center;
+      gap: 12px;
+    }
+    .resident-filled.visible { display: flex; }
+
+    .resident-filled-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--green-100);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+
+    .resident-filled-info { flex: 1; }
+    .resident-filled-name { font-weight: var(--fw-bold); font-size: 14px; color: var(--text-main); }
+    .resident-filled-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    .resident-clear-btn {
+      background: none; border: none;
+      font-size: 18px; color: var(--text-light);
+      cursor: pointer; padding: 4px; line-height: 1;
+      transition: color .15s;
+    }
+    .resident-clear-btn:hover { color: var(--red-500); }
+
+    /* Date display */
+    .date-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .date-display-icon { font-size: 18px; }
+    .date-display-text { font-size: 14px; font-weight: var(--fw-semibold); color: var(--text-main); }
+    .date-display-label {
+      font-size: 11px; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: .6px;
+      font-weight: var(--fw-bold); margin-left: auto;
+    }
+
+    /* OR section */
+    .or-section { margin-top: 24px; }
+
+    /* Certification details (hidden by default) */
+    .field-details { display: none; }
+    .field-details.visible { display: grid; }
+
+    .form-card-footer {
+      padding: 20px 28px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center;
+      justify-content: flex-end; gap: 12px;
+    }
+
+    .back-link {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text-muted);
+      cursor: pointer; transition: var(--transition-fast);
+      background: none; border: none;
+      font-family: var(--font-sans); font-weight: var(--fw-medium);
+    }
+    .back-link:hover { color: var(--text-main); }
+
+    /* ── DARK MODE ─────────────────────────────────────────── */
+    body.dark {
+      --surface:     #0f1a12; --surface-2:   #162019; --surface-3:   #1d2b21;
+      --border:      #28392c; --border-dark: #324438;
+      --text-main:   #e4ede7; --text-body:   #c2d4c8;
+      --text-muted:  #7fa086; --text-light:  #536e59;
+      --green-50:    #0c1c10; --green-100:   #112016; --green-200:   #183224;
+      --gold-pale:   #1c1908; --red-100:     #1f0c0f; --blue-100:    #0c1520;
+      --shadow-xs:   0 1px 4px  rgba(0,0,0,.35);
+      --shadow-sm:   0 2px 8px  rgba(0,0,0,.45);
+      --shadow-md:   0 4px 20px rgba(0,0,0,.55);
+    }
+    body.dark .topbar            { background:#09120b; border-bottom-color:#1d3025; }
+    body.dark .sidebar           { background:#0d1710; border-right-color:#1d3025; }
+    body.dark .sidebar-divider   { background: var(--border); }
+    body.dark .app-content       { background: var(--surface); }
+    body.dark .menu-icon svg     { stroke: var(--text-muted); }
+    body.dark .menu-item.active .menu-icon svg { stroke: var(--green-400); }
+
+    /* form card */
+    body.dark .form-card         { background: var(--surface-2); border-color: var(--border); }
+    body.dark .form-card-header  { background: var(--surface-2); border-bottom-color: var(--border); }
+    body.dark .form-card-body    { background: var(--surface-2); }
+    body.dark .form-card-footer  { background: var(--surface-3); border-top-color: var(--border); }
+    body.dark .form-section-title { color: var(--green-400); border-bottom-color: var(--border); }
+    body.dark .form-label        { color: var(--text-muted); }
+    body.dark .form-input, body.dark .form-select { background: var(--surface-3); border-color: var(--border); color: var(--text-main); }
+    body.dark .form-input::placeholder { color: var(--text-light); }
+    body.dark .back-link         { color: var(--text-muted); }
+    body.dark .back-link:hover   { color: var(--text-main); }
+
+    /* resident dropdown */
+    body.dark .resident-dropdown { background: var(--surface-2); border-color: var(--border); box-shadow: var(--shadow-md); }
+    body.dark .resident-option   { border-bottom-color: var(--border); }
+    body.dark .resident-option:hover { background: var(--surface-3); }
+    body.dark .resident-option-name  { color: var(--text-main); }
+    body.dark .resident-option-meta  { color: var(--text-muted); }
+
+    /* selected resident card */
+    body.dark .resident-filled   { background: var(--surface-3); border-color: var(--border); }
+    body.dark .resident-filled-icon { background: var(--green-100); }
+    body.dark .resident-filled-icon svg { stroke: var(--green-400); }
+    body.dark .resident-filled-name { color: var(--text-main); }
+    body.dark .resident-filled-meta { color: var(--text-muted); }
+    body.dark .resident-clear-btn { color: var(--text-muted); }
+
+    /* date display */
+    body.dark .date-display      { background: var(--surface-3); border-color: var(--border); }
+    body.dark .date-display svg  { stroke: var(--green-400); }
+    body.dark .date-display-text { color: var(--text-main); }
+    body.dark .date-display-label { color: var(--text-light); }
+
+    /* page breadcrumb link */
+    body.dark #pageTitle         { color: var(--text-main); }
+  </style>
+
+  <link rel="stylesheet" href="responsive.css?v=dark-mobile-20260522">
+
+<!-- Theme folder redirect removed: dashboard pages keep the same layout; generated documents stay light mode only. -->
+
+<!-- DOCUMENT FILES REPLACED EXACT 20260521 -->
+</head>
+<body class="app-body">
+  <script>
+    (function(){
+      if ((localStorage.getItem('theme') || sessionStorage.getItem('cached_theme')) === 'dark') {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="sessionManager.manualLogout()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item active" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='file-manager.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='backup.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="app-content">
+      <div class="page-header">
+        <div>
+          <button class="back-link" onclick="location.href='documents.html'" style="margin-bottom:12px;">← Back to Documents</button>
+          <h1 class="page-title" id="pageTitle">Generate Document</h1>
+          <div class="page-breadcrumb">
+            Dashboard › <a href="documents.html" style="color:var(--green-600);">Documents</a> › <span id="breadcrumbLabel">Form</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-page-wrap">
+        <div class="form-card">
+
+          <div class="form-card-header">
+            <div class="form-card-icon" id="formIcon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></div>
+            <div>
+              <div class="form-card-title" id="formTitle">Document Form</div>
+              <div class="form-card-subtitle">Select a resident and fill in the details to generate</div>
+            </div>
+          </div>
+
+          <div class="form-card-body">
+
+            <!-- ══ CERTIFICATE PANEL (clearance / indigency / certification) ══ -->
+            <div id="certPanel">
+              <!-- RESIDENT SEARCH -->
+              <div class="form-section-title">Resident Information</div>
+              <div class="form-row single" id="searchRow">
+                <div class="form-group">
+                  <label class="form-label">Search Resident *</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" type="text" id="residentSearch"
+                      placeholder="Type name to search…" autocomplete="off">
+                    <div class="resident-dropdown" id="residentDropdown"></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Selected resident card -->
+              <div class="resident-filled" id="residentFilled">
+                <div class="resident-filled-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg></div>
+                <div class="resident-filled-info">
+                  <div class="resident-filled-name" id="filledName"></div>
+                  <div class="resident-filled-meta" id="filledMeta"></div>
+                </div>
+                <button class="resident-clear-btn" onclick="clearResident()" title="Change resident">✕</button>
+              </div>
+              <!-- Hidden inputs (auto-filled from resident data) -->
+              <input type="hidden" id="name">
+              <input type="hidden" id="age">
+              <input type="hidden" id="purok">
+              <!-- CERTIFICATION DETAILS (Barangay Certification / Indigency only) -->
+              <div class="form-row single field-details" id="detailsField">
+                <div class="form-group">
+                  <label class="form-label">Certification Details</label>
+                  <textarea class="form-input" id="details"
+                    placeholder="Describe what is being certified…"
+                    rows="3" style="resize:vertical;"></textarea>
+                </div>
+              </div>
+              <!-- PURPOSE -->
+              <div class="form-row single">
+                <div class="form-group">
+                  <label class="form-label">Purpose *</label>
+                  <input class="form-input" type="text" id="purpose"
+                    placeholder="e.g. Employment, Scholarship, Loan application">
+                </div>
+              </div>
+              <!-- DATE OF ISSUANCE (auto) -->
+              <div class="form-section-title" style="margin-top:24px;">Date of Issuance</div>
+              <div class="date-display">
+                <span class="date-display-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="14" x2="12" y2="14" stroke-width="2.5" stroke-linecap="round"/><line x1="16" y1="14" x2="16" y2="14" stroke-width="2.5" stroke-linecap="round"/><line x1="8" y1="18" x2="8" y2="18" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="18" x2="12" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+                <span class="date-display-text" id="dateText"></span>
+                <span class="date-display-label">Auto-generated · Today</span>
+              </div>
+              <!-- OR / PAYMENT DETAILS -->
+              <div id="orSection" class="or-section">
+                <div class="form-section-title">OR / Payment Details</div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">O.R. No.</label>
+                    <input class="form-input" type="text" id="orNo" placeholder="Optional">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Amount</label>
+                    <input class="form-input" type="text" id="amount" placeholder="Optional · e.g. ₱50.00">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">OR Date</label>
+                    <input class="form-input" type="date" id="orDate">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Control No.</label>
+                    <input class="form-input" type="text" id="controlNo" placeholder="Optional">
+                  </div>
+                </div>
+              </div>
+            </div><!-- /#certPanel -->
+
+            <!-- ══ SUMMONS PANEL ══ -->
+            <div id="summonsPanel" style="display:none;">
+              <div class="form-section-title">Case Information</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Barangay Case No.</label>
+                  <input class="form-input" id="s_caseNo" type="text" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">For</label>
+                  <input class="form-input" id="s_caseFor1" type="text" placeholder="Optional · Nature of case">
+                </div>
+              </div>
+              <div class="form-row single">
+                <div class="form-group">
+                  <label class="form-label">For Continuation Line</label>
+                  <input class="form-input" id="s_caseFor2" type="text" placeholder="Optional">
+                </div>
+              </div>
+              <div class="form-section-title">Parties</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Complainant/s *</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="s_complainant1" data-suggest="1" type="text" placeholder="Type name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Respondent/s *</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="s_respondent1" data-suggest="1" type="text" placeholder="Type name">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Complainant/s 2</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="s_complainant2" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Respondent/s 2</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="s_respondent2" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Complainant/s 3</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="s_complainant3" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Respondent/s 3</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="s_respondent3" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+              </div>
+              <div class="form-section-title">Summons Schedule</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Hearing Day *</label>
+                  <input class="form-input" id="s_hearingDay" type="text" placeholder="e.g. 15">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hearing Month *</label>
+                  <input class="form-input" id="s_hearingMonth" type="text" placeholder="e.g. May">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Hearing Year</label>
+                  <input class="form-input" id="s_hearingYear" type="text" value="2026">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Time *</label>
+                  <input class="form-input" id="s_hearingTime" type="text" placeholder="e.g. 9:00">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Morning / Afternoon</label>
+                  <select class="form-select" id="s_hearingPeriod">
+                    <option value="morning">morning</option>
+                    <option value="afternoon">afternoon</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Made Date</label>
+                  <div class="date-display">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span class="date-display-text" id="s_dateText"></span>
+                    <span class="date-display-label">Auto-generated</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-section-title">Officer's Return</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Service Date</label>
+                  <input class="form-input" id="s_serviceDate" type="date">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Officer</label>
+                  <input class="form-input" id="s_officer" type="text" placeholder="Optional">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Left To</label>
+                  <input class="form-input" id="s_leftTo" type="text" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Business Receiver</label>
+                  <input class="form-input" id="s_businessReceiver" type="text" placeholder="Optional">
+                </div>
+              </div>
+            </div><!-- /#summonsPanel -->
+
+            <!-- ══ COMPLAINT PANEL ══ -->
+            <div id="complaintPanel" style="display:none;">
+              <div class="form-section-title">Case Information</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Barangay Case No.</label>
+                  <input class="form-input" id="c_caseNo" type="text" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">For</label>
+                  <input class="form-input" id="c_caseFor1" type="text" placeholder="Optional · Nature of complaint">
+                </div>
+              </div>
+              <div class="form-row single">
+                <div class="form-group">
+                  <label class="form-label">For Continuation Line</label>
+                  <input class="form-input" id="c_caseFor2" type="text" placeholder="Optional">
+                </div>
+              </div>
+              <div class="form-section-title">Parties</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Complainant/s *</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="c_complainant1" data-suggest="1" type="text" placeholder="Type name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Respondent/s *</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="c_respondent1" data-suggest="1" type="text" placeholder="Type name">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Complainant/s 2</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="c_complainant2" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Respondent/s 2</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="c_respondent2" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Complainant/s 3</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="c_complainant3" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Respondent/s 3</label>
+                  <div class="resident-search-wrap">
+                    <input class="form-input" id="c_respondent3" data-suggest="1" type="text" placeholder="Optional">
+                  </div>
+                </div>
+              </div>
+              <div class="form-section-title">Complaint Details</div>
+              <div class="form-row single">
+                <div class="form-group">
+                  <label class="form-label">Violation / Complaint Details *</label>
+                  <textarea class="form-input" id="c_complaintDetails" rows="5" placeholder="Explain the complaint. Lines will fit into the document automatically." style="resize:vertical;"></textarea>
+                </div>
+              </div>
+              <div class="form-row single">
+                <div class="form-group">
+                  <label class="form-label">Relief/s Requested</label>
+                  <textarea class="form-input" id="c_reliefs" rows="4" placeholder="Optional" style="resize:vertical;"></textarea>
+                </div>
+              </div>
+              <div class="form-section-title">Schedule and Filing</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Hearing Day</label>
+                  <input class="form-input" id="c_hearingDay" type="text" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hearing Month</label>
+                  <input class="form-input" id="c_hearingMonth" type="text" placeholder="Optional">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Hearing Year</label>
+                  <input class="form-input" id="c_hearingYear" type="text" value="2026">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hearing Time</label>
+                  <input class="form-input" id="c_hearingTime" type="text" placeholder="Optional">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Made Date</label>
+                  <div class="date-display">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span class="date-display-text" id="c_dateText"></span>
+                    <span class="date-display-label">Auto-generated</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Made By</label>
+                  <input class="form-input" id="c_madeBy" type="text" value="HON. KENNETH R. MATE, RCE">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Received Date</label>
+                  <input class="form-input" id="c_receivedDate" type="date">
+                  <span class="hint">Can be changed to a future date.</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Notified Date</label>
+                  <input class="form-input" id="c_notifiedDate" type="date">
+                  <span class="hint">Can be changed to a future date.</span>
+                </div>
+              </div>
+            </div><!-- /#complaintPanel -->
+
+          </div>
+
+          <div class="form-card-footer">
+            <button class="btn-primary" onclick="generateDoc()">Generate Document →</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    /* ─── RESIDENT DATA ─────────────────────────────────────────
+       Residents are loaded from the same MongoDB records used by
+       Residents Management: GET /api/members.
+    ─────────────────────────────────────────────────────────── */
+    let ALL_RESIDENTS = [];
+
+    function calculateResidentAge(dateOfBirth) {
+      if (!dateOfBirth) return '';
+      const birth = new Date(dateOfBirth);
+      if (Number.isNaN(birth.getTime())) return '';
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      return age >= 0 ? age : '';
+    }
+
+    function buildResidentName(r) {
+      if (!r) return '';
+      if (r.name || r.fullName) return r.name || r.fullName;
+      const last = r.lastname || r.lastName || '';
+      const first = r.firstname || r.firstName || '';
+      const middle = r.middlename || r.middleName || '';
+      const ext = r.extensionName || r.ext || '';
+      const firstPart = [first, middle, ext].filter(Boolean).join(' ');
+      return [last, firstPart].filter(Boolean).join(', ');
+    }
+
+    function normalizeResident(r) {
+      if (!r) return null;
+      const name = buildResidentName(r).trim();
+      if (!name) return null;
+      const age = r.age || calculateResidentAge(r.dateOfBirth) || '';
+      return {
+        id: r._id || r.id || '',
+        name,
+        age,
+        purok: r.purok || r.zone || '',
+        gender: r.gender || '',
+        civilStatus: r.civilStatus || '',
+        phone: r.phone || r.contactNumber || '',
+        occupation: r.occupation || r.sourceOfIncome || '',
+        raw: r
+      };
+    }
+
+    async function loadResidentsFromDatabase() {
+      try {
+        const response = await fetch('/api/members', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Failed to load residents');
+        const data = await response.json();
+        ALL_RESIDENTS = Array.isArray(data) ? data.map(normalizeResident).filter(Boolean) : [];
+      } catch (error) {
+        console.error('Error loading residents from database:', error);
+        ALL_RESIDENTS = [];
+      }
+    }
+
+    /* ─── DOC TYPE ── */
+    const docMeta = {
+      clearance:     { title: 'Barangay Clearance',       hasDetails: false, hasOR: true,  isCert: true,  detailsLabel: '',                            detailsPlaceholder: '' },
+      indigency:     { title: 'Certificate of Indigency', hasDetails: true,  hasOR: false, isCert: true,  detailsLabel: 'This Further Certifies That',  detailsPlaceholder: 'e.g. the above named person belongs to an indigent family and has insufficient financial resources…' },
+      certification: { title: 'Barangay Certification',   hasDetails: true,  hasOR: true,  isCert: true,  detailsLabel: 'Certification Details',        detailsPlaceholder: 'Describe what is being certified…' },
+      summons:       { title: 'Summons',                  hasDetails: false, hasOR: false, isCert: false, isLegal: 'summons' },
+      complaint:     { title: 'Complaint',                hasDetails: false, hasOR: false, isCert: false, isLegal: 'complaint' },
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const doc  = urlParams.get('doc') || 'clearance';
+    const meta = docMeta[doc] || docMeta['clearance'];
+
+    document.getElementById('pageTitle').textContent       = 'Generate ' + meta.title;
+    document.getElementById('breadcrumbLabel').textContent = meta.title;
+    document.getElementById('formTitle').textContent       = meta.title;
+
+    /* ─── PANEL SWITCHING ── */
+    if (meta.isCert) {
+      document.getElementById('certPanel').style.display    = '';
+      document.getElementById('summonsPanel').style.display  = 'none';
+      document.getElementById('complaintPanel').style.display = 'none';
+
+      if (meta.hasDetails) {
+        const field = document.getElementById('detailsField');
+        field.classList.add('visible');
+        document.querySelector('#detailsField .form-label').textContent = meta.detailsLabel;
+        document.getElementById('details').placeholder = meta.detailsPlaceholder;
+      }
+      if (!meta.hasOR) document.getElementById('orSection').style.display = 'none';
+    } else if (meta.isLegal === 'summons') {
+      document.getElementById('certPanel').style.display    = 'none';
+      document.getElementById('summonsPanel').style.display  = '';
+      document.getElementById('complaintPanel').style.display = 'none';
+    } else if (meta.isLegal === 'complaint') {
+      document.getElementById('certPanel').style.display    = 'none';
+      document.getElementById('summonsPanel').style.display  = 'none';
+      document.getElementById('complaintPanel').style.display = '';
+    }
+
+    /* ─── REAL-TIME DATE ── */
+    const now   = new Date();
+    const day   = now.getDate();
+    const month = now.toLocaleString('en-PH', { month: 'long' });
+    const year  = now.getFullYear();
+    const todayISO = now.toISOString().slice(0, 10);
+
+    if (document.getElementById('dateText'))   document.getElementById('dateText').textContent   = `${day} ${month} ${year}`;
+    if (document.getElementById('s_dateText')) document.getElementById('s_dateText').textContent = `${day} ${month} ${year}`;
+    if (document.getElementById('c_dateText')) document.getElementById('c_dateText').textContent = `${day} ${month} ${year}`;
+    if (document.getElementById('c_receivedDate')) document.getElementById('c_receivedDate').value = todayISO;
+    if (document.getElementById('c_notifiedDate')) document.getElementById('c_notifiedDate').value = todayISO;
+    if (document.getElementById('s_serviceDate'))  document.getElementById('s_serviceDate').value  = todayISO;
+
+
+    function escapeHTML(s) {
+      return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    /* ─── CERT RESIDENT SEARCH ── */
+    let selectedResident = null;
+    const searchInput = document.getElementById('residentSearch');
+    const dropdown    = document.getElementById('residentDropdown');
+
+    function showResidentLoadState(message) {
+      if (!dropdown) return;
+      dropdown.innerHTML = `<div class="resident-option"><span class="resident-option-meta">${escapeHTML(message)}</span></div>`;
+      dropdown.classList.add('open');
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('focus', function () {
+        if (!ALL_RESIDENTS.length) showResidentLoadState('Loading residents from database...');
+      });
+      searchInput.addEventListener('input', function () {
+        const q = this.value.trim().toLowerCase();
+        dropdown.innerHTML = '';
+        if (!q) { dropdown.classList.remove('open'); return; }
+        const matches = ALL_RESIDENTS.filter(r =>
+          r.name.toLowerCase().includes(q) ||
+          String(r.purok || '').toLowerCase().includes(q) ||
+          String(r.phone || '').toLowerCase().includes(q)
+        );
+        if (matches.length === 0) {
+          dropdown.innerHTML = '<div class="resident-option"><span class="resident-option-meta">No residents found</span></div>';
+        } else {
+          matches.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'resident-option';
+            div.innerHTML = `<span class="resident-option-name">${escapeHTML(r.name)}</span>
+                             <span class="resident-option-meta">${escapeHTML(r.age)} yrs · ${escapeHTML(r.purok)}</span>`;
+            div.addEventListener('click', () => selectResident(r));
+            dropdown.appendChild(div);
+          });
+        }
+        dropdown.classList.add('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.resident-search-wrap')) dropdown.classList.remove('open');
+      });
+    }
+
+    function selectResident(r) {
+      selectedResident = r;
+      document.getElementById('name').value  = r.name;
+      document.getElementById('age').value   = r.age;
+      document.getElementById('purok').value = r.purok;
+      document.getElementById('filledName').textContent = r.name;
+      document.getElementById('filledMeta').textContent = `${r.age} years old · ${r.purok}`;
+      document.getElementById('residentFilled').classList.add('visible');
+      document.getElementById('searchRow').style.display = 'none';
+      dropdown.classList.remove('open');
+    }
+
+    function clearResident() {
+      selectedResident = null;
+      ['name','age','purok'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('residentSearch').value = '';
+      document.getElementById('residentFilled').classList.remove('visible');
+      document.getElementById('searchRow').style.display = '';
+    }
+
+    /* ─── LEGAL RESIDENT SUGGEST (summons / complaint panels) ── */
+    function setupSuggest(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const drop = document.createElement('div');
+      drop.className = 'resident-dropdown';
+      input.parentElement.appendChild(drop);
+      input.addEventListener('input', () => {
+        input.dataset.residentId = '';
+        const q = input.value.trim().toLowerCase();
+        drop.innerHTML = '';
+        if (!q) { drop.classList.remove('open'); return; }
+        const matches = ALL_RESIDENTS.filter(r =>
+          r.name.toLowerCase().includes(q) ||
+          String(r.purok || '').toLowerCase().includes(q)
+        ).slice(0, 8);
+        if (!matches.length) {
+          drop.innerHTML = '<div class="resident-option"><span class="resident-option-meta">No residents found</span></div>';
+        }
+        matches.forEach(r => {
+          const row = document.createElement('div');
+          row.className = 'resident-option';
+          row.innerHTML = `<span class="resident-option-name">${escapeHTML(r.name)}</span>
+                           <span class="resident-option-meta">${escapeHTML(r.purok || '')}</span>`;
+          row.addEventListener('click', () => { input.value = r.name; input.dataset.residentId = r.id || ''; drop.classList.remove('open'); });
+          drop.appendChild(row);
+        });
+        drop.classList.add('open');
+      });
+      document.addEventListener('click', e => {
+        if (!input.parentElement.contains(e.target)) drop.classList.remove('open');
+      });
+    }
+
+    // Wire up all legal suggest fields
+    ['s_complainant1','s_complainant2','s_complainant3',
+     's_respondent1','s_respondent2','s_respondent3',
+     'c_complainant1','c_complainant2','c_complainant3',
+     'c_respondent1','c_respondent2','c_respondent3'].forEach(setupSuggest);
+
+    loadResidentsFromDatabase().then(() => {
+      if (dropdown && dropdown.classList.contains('open') && searchInput && !searchInput.value.trim()) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    function resetGeneratedDocumentForm() {
+      // Used when returning from a generated document via "Back to Form".
+      // This prevents the browser from restoring the previous filled values.
+      selectedResident = null;
+
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+        if (el.tagName === 'SELECT') {
+          el.selectedIndex = 0;
+        } else if (el.type === 'checkbox' || el.type === 'radio') {
+          el.checked = false;
+        } else {
+          el.value = '';
+        }
+        if (el.dataset) el.dataset.residentId = '';
+      });
+
+      document.querySelectorAll('.resident-dropdown').forEach(el => {
+        el.innerHTML = '';
+        el.classList.remove('open');
+      });
+
+      const residentFilled = document.getElementById('residentFilled');
+      if (residentFilled) residentFilled.classList.remove('visible');
+      const searchRow = document.getElementById('searchRow');
+      if (searchRow) searchRow.style.display = '';
+      const filledName = document.getElementById('filledName');
+      if (filledName) filledName.textContent = '';
+      const filledMeta = document.getElementById('filledMeta');
+      if (filledMeta) filledMeta.textContent = '';
+    }
+
+    if (urlParams.get('reset') === '1') {
+      resetGeneratedDocumentForm();
+      // Keep the form clean even if the page is restored from the browser back-forward cache.
+      window.addEventListener('pageshow', function () {
+        resetGeneratedDocumentForm();
+      });
+    }
+
+    /* ─── GENERATE ── */
+    function val(id) { return (document.getElementById(id)?.value || '').trim(); }
+    function enc(obj) {
+      const p = new URLSearchParams();
+      Object.entries(obj).forEach(([k, v]) => p.set(k, v || ''));
+      return p.toString();
+    }
+
+    function residentIdOf(inputId) {
+      const el = document.getElementById(inputId);
+      if (!el) return '';
+      if (el.dataset && el.dataset.residentId) return el.dataset.residentId;
+      const typed = (el.value || '').trim().toLowerCase();
+      const match = ALL_RESIDENTS.find(r => (r.name || '').trim().toLowerCase() === typed);
+      return match ? (match.id || '') : '';
+    }
+
+    function datePartsFromISO(iso) {
+      if (!iso) return { day: '', month: '', year: '' };
+      const d = new Date(iso + 'T00:00:00');
+      return { day: String(d.getDate()), month: d.toLocaleString('en-PH', { month: 'long' }), year: String(d.getFullYear()) };
+    }
+
+
+    function themedDocumentUrl(fileName, queryString) {
+      const qs = queryString ? (queryString.startsWith('?') ? queryString : '?' + queryString) : '';
+      // Generated documents must always open in normal/light mode,
+      // even when the main dashboard is currently using dark mode.
+      return '/' + fileName + qs;
+    }
+
+    function generateDoc() {
+      if (meta.isCert) {
+        const name    = document.getElementById('name').value.trim();
+        const age     = document.getElementById('age').value.trim();
+        const purok   = document.getElementById('purok').value.trim();
+        const purpose = document.getElementById('purpose').value.trim();
+        const details = document.getElementById('details')?.value.trim() || '';
+        const orNo      = document.getElementById('orNo')?.value.trim()     || '';
+        const orDate    = document.getElementById('orDate')?.value           || '';
+        const amount    = document.getElementById('amount')?.value.trim()    || '';
+        const controlNo = document.getElementById('controlNo')?.value.trim() || '';
+        if (!name)    { alert('Please select a resident.'); return; }
+        if (!purpose) { alert('Please enter the purpose.'); return; }
+        const query = `residentId=${encodeURIComponent(selectedResident?.id || '')}`
+          + `&name=${encodeURIComponent(name)}`
+          + `&age=${encodeURIComponent(age)}`
+          + `&purok=${encodeURIComponent(purok)}`
+          + `&purpose=${encodeURIComponent(purpose)}`
+          + `&details=${encodeURIComponent(details)}`
+          + `&day=${encodeURIComponent(day)}`
+          + `&month=${encodeURIComponent(month)}`
+          + `&year=${encodeURIComponent(year)}`
+          + `&orNo=${encodeURIComponent(orNo)}`
+          + `&orDate=${encodeURIComponent(orDate)}`
+          + `&amount=${encodeURIComponent(amount)}`
+          + `&controlNo=${encodeURIComponent(controlNo)}`;
+        const url = themedDocumentUrl(`${doc}.html`, query);
+        try { Logger.log('Generated Document', meta.title + ' for ' + name, 'Documents'); } catch(e) {}
+        window.location.href = url;
+
+      } else if (meta.isLegal === 'summons') {
+        if (!val('s_respondent1')) { alert('Please add at least one respondent.'); return; }
+        if (!val('s_hearingDay') || !val('s_hearingMonth') || !val('s_hearingTime')) { alert('Please add the hearing day, month, and time.'); return; }
+        const service = datePartsFromISO(val('s_serviceDate'));
+        const data = {
+          caseNo: val('s_caseNo'), caseFor1: val('s_caseFor1'), caseFor2: val('s_caseFor2'),
+          complainant1: val('s_complainant1'), complainant2: val('s_complainant2'), complainant3: val('s_complainant3'),
+          complainant1Id: residentIdOf('s_complainant1'), complainant2Id: residentIdOf('s_complainant2'), complainant3Id: residentIdOf('s_complainant3'),
+          respondent1: val('s_respondent1'), respondent2: val('s_respondent2'), respondent3: val('s_respondent3'),
+          respondent1Id: residentIdOf('s_respondent1'), respondent2Id: residentIdOf('s_respondent2'), respondent3Id: residentIdOf('s_respondent3'),
+          hearingDay: val('s_hearingDay'), hearingMonth: val('s_hearingMonth'), hearingYear: (val('s_hearingDay') && val('s_hearingMonth')) ? (val('s_hearingYear') || '2026') : '',
+          hearingTime: val('s_hearingTime'), hearingPeriod: val('s_hearingPeriod'),
+          madeDay: String(day), madeMonth: month, madeYear: String(year), madeBy: 'HON. KENNETH R. MATE, RCE',
+          serviceDay: service.day, serviceMonth: service.month, serviceYear: service.year || String(year),
+          officer: val('s_officer'), leftTo: val('s_leftTo'), businessReceiver: val('s_businessReceiver'),
+        };
+        try { Logger.log('Generated Document', 'Summons for ' + val('s_respondent1'), 'Documents'); } catch(e) {}
+        location.href = themedDocumentUrl('summons.html', enc(data));
+
+      } else if (meta.isLegal === 'complaint') {
+        if (!val('c_complainant1')) { alert('Please add at least one complainant.'); return; }
+        if (!val('c_respondent1')) { alert('Please add at least one respondent.'); return; }
+        if (!val('c_complaintDetails')) { alert('Please add the complaint details.'); return; }
+        const received = datePartsFromISO(val('c_receivedDate'));
+        const notified = datePartsFromISO(val('c_notifiedDate'));
+        const data = {
+          caseNo: val('c_caseNo'), caseFor1: val('c_caseFor1'), caseFor2: val('c_caseFor2'),
+          complainant1: val('c_complainant1'), complainant2: val('c_complainant2'), complainant3: val('c_complainant3'),
+          complainant1Id: residentIdOf('c_complainant1'), complainant2Id: residentIdOf('c_complainant2'), complainant3Id: residentIdOf('c_complainant3'),
+          respondent1: val('c_respondent1'), respondent2: val('c_respondent2'), respondent3: val('c_respondent3'),
+          respondent1Id: residentIdOf('c_respondent1'), respondent2Id: residentIdOf('c_respondent2'), respondent3Id: residentIdOf('c_respondent3'),
+          complaintDetails: val('c_complaintDetails'), reliefs: val('c_reliefs'),
+          hearingDay: val('c_hearingDay'), hearingMonth: val('c_hearingMonth'),
+          hearingYear: (val('c_hearingDay') && val('c_hearingMonth')) ? (val('c_hearingYear') || '2026') : '', hearingTime: val('c_hearingTime'),
+          madeDay: String(day), madeMonth: month, madeYear: String(year), madeBy: val('c_madeBy') || 'HON. KENNETH R. MATE, RCE',
+          receivedDay: received.day, receivedMonth: received.month, receivedYear: received.year || String(year),
+          notifiedDay: notified.day, notifiedMonth: notified.month, notifiedYear: notified.year || String(year),
+        };
+        try { Logger.log('Generated Document', 'Complaint for ' + val('c_complainant1'), 'Documents'); } catch(e) {}
+        location.href = themedDocumentUrl('complaint.html', enc(data));
+      }
+    }
+
+    function setActive(el) {
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+    }
+  </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('button, a').forEach(function (el) {
+      if ((el.textContent || '').trim().toLowerCase().includes('back to documents')) {
+        el.onclick = function (e) {
+          e.preventDefault();
+          window.location.href = 'documents.html';
+        };
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

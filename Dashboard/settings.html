@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Barangay 59-A</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="responsive.css?v=dark-mobile-20260522">
+  <style>
+
+    /* ══════════════════════════════════════════════════════════
+       SETTINGS-SPECIFIC LAYOUT
+       ══════════════════════════════════════════════════════════ */
+    .settings-wrap {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 28px;
+      max-width: 960px;
+    }
+
+    /* ── Settings left-nav ── */
+    .settings-nav { display: flex; flex-direction: column; gap: 3px; }
+
+    .snav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: var(--fw-medium);
+      transition: var(--transition-fast);
+      user-select: none;
+    }
+    .snav-item:hover { background: var(--surface-2); color: var(--text-main); }
+
+    .snav-item.active {
+      background: var(--green-50);
+      color: var(--green-700);
+      font-weight: var(--fw-semibold);
+    }
+
+    .snav-icon {
+      width: 17px; height: 17px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: var(--transition-fast);
+    }
+
+    /* ── Settings panels ── */
+    .spanel { display: none; }
+    .spanel.active { display: block; }
+
+    /* ── Settings section card ── */
+    .scard {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xs);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .scard-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 22px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .scard-icon {
+      width: 34px; height: 34px;
+      border-radius: var(--radius-sm);
+      background: var(--green-50);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .scard-icon svg {
+      width: 16px; height: 16px;
+      stroke: var(--green-600);
+      fill: none;
+      stroke-width: 2.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .scard-title {
+      font-size: 13.5px;
+      font-weight: var(--fw-semibold);
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .scard-subtitle {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Settings row ── */
+    .srow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 17px 22px;
+      border-bottom: 1px solid var(--border);
+      transition: background .14s;
+    }
+    .srow:last-child { border-bottom: none; }
+    .srow:hover { background: var(--surface); }
+
+    .srow-label {
+      font-size: 13.5px;
+      font-weight: var(--fw-medium);
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+    .srow-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── Text inputs inside settings ── */
+    .s-input {
+      padding: 9px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13.5px;
+      color: var(--text-main);
+      background: var(--surface);
+      font-family: var(--font-sans);
+      transition: var(--transition-fast);
+      min-width: 220px;
+    }
+    .s-input:focus {
+      outline: none;
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px rgba(63,153,98,.12);
+    }
+
+    /* ── Toggle switch ── */
+    .tog {
+      position: relative;
+      width: 44px; height: 24px;
+      flex-shrink: 0;
+    }
+    .tog input { opacity:0; width:0; height:0; position:absolute; }
+    .tog-track {
+      position: absolute; inset: 0;
+      background: var(--border-dark);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .tog-track::after {
+      content:'';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 1px 4px rgba(0,0,0,.22);
+      transition: transform .2s;
+    }
+    .tog input:checked + .tog-track { background: var(--green-600); }
+    .tog input:checked + .tog-track::after { transform: translateX(20px); }
+
+    /* ── Theme cards ── */
+    .theme-row { display:flex; gap:14px; flex-wrap:wrap; padding:20px 22px; }
+
+    .theme-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      min-width: 108px;
+    }
+    .theme-card:hover { border-color: var(--green-400); transform:translateY(-2px); }
+    .theme-card.sel   { border-color: var(--green-600); background: var(--green-50); }
+
+    .theme-thumb {
+      width: 64px; height: 42px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .thumb-light { background: linear-gradient(to bottom, #1f6f43 34%, #fafaf7 34%); }
+    .thumb-dark { background: linear-gradient(to bottom, #09120b 34%, #0f1a12 34%); }
+
+    .theme-name {
+      font-size: 12.5px;
+      font-weight: var(--fw-semibold);
+      color: var(--text-main);
+    }
+    .theme-dot {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border-dark);
+      display: flex; align-items:center; justify-content:center;
+      transition: var(--transition-fast);
+    }
+    .theme-card.sel .theme-dot { background: var(--green-600); border-color: var(--green-600); }
+
+    /* ── Avatar upload ── */
+    .avatar-zone {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 20px 22px;
+    }
+    .avatar-ring {
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-500), var(--gold));
+      display: flex; align-items:center; justify-content:center;
+      font-size: 24px; font-weight: var(--fw-bold);
+      color: var(--green-900);
+      border: 3px solid var(--green-200);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: var(--transition-base);
+      flex-shrink: 0;
+    }
+    .avatar-ring:hover { transform: scale(1.04); box-shadow: var(--shadow-md); }
+    .avatar-ring img {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover; border-radius:50%;
+    }
+    .avatar-overlay {
+      position:absolute; inset:0;
+      border-radius:50%;
+      background: rgba(10,30,15,.55);
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity .2s;
+    }
+    .avatar-ring:hover .avatar-overlay { opacity:1; }
+    .avatar-overlay svg {
+      width:22px; height:22px;
+      stroke:white; fill:none;
+      stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+    }
+
+    .avatar-btns { display:flex; flex-direction:column; gap:8px; }
+    .btn-upload {
+      display: inline-flex; align-items:center; gap:7px;
+      padding: 8px 16px;
+      background: var(--green-700); color: white;
+      border: none; border-radius: var(--radius);
+      font-size:13px; font-weight:var(--fw-semibold);
+      font-family:var(--font-sans); cursor:pointer;
+      transition:var(--transition-fast);
+    }
+    .btn-upload:hover { background: var(--green-800); }
+    .btn-upload svg, .btn-remove svg {
+      width:13px; height:13px;
+      stroke:currentColor; fill:none;
+      stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round;
+    }
+    .btn-remove {
+      display: inline-flex; align-items:center; gap:7px;
+      padding: 8px 16px;
+      background: transparent; color: var(--red-500);
+      border: 1.5px solid var(--red-100);
+      border-radius: var(--radius);
+      font-size:13px; font-weight:var(--fw-medium);
+      font-family:var(--font-sans); cursor:pointer;
+      transition:var(--transition-fast);
+    }
+    .btn-remove:hover { background: var(--red-100); }
+
+    /* ── Phone prefix ── */
+    .phone-wrap { display:flex; gap:8px; align-items:center; }
+    .phone-pre {
+      padding:9px 12px;
+      border:1.5px solid var(--border);
+      border-radius:var(--radius);
+      font-size:13.5px;
+      color:var(--text-muted);
+      background:var(--surface-2);
+      font-family:var(--font-sans);
+      min-width:56px; text-align:center;
+    }
+
+    /* ── Save button ── */
+    .btn-save {
+      display: inline-flex; align-items:center; gap:7px;
+      padding: 10px 22px;
+      background: var(--green-700); color: white;
+      border: none; border-radius: var(--radius);
+      font-size:13.5px; font-weight:var(--fw-semibold);
+      font-family:var(--font-sans); cursor:pointer;
+      box-shadow:var(--shadow-sm);
+      transition:var(--transition-fast);
+    }
+    .btn-save:hover { background:var(--green-800); box-shadow:var(--shadow-md); }
+    .btn-save svg {
+      width:14px; height:14px;
+      stroke:white; fill:none;
+      stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;
+    }
+
+    /* ── OTP verify btn ── */
+    .btn-otp {
+      display: inline-flex; align-items:center; gap:7px;
+      padding: 10px 18px;
+      background: var(--green-600); color: white;
+      border: none; border-radius: var(--radius);
+      font-size:13px; font-weight:var(--fw-semibold);
+      font-family:var(--font-sans); cursor:pointer;
+      transition:var(--transition-fast);
+    }
+    .btn-otp:hover { background:var(--green-700); }
+    .btn-otp svg {
+      width:13px; height:13px;
+      stroke:white; fill:none;
+      stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round;
+    }
+
+    /* ── Danger btn ── */
+    .btn-danger {
+      display:inline-flex; align-items:center; gap:7px;
+      padding:8px 18px;
+      background:transparent; color:var(--red-500);
+      border:1.5px solid var(--red-100);
+      border-radius:var(--radius);
+      font-size:13px; font-weight:var(--fw-medium);
+      font-family:var(--font-sans); cursor:pointer;
+      transition:var(--transition-fast);
+    }
+    .btn-danger:hover { background:var(--red-100); }
+
+    /* ── Readonly pill ── */
+    .readonly-pill {
+      padding:9px 13px;
+      border:1.5px solid var(--border);
+      border-radius:var(--radius);
+      font-size:13.5px;
+      color:var(--text-muted);
+      background:var(--surface-2);
+      min-width:220px;
+    }
+
+    /* ── OTP badge ── */
+    .otp-badge {
+      display:flex; align-items:center; gap:7px;
+      padding:9px 13px;
+      border:1.5px solid var(--green-200);
+      border-radius:var(--radius);
+      background:var(--green-50);
+      color:var(--green-700);
+      font-size:13px; font-weight:var(--fw-semibold);
+      min-width:160px;
+    }
+    .otp-badge svg {
+      width:13px; height:13px;
+      stroke:currentColor; fill:none;
+      stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;
+    }
+
+    /* ── Session row ── */
+    .session-device {
+      display:flex; align-items:center; gap:14px; flex:1;
+    }
+    .session-icon-wrap {
+      width:40px; height:40px;
+      border-radius:var(--radius);
+      background:var(--green-50);
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    .session-icon-wrap svg {
+      width:18px; height:18px;
+      stroke:var(--green-600); fill:none;
+      stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+    }
+
+    /* ── Danger section ── */
+    .scard.danger { border-color: var(--red-100); }
+    .scard.danger .scard-head { background:#fff6f7; border-bottom-color:#f5dce0; }
+    .scard.danger .scard-icon { background:var(--red-100); }
+    .scard.danger .scard-icon svg { stroke:var(--red-500); }
+
+    /* ── Sign out card styled like session card ── */
+    .signout-card {
+      margin-top: 18px;
+    }
+    .signout-card .scard-icon {
+      background: rgba(181,41,62,.10);
+    }
+    .signout-card .scard-icon svg {
+      stroke: var(--red-500);
+    }
+    .signout-card .scard-title {
+      color: var(--text);
+    }
+    .signout-card .scard-subtitle {
+      color: var(--text-muted);
+    }
+    body.dark .signout-card .scard-icon {
+      background: rgba(181,41,62,.18);
+    }
+    body.dark .signout-card .srow {
+      background: transparent;
+      border-top: 1px solid var(--border);
+      border-bottom: none;
+    }
+    body.dark .signout-card .scard-head {
+      border-bottom-color: var(--border);
+    }
+
+    /* ── Page header divider ── */
+    .page-header {
+      border-bottom:1px solid var(--border);
+      margin-bottom:28px;
+      padding-bottom:20px;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position:fixed; bottom:28px; right:28px;
+      background:var(--green-900); color:white;
+      padding:13px 20px;
+      border-radius:var(--radius-md);
+      font-size:13.5px; font-weight:var(--fw-medium);
+      display:flex; align-items:center; gap:10px;
+      box-shadow:var(--shadow-lg);
+      z-index:999;
+      transform:translateY(80px); opacity:0;
+      transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast svg {
+      width:16px; height:16px;
+      stroke:white; fill:none;
+      stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;
+    }
+
+    /* ── DARK MODE ────────────────────────────────────────── */
+    body.dark {
+      --surface:     #0f1a12; --surface-2:   #162019; --surface-3:   #1d2b21;
+      --border:      #28392c; --border-dark: #324438;
+      --text-main:   #e4ede7; --text-body:   #c2d4c8;
+      --text-muted:  #7fa086; --text-light:  #536e59;
+      --green-50:    #0c1c10; --green-100:   #112016; --green-200:   #183224;
+      --shadow-xs:   0 1px 4px  rgba(0,0,0,.35);
+      --shadow-sm:   0 2px 8px  rgba(0,0,0,.45);
+      --shadow-md:   0 4px 20px rgba(0,0,0,.55);
+    }
+    body.dark .topbar              { background: #09120b; border-bottom-color: #1d3025; }
+    body.dark .sidebar             { background: #0d1710; border-right-color: #1d3025; }
+    body.dark .sidebar-label       { color: #5ab87c; }
+    body.dark .sidebar-divider     { background: rgba(255,255,255,.08); }
+    body.dark .menu-item           { color: rgba(255,255,255,.6); }
+    body.dark .menu-item .menu-icon { background: rgba(255,255,255,.05); }
+    body.dark .menu-item:hover     { background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); }
+    body.dark .menu-item:hover .menu-icon { background: rgba(255,255,255,.12); }
+    body.dark .menu-item.active    { background: #112016; color: #5ab87c; box-shadow: var(--shadow-sm); }
+    body.dark .menu-item.active .menu-icon { background: transparent; color: #5ab87c; }
+    body.dark .menu-item.active .menu-icon svg { stroke: #5ab87c; }
+    body.dark .menu-item.active::before { background: var(--gold); }
+    body.dark .app-content         { background: var(--surface); }
+    body.dark .page-title          { color: var(--text-main); }
+    body.dark .page-breadcrumb     { color: var(--text-muted); }
+    body.dark .snav-item           { color: var(--text-muted); }
+    body.dark .snav-item:hover     { background: var(--surface-2); color: var(--text-main); }
+    body.dark .snav-item.active    { background: var(--green-50); color: var(--green-700); }
+    body.dark .scard               { background: var(--surface-2); border-color: var(--border); }
+    body.dark .scard-head          { border-bottom-color: var(--border); }
+    body.dark .scard.danger        { background: var(--surface-2); border-color:#5a1e28; }
+    body.dark .scard.danger .scard-head { background:#2a0f13; border-bottom-color:#5a1e28; }
+    body.dark .scard.danger .scard-icon { background:#3a1520; }
+    body.dark .scard.danger .scard-title { color: var(--text-main); }
+    body.dark .scard.danger .scard-subtitle,
+    body.dark .scard.danger .srow-hint { color: var(--text-muted); }
+    body.dark .scard-subtitle      { color: var(--text-muted); }
+    body.dark .srow                { border-bottom-color: var(--border); }
+    body.dark .srow:hover          { background: var(--surface-3); }
+    body.dark .srow-label          { color: var(--text-main); }
+    body.dark .srow-hint           { color: var(--text-muted); }
+    body.dark .s-input             { background: var(--surface-3); border-color: var(--border); color: var(--text-main); }
+    body.dark .s-input:focus       { border-color: var(--green-500); }
+    body.dark .readonly-pill       { background: var(--surface-3); border-color: var(--border); color: var(--text-muted); }
+    body.dark .theme-card          { border-color: var(--border); background: var(--surface-2); }
+    body.dark .theme-card:hover    { border-color: var(--green-400); }
+    body.dark .theme-name          { color: var(--text-main); }
+    body.dark .theme-dot           { border-color: var(--border-dark); }
+    body.dark .theme-card.sel      { border-color: var(--green-600); background: var(--surface-3); }
+    body.dark .avatar-ring         { border-color: var(--green-200); background: linear-gradient(135deg, #1f6f43, #c9a84c); }
+    body.dark .phone-pre           { background: var(--surface-3); border-color: var(--border); color: var(--text-muted); }
+    body.dark .btn-secondary, body.dark .btn-save { background: var(--green-700); }
+    body.dark .btn-secondary:hover, body.dark .btn-save:hover { background: var(--green-800); }
+    body.dark .btn-danger          { border-color: var(--red-100); color: var(--red-500); }
+    body.dark .btn-danger:hover    { background: var(--red-100); }
+    body.dark .tog-track           { background: var(--border-dark); }
+    body.dark .tog input:checked + .tog-track { background: var(--green-600); }
+    body.dark .tog-track::after    { background: white; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+
+    /* ── Active sessions list with scrollbar ── */
+    #sessionList {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    #sessionList::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #sessionList::-webkit-scrollbar-track {
+      background: var(--surface-2);
+    }
+
+    #sessionList::-webkit-scrollbar-thumb {
+      background: var(--border-dark);
+      border-radius: 3px;
+    }
+
+    #sessionList::-webkit-scrollbar-thumb:hover {
+      background: var(--border);
+    }
+
+  </style>
+  <script src="/messagebox.js"></script>
+</head>
+<body class="app-body">
+  <!-- Apply cached theme immediately to prevent flash — default is always LIGHT -->
+  <script>
+    (function() {
+      var theme = sessionStorage.getItem('cached_theme') || localStorage.getItem('theme') || 'light';
+      if (theme === 'dark') document.body.classList.add('dark');
+    })();
+  </script>
+
+  <!-- ══ TOPBAR ═══════════════════════════════════════════════ -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><img src="./images/barangay-logo.png" alt="Barangay Logo"></div>
+      <div class="topbar-titles">
+        <div class="topbar-main">Barangay 59-A, Sampaguita Village</div>
+        <div class="topbar-sub">Tacloban City · Management System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">JD</div>
+        <span id="topbarUserName">Juan Dela Cruz</span>
+      </div>
+      <button class="topbar-logout-btn" onclick="settingsSignOut()" title="Logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- ══ SIDEBAR ═══════════════════════════════════════════════ -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="menu-item" onclick="location.href='overview.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="menu-label">Overview</span>
+        </div>
+        <div class="menu-item" onclick="location.href='residents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20c0-3.31 2.69-6 6-6s6 2.69 6 6"/><circle cx="18" cy="8" r="2.5"/><path d="M15.2 20c0-2.42 1.44-4.5 3.3-5.1"/></svg>
+          </div>
+          <span class="menu-label">Residents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='documents.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <span class="menu-label">Documents</span>
+        </div>
+        <div class="menu-item" onclick="location.href='file-manager.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2.414-.646l-5.106-6.564a2 2 0 0 0-1.38-.646H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v.5M2 21h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <span class="menu-label">File Manager</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <div class="menu-item" onclick="location.href='activity-logs.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <span class="menu-label">Activity Logs</span>
+        </div>
+        <div class="menu-item" onclick="location.href='backup.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <span class="menu-label">Backup</span>
+        </div>
+        <div class="menu-item active" onclick="location.href='settings.html'">
+          <div class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="menu-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+      </div>
+    </div><!-- /sidebar -->
+
+    <!-- ══ MAIN CONTENT ══════════════════════════════════════════ -->
+    <div class="app-content">
+
+      <div class="page-header">
+        <h1 class="page-title">Settings</h1>
+        <div class="page-breadcrumb">Dashboard › <span>Settings</span></div>
+      </div>
+
+      <div class="settings-wrap">
+
+        <!-- ── Left nav ──────────────────────────────────────── -->
+        <nav class="settings-nav">
+
+          <div class="snav-item active" onclick="showPanel('profile',this)">
+            <svg class="snav-icon" viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/>
+            </svg>
+            Profile
+          </div>
+          <div class="snav-item" onclick="showPanel('appearance',this)">
+            <svg class="snav-icon" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+            Appearance
+          </div>
+
+          <div class="snav-item" onclick="showPanel('privacy',this)">
+            <svg class="snav-icon" viewBox="0 0 24 24">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+            Privacy
+          </div>
+
+          <div class="snav-item" onclick="showPanel('session',this)">
+            <svg class="snav-icon" viewBox="0 0 24 24">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Sessions
+          </div>
+
+        </nav>
+
+        <!-- ── Right panels ──────────────────────────────────── -->
+        <div style="min-width:0;">
+
+          <!-- PROFILE -->
+          <div id="panel-profile" class="spanel active">
+
+            <div class="scard">
+              <div class="scard-head">
+                <div class="scard-icon">
+                  <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+                <div>
+                  <div class="scard-title">Profile Photo</div>
+                  <div class="scard-subtitle">Shown in the topbar and throughout the system</div>
+                </div>
+              </div>
+              <div class="avatar-zone">
+                <div class="avatar-ring" id="avatarRing" onclick="document.getElementById('avatarFile').click()">
+                  <span id="avatarInitials">JD</span>
+                  <img id="avatarImg" src="" style="display:none;" alt="">
+                  <div class="avatar-overlay">
+                    <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </div>
+                </div>
+                <div class="avatar-btns">
+                  <button class="btn-upload" onclick="document.getElementById('avatarFile').click()">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Upload Photo
+                  </button>
+                  <button class="btn-remove" onclick="removeAvatar()">
+                    <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                    Remove
+                  </button>
+                </div>
+                <input type="file" id="avatarFile" accept="image/*" style="display:none" onchange="handleAvatar(event)">
+              </div>
+            </div>
+
+            <div class="scard">
+              <div class="scard-head">
+                <div class="scard-icon">
+                  <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                  <div class="scard-title">Account Information</div>
+                  <div class="scard-subtitle">View and update your account details</div>
+                </div>
+              </div>
+
+              <div class="srow">
+                <div>
+                  <div class="srow-label">Full Name</div>
+                  <div class="srow-hint">Your official name as shown in the system</div>
+                </div>
+                <div id="fullNameDisplay" style="font-size: 14px; font-weight: 500; color: var(--text-main);">Loading...</div>
+              </div>
+
+              <div class="srow">
+                <div>
+                  <div class="srow-label">Role</div>
+                  <div class="srow-hint">Your assigned role — contact an admin to change</div>
+                </div>
+                <div class="readonly-pill" id="roleDisplay">Loading...</div>
+              </div>
+
+              <div class="srow" style="justify-content:flex-end; border-bottom:none;">
+                <button class="btn-secondary" id="editInfoBtn" onclick="toggleEditMode()" style="padding: 10px 20px;">
+                  Edit Account Information
+                </button>
+              </div>
+
+              <div id="editFormSection" style="display:none;">
+                <div class="srow">
+                  <div>
+                    <div class="srow-label">First Name</div>
+                    <div class="srow-hint">Your given name</div>
+                  </div>
+                  <input class="s-input" id="firstNameInput" type="text" value="" placeholder="Enter first name">
+                </div>
+
+                <div class="srow">
+                  <div>
+                    <div class="srow-label">Middle Name</div>
+                    <div class="srow-hint">Optional - Your middle name</div>
+                  </div>
+                  <input class="s-input" id="middleNameInput" type="text" value="" placeholder="Enter middle name (optional)">
+                </div>
+
+                <div class="srow">
+                  <div>
+                    <div class="srow-label">Last Name</div>
+                    <div class="srow-hint">Your family name</div>
+                  </div>
+                  <input class="s-input" id="lastNameInput" type="text" value="" placeholder="Enter last name">
+                </div>
+
+                <div class="srow" style="justify-content:flex-end; border-bottom:none;">
+                  <button class="btn-save" onclick="saveAccountInfo()">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Save Changes
+                  </button>
+                  <button class="btn-danger" onclick="cancelEditMode()" style="margin-left: 8px;">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /panel-profile -->
+          <!-- APPEARANCE -->
+          <div id="panel-appearance" class="spanel">
+
+            <div class="scard">
+              <div class="scard-head">
+                <div class="scard-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </div>
+                <div>
+                  <div class="scard-title">Color Mode</div>
+                  <div class="scard-subtitle">Choose the look that's most comfortable for you</div>
+                </div>
+              </div>
+              <div class="theme-row">
+
+                <div class="theme-card sel" id="tc-light" onclick="setTheme('light')">
+                  <div class="theme-thumb thumb-light"></div>
+                  <div class="theme-name">Light</div>
+                  <div class="theme-dot" id="td-light">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                </div>
+
+                <div class="theme-card" id="tc-dark" onclick="setTheme('dark')">
+                  <div class="theme-thumb thumb-dark"></div>
+                  <div class="theme-name">Dark</div>
+                  <div class="theme-dot" id="td-dark"></div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="scard">
+              <div class="scard-head">
+                <div class="scard-icon">
+                  <svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                </div>
+                <div>
+                  <div class="scard-title">Display Preferences</div>
+                  <div class="scard-subtitle">Adjust how information is laid out</div>
+                </div>
+              </div>
+
+              <div class="srow" style="border-bottom:none;">
+                <div>
+                  <div class="srow-label">Compact View</div>
+                  <div class="srow-hint">Tighter spacing to show more content per screen</div>
+                </div>
+                <label class="tog"><input type="checkbox" id="compactMode" onchange="toggleCompact(this)"><div class="tog-track"></div></label>
+              </div>
+
+            </div>
+
+          </div><!-- /panel-appearance -->
+
+
+          <!-- PRIVACY -->
+          <div id="panel-privacy" class="spanel">
+            <div class="scard">
+              <div class="scard-head">
+                <div class="scard-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M9 12l2 2 4-4"/></svg>
+                </div>
+                <div>
+                  <div class="scard-title">Privacy</div>
+                  <div class="scard-subtitle">Control account privacy and automatic sign out</div>
+                </div>
+              </div>
+
+              <div class="srow" style="border-bottom:none;">
+                <div>
+                  <div class="srow-label">Auto-Logout Timeout</div>
+                  <div class="srow-hint">Sign out automatically after inactivity</div>
+                </div>
+                <select class="s-input" id="autoLogoutMinutes" onchange="setAutoLogoutTimeout(this.value)" style="max-width:220px;">
+                  <option value="1">1 minute</option>
+                  <option value="5">5 minutes</option>
+                  <option value="10">10 minutes</option>
+                  <option value="15">15 minutes</option>
+                  <option value="30">30 minutes</option>
+                  <option value="60">1 hour</option>
+                  <option value="120">2 hours</option>
+                </select>
+              </div>
+            </div>
+          </div><!-- /panel-privacy -->
+
+          <!-- SESSIONS -->
+          <div id="panel-session" class="spanel">
+
+            <div class="scard">
+              <div class="scard-head">
+                <div class="scard-icon">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <div>
+                  <div class="scard-title">Active Sessions</div>
+                  <div class="scard-subtitle">Devices currently logged in to your account</div>
+                </div>
+              </div>
+
+              <div id="sessionList"></div>
+
+              <div class="srow" style="justify-content:flex-end; border-bottom:none;">
+                <button class="btn-danger" onclick="signOutOthers()">
+                  Sign Out All Other Sessions
+                </button>
+              </div>
+            </div>
+
+            <div class="scard signout-card">
+              <div class="scard-head">
+                <div class="scard-icon">
+                  <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </div>
+                <div>
+                  <div class="scard-title">Sign Out</div>
+                  <div class="scard-subtitle">End your current session</div>
+                </div>
+              </div>
+              <div class="srow" style="border-bottom:none;">
+                <div>
+                  <div class="srow-label">Log out from this device</div>
+                  <div class="srow-hint">You'll need to verify via OTP when you log back in</div>
+                </div>
+                <button class="btn-danger" onclick="settingsSignOut()">
+                  Sign Out
+                </button>
+              </div>
+            </div>
+
+          </div><!-- /panel-session -->
+
+        </div><!-- /right panels -->
+      </div><!-- /settings-wrap -->
+
+    </div><!-- /app-content -->
+  </div><!-- /app-container -->
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg">Saved.</span>
+  </div>
+
+  <script src="session-manager.js"></script>
+  <script src="session.js"></script>
+  <script src="logger.js"></script>
+  <script>
+    /* ── Settings nav panels ───────────────────────────── */
+    function showPanel(name, el) {
+      document.querySelectorAll('.spanel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.snav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('panel-' + name).classList.add('active');
+      el.classList.add('active');
+    }
+
+    /* ── Avatar ────────────────────────────────────────── */
+    async function handleAvatar(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select a valid image file.');
+        e.target.value = '';
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Image is too large. Please upload a photo below 2 MB.');
+        e.target.value = '';
+        return;
+      }
+
+      const phone = window.CURRENT_PROFILE?.phone || sessionStorage.getItem('otp_phone');
+      if (!phone) {
+        showToast('Phone number not found. Please refresh the page.');
+        e.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async ev => {
+        const imageData = ev.target.result;
+        try {
+          const response = await fetch('/api/accounts/profile/photo', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone, profileImage: imageData })
+          });
+          const data = await response.json();
+
+          if (!data.success) {
+            showToast(data.message || 'Failed to update profile photo.');
+            return;
+          }
+
+          applyAvatarImage(imageData);
+          if (window.CURRENT_PROFILE) window.CURRENT_PROFILE.profileImage = imageData;
+          const storedUser = JSON.parse(sessionStorage.getItem('current_user') || '{}');
+          storedUser.profileImage = imageData;
+          sessionStorage.setItem('current_user', JSON.stringify(storedUser));
+          showToast('Profile photo updated.');
+        } catch (error) {
+          console.error('Profile photo upload error:', error);
+          showToast('Error uploading profile photo. Please try again.');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function applyAvatarImage(imageData) {
+      const img = document.getElementById('avatarImg');
+      if (img) {
+        img.src = imageData;
+        img.style.display = 'block';
+      }
+      const initials = document.getElementById('avatarInitials');
+      if (initials) initials.style.display = 'none';
+      const tb = document.getElementById('topbarAvatar');
+      if (tb) tb.innerHTML = `<img src="${imageData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">`;
+    }
+
+    function applyAvatarInitials(fullName) {
+      const initialsText = getInitials(fullName || document.getElementById('fullNameDisplay')?.textContent || 'User');
+      const img = document.getElementById('avatarImg');
+      if (img) {
+        img.src = '';
+        img.style.display = 'none';
+      }
+      const initials = document.getElementById('avatarInitials');
+      if (initials) {
+        initials.textContent = initialsText;
+        initials.style.display = '';
+      }
+      const tb = document.getElementById('topbarAvatar');
+      if (tb) tb.textContent = initialsText;
+    }
+
+    async function removeAvatar() {
+      const phone = window.CURRENT_PROFILE?.phone || sessionStorage.getItem('otp_phone');
+      if (!phone) {
+        showToast('Phone number not found. Please refresh the page.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/accounts/profile/photo', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone })
+        });
+        const data = await response.json();
+
+        if (!data.success) {
+          showToast(data.message || 'Failed to remove profile photo.');
+          return;
+        }
+
+        document.getElementById('avatarFile').value = '';
+        applyAvatarInitials(document.getElementById('fullNameDisplay').textContent);
+        if (window.CURRENT_PROFILE) window.CURRENT_PROFILE.profileImage = '';
+        const storedUser = JSON.parse(sessionStorage.getItem('current_user') || '{}');
+        storedUser.profileImage = '';
+        sessionStorage.setItem('current_user', JSON.stringify(storedUser));
+        showToast('Profile photo removed.');
+      } catch (error) {
+        console.error('Profile photo remove error:', error);
+        showToast('Error removing profile photo. Please try again.');
+      }
+    }
+
+    function getInitials(name) {
+      return name.trim().split(/\s+/).map(w => w[0]).join('').slice(0,2).toUpperCase();
+    }
+
+    /* ── Load user profile from database ───────────────── */
+    async function loadProfile() {
+      try {
+        const phone = sessionStorage.getItem('otp_phone');
+        if (!phone) {
+          console.error('Phone number not found in session');
+          document.getElementById('roleDisplay').textContent = 'Error: No phone found';
+          return;
+        }
+
+        console.log('Loading profile for phone:', phone);
+        
+        // Try with leading 0 removed first (standard format)
+        let phoneToQuery = phone.replace(/^0/, '');
+        if (phoneToQuery.length !== 10) {
+          phoneToQuery = phone; // Use original if not standard
+        }
+
+        const response = await fetch(`/api/accounts/profile/get?phone=${encodeURIComponent(phoneToQuery)}`);
+        const data = await response.json();
+
+        console.log('Profile response:', data);
+
+        if (data.success && data.account) {
+          const account = data.account;
+          
+          // Display form fields with database data
+          const fullName = `${account.firstName} ${account.middleName || ''} ${account.lastName}`.trim();
+          document.getElementById('fullNameDisplay').textContent = fullName;
+          document.getElementById('firstNameInput').value = account.firstName || '';
+          document.getElementById('middleNameInput').value = account.middleName || '';
+          document.getElementById('lastNameInput').value = account.lastName || '';
+          const phoneField = document.getElementById('phone');
+          if (phoneField) phoneField.value = account.phone.replace(/^0/, '');
+          
+          // Set role display
+          document.getElementById('roleDisplay').textContent = account.role || 'Staff';
+          
+          // Update topbar
+          document.getElementById('topbarUserName').textContent = fullName;
+          document.getElementById('avatarInitials').textContent = getInitials(fullName);
+          if (account.profileImage) {
+            applyAvatarImage(account.profileImage);
+          } else {
+            applyAvatarInitials(fullName);
+          }
+          
+          // Store current user data for later reference
+          window.CURRENT_PROFILE = data.account;
+          const storedUser = JSON.parse(sessionStorage.getItem('current_user') || '{}');
+          storedUser.profileImage = account.profileImage || '';
+          sessionStorage.setItem('current_user', JSON.stringify(storedUser));
+          console.log('Profile loaded successfully');
+        } else {
+          console.error('Failed to load profile:', data.message);
+          document.getElementById('roleDisplay').textContent = 'Error loading profile';
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        document.getElementById('roleDisplay').textContent = 'Error: ' + error.message;
+      }
+    }
+
+    /* ── Save profile to database ──────────────────────── */
+    async function saveAccountInfo() {
+      try {
+        const firstName = document.getElementById('firstNameInput').value.trim();
+        const middleName = document.getElementById('middleNameInput').value.trim();
+        const lastName = document.getElementById('lastNameInput').value.trim();
+        
+        if (!firstName || !lastName) { 
+          showToast('Please enter your first name and last name.'); 
+          return; 
+        }
+
+        const fullName = `${firstName} ${middleName || ''} ${lastName}`.trim();
+
+        const phone = window.CURRENT_PROFILE?.phone || sessionStorage.getItem('otp_phone');
+
+        if (!phone) {
+          showToast('Phone number not found. Please refresh the page.');
+          return;
+        }
+
+        const response = await fetch('/api/accounts/profile/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: phone,
+            firstName: firstName,
+            lastName: lastName,
+            middleName: middleName
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          window.CURRENT_PROFILE = data.account;
+          const storedUser = JSON.parse(sessionStorage.getItem('current_user') || '{}');
+          storedUser.profileImage = account.profileImage || '';
+          sessionStorage.setItem('current_user', JSON.stringify(storedUser));
+          document.getElementById('fullNameDisplay').textContent = fullName;
+          document.getElementById('topbarUserName').textContent = fullName;
+          document.getElementById('avatarInitials').textContent = getInitials(fullName);
+          if (!window.CURRENT_PROFILE?.profileImage) {
+            applyAvatarInitials(fullName);
+          }
+          
+          cancelEditMode();
+          showToast('Profile updated successfully.');
+        } else {
+          showToast(data.message || 'Failed to update profile.');
+        }
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        showToast('Error saving profile. Please try again.');
+      }
+    }
+
+    /* ── Toggle edit mode for account information ─────── */
+    let isEditingAccount = false;
+    function toggleEditMode() {
+      const editInfoBtn = document.getElementById('editInfoBtn');
+      const editFormSection = document.getElementById('editFormSection');
+      const firstNameInput = document.getElementById('firstNameInput');
+      
+      isEditingAccount = !isEditingAccount;
+      
+      if (isEditingAccount) {
+        // Show edit form
+        editFormSection.style.display = 'block';
+        editInfoBtn.style.display = 'none';
+        firstNameInput.focus();
+      }
+    }
+
+    function cancelEditMode() {
+      const editInfoBtn = document.getElementById('editInfoBtn');
+      const editFormSection = document.getElementById('editFormSection');
+      const firstNameInput = document.getElementById('firstNameInput');
+      const middleNameInput = document.getElementById('middleNameInput');
+      const lastNameInput = document.getElementById('lastNameInput');
+      
+      isEditingAccount = false;
+      
+      // Hide edit form
+      editFormSection.style.display = 'none';
+      editInfoBtn.style.display = 'block';
+      
+      // Reset inputs to current values
+      if (window.CURRENT_PROFILE) {
+        firstNameInput.value = window.CURRENT_PROFILE.firstName || '';
+        middleNameInput.value = window.CURRENT_PROFILE.middleName || '';
+        lastNameInput.value = window.CURRENT_PROFILE.lastName || '';
+      }
+    }
+
+    /* ── Change Phone Number (with database update) ───── */
+    async function editPhoneNumber() {
+      const phoneInput = document.getElementById('phone');
+      const currentNumber = phoneInput.value;
+      const newNumber = await BrgyMessageBox.prompt('Enter new phone number (without the +63):', currentNumber);
+      
+      if (newNumber === null) {
+        return; // User cancelled
+      }
+      
+      const cleaned = newNumber.trim().replace(/\s+/g, '');
+      
+      if (cleaned.length !== 10 || !/^\d+$/.test(cleaned)) {
+        showToast('Please enter a valid 10-digit number.', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/accounts/profile/phone', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentPhone: currentNumber,
+            newPhone: cleaned
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          phoneInput.value = cleaned;
+          sessionStorage.setItem('otp_phone', cleaned);
+          window.CURRENT_PROFILE.phone = cleaned;
+          showToast('Phone number updated to +63 ' + cleaned);
+        } else {
+          showToast(data.message || 'Failed to update phone number.');
+        }
+      } catch (error) {
+        console.error('Error updating phone:', error);
+        showToast('Error updating phone number. Please try again.');
+      }
+    }
+
+    // Load profile when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadProfile);
+    } else {
+      // If DOM is already loaded, call immediately
+      loadProfile();
+    }
+
+    /* ── Compact mode ──────────────────────────────────── */
+    function toggleCompact(el) {
+      setCompactMode(el.checked);
+    }
+
+    /* Load and restore compact mode from database */
+    async function restoreCompactModeSetting() {
+      try {
+        const phone = sessionStorage.getItem('otp_phone');
+        if (!phone) {
+          // Default to unchecked if no phone found
+          const cb = document.getElementById('compactMode');
+          if (cb) cb.checked = false;
+          return;
+        }
+
+        const response = await fetch(`/api/accounts/settings/${phone}`);
+        const data = await response.json();
+
+        if (data.success && data.settings) {
+          const cb = document.getElementById('compactMode');
+          if (cb) cb.checked = data.settings.compactMode || false;
+        } else {
+          const cb = document.getElementById('compactMode');
+          if (cb) cb.checked = false;
+        }
+      } catch (error) {
+        console.error('Error loading compact mode setting:', error);
+        const cb = document.getElementById('compactMode');
+        if (cb) cb.checked = false;
+      }
+    }
+
+    // Restore compact mode on settings page load
+    restoreCompactModeSetting();
+
+    /* ── Auto-logout timeout ───────────────────────────── */
+    async function restoreAutoLogoutSetting() {
+      try {
+        const phone = sessionStorage.getItem('otp_phone');
+        const select = document.getElementById('autoLogoutMinutes');
+        if (!select || !phone) return;
+
+        const response = await fetch(`/api/accounts/settings/${phone}`);
+        const data = await response.json();
+        const minutes = data.success && data.settings ? (data.settings.autoLogoutMinutes || 10) : 10;
+        select.value = String(minutes);
+        updateSessionManagerTimeout(minutes);
+      } catch (error) {
+        console.error('Error loading auto-logout setting:', error);
+      }
+    }
+
+    async function setAutoLogoutTimeout(value) {
+      const minutes = Number(value) || 10;
+      let phone = sessionStorage.getItem('otp_phone');
+      if (!phone) {
+        showToast('Phone number not found. Please refresh the page.');
+        return;
+      }
+
+      phone = phone.trim().replace(/\s+/g, '').replace(/^0/, '');
+      try {
+        const response = await fetch(`/api/accounts/settings/${phone}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ autoLogoutMinutes: minutes })
+        });
+        const data = await response.json();
+        if (data.success) {
+          updateSessionManagerTimeout(minutes);
+          await fetch('/api/session/activity', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+          showToast(`Auto-logout timeout set to ${minutes === 60 ? '1 hour' : minutes === 120 ? '2 hours' : minutes + ' minutes'}.`);
+        } else {
+          showToast(data.message || 'Failed to save auto-logout timeout.');
+        }
+      } catch (error) {
+        console.error('Error saving auto-logout setting:', error);
+        showToast('Error saving auto-logout timeout. Please try again.');
+      }
+    }
+
+    function updateSessionManagerTimeout(minutes) {
+      if (window.SESSION_CONFIG) {
+        window.SESSION_CONFIG.ACTIVITY_TIMEOUT = minutes * 60 * 1000;
+        window.SESSION_CONFIG.WARNING_BEFORE_LOGOUT = Math.min(60 * 1000, Math.max(15 * 1000, Math.floor(window.SESSION_CONFIG.ACTIVITY_TIMEOUT * 0.2)));
+      }
+      if (window.sessionManager && window.sessionManager.isLoggedIn) {
+        window.sessionManager.lastActivityTime = Date.now();
+        window.sessionManager.warningShown = false;
+        window.sessionManager.startIdleTimeout();
+      }
+    }
+
+    restoreAutoLogoutSetting();
+
+
+
+
+    async function settingsSignOut() {
+      const confirmed = !window.BrgyMessageBox || await BrgyMessageBox.confirm('Are you sure you want to sign out?');
+      if (!confirmed) return;
+
+      try {
+        sessionStorage.setItem('logoutReason', 'User logged out');
+      } catch (e) {}
+
+      try {
+        await fetch('/api/session/logout', {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}'
+        });
+      } catch (error) {
+        console.error('Settings sign out error:', error);
+      }
+
+      try {
+        const reason = sessionStorage.getItem('logoutReason') || 'User logged out';
+        try { localStorage.removeItem('brgy-theme'); } catch (_) {}
+        sessionStorage.clear();
+        sessionStorage.setItem('logoutReason', reason);
+      } catch (e) {}
+
+      window.location.replace('/');
+    }
+
+    /* ── Sessions (server-backed) ───────────────────────── */
+    function formatSessionLabel(rawLabel, userAgent) {
+      const ua = userAgent || rawLabel || navigator.userAgent;
+      let browser = 'Browser';
+      let os = 'Device';
+      if (/Edg\//.test(ua)) browser = 'Edge';
+      else if (/Chrome/.test(ua)) browser = 'Chrome';
+      else if (/Firefox/.test(ua)) browser = 'Firefox';
+      else if (/Safari/.test(ua)) browser = 'Safari';
+      if (/Windows/.test(ua)) os = 'Windows';
+      else if (/Mac/.test(ua)) os = 'macOS';
+      else if (/Android/.test(ua)) os = 'Android';
+      else if (/iPhone|iPad/.test(ua)) os = 'iOS';
+      else if (/Linux/.test(ua)) os = 'Linux';
+      return browser + ' on ' + os;
+    }
+
+    function relativeTime(value) {
+      const time = value ? new Date(value).getTime() : Date.now();
+      const diff = Math.max(0, Date.now() - time);
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Active now';
+      if (mins === 1) return '1 minute ago';
+      if (mins < 60) return `${mins} minutes ago`;
+      const hrs = Math.floor(mins / 60);
+      return hrs === 1 ? '1 hour ago' : `${hrs} hours ago`;
+    }
+
+    async function renderSessions() {
+      const list = document.getElementById('sessionList');
+      if (!list) return;
+      list.innerHTML = '<div class="srow"><div class="srow-hint">Loading active sessions...</div></div>';
+      try {
+        const response = await fetch('/api/session/active', { credentials: 'include', cache: 'no-store' });
+        const data = await response.json();
+        if (!data.success) {
+          list.innerHTML = `<div class="srow"><div class="srow-hint">${data.message || 'Unable to load sessions.'}</div></div>`;
+          return;
+        }
+
+        const MONITOR_SVG = '<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+        list.innerHTML = data.sessions.map(s => `
+          <div class="srow">
+            <div class="session-device">
+              <div class="session-icon-wrap">${MONITOR_SVG}</div>
+              <div>
+                <div class="srow-label">${s.current ? 'This Device — ' : ''}${formatSessionLabel(s.label, s.userAgent)}</div>
+                <div class="srow-hint">Last active: ${relativeTime(s.lastActive)}</div>
+              </div>
+            </div>
+            ${s.current ? '<span class="badge badge-green" style="flex-shrink:0;">Current</span>' : '<span class="badge" style="flex-shrink:0;">Other Session</span>'}
+          </div>`).join('') || '<div class="srow"><div class="srow-hint">No active sessions found.</div></div>';
+      } catch (error) {
+        console.error('Error loading sessions:', error);
+        list.innerHTML = '<div class="srow"><div class="srow-hint">Error loading active sessions.</div></div>';
+      }
+    }
+
+    async function signOutOthers() {
+      try {
+        const response = await fetch('/api/session/signout-others', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}'
+        });
+        const data = await response.json();
+        if (data.success) {
+          await renderSessions();
+          showToast(data.removed ? `Signed out ${data.removed} other session(s).` : 'No other sessions were active.');
+        } else {
+          showToast(data.message || 'Failed to sign out other sessions.');
+        }
+      } catch (error) {
+        console.error('Error signing out other sessions:', error);
+        showToast('Error signing out other sessions. Please try again.');
+      }
+    }
+
+    renderSessions();
+
+    /* ── Theme ─────────────────────────────────────────── */
+    const checkSVG = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+    // Override the global applyTheme to also update UI
+    const originalApplyTheme = window.applyTheme;
+    window.applyTheme = function(mode) {
+      // Always apply theme to body regardless of UI elements
+      originalApplyTheme(mode);
+      
+      // Update theme selection buttons UI if elements exist
+      const tcLight = document.getElementById('tc-light');
+      const tcDark = document.getElementById('tc-dark');
+      const tdLight = document.getElementById('td-light');
+      const tdDark = document.getElementById('td-dark');
+      
+      if (!tcLight || !tcDark || !tdLight || !tdDark) {
+        console.log('[Theme] Theme UI elements not found, skipping UI update');
+        return;
+      }
+      
+      if (mode === 'dark') {
+        tcLight.classList.remove('sel');
+        tcDark.classList.add('sel');
+        tdLight.innerHTML = '';
+        tdDark.innerHTML = checkSVG;
+      } else {
+        tcLight.classList.add('sel');
+        tcDark.classList.remove('sel');
+        tdLight.innerHTML = checkSVG;
+        tdDark.innerHTML = '';
+      }
+    };
+
+    // Initialize theme UI on page load
+    async function initThemeUI() {
+      try {
+        const phone = sessionStorage.getItem('otp_phone');
+        if (!phone) {
+          console.log('[Settings] Phone not found, using default theme');
+          return;
+        }
+        
+        console.log('[Settings] Initializing theme UI for phone:', phone);
+        const response = await fetch(`/api/accounts/settings/${phone}`);
+        const data = await response.json();
+        
+        console.log('[Settings] Theme UI init response:', data);
+        
+        if (data.success && data.settings) {
+          const mode = data.settings.theme || 'light';
+          console.log('[Settings] Applying theme mode:', mode);
+          window.applyTheme(mode);
+        }
+      } catch (error) {
+        console.error('[Settings] Error initializing theme UI:', error);
+      }
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initThemeUI);
+    } else {
+      initThemeUI();
+    }
+
+    /* ── Toast ─────────────────────────────────────────── */
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>

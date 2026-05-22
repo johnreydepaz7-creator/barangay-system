@@ -1,0 +1,5 @@
+/* Compatibility file only.
+   All Login pages now use auth-responsive.css directly.
+   Keep this file so older links/bookmarks or cached pages that still request
+   responsive.css will still receive the same mobile rules. */
+@import url('auth-responsive.css');

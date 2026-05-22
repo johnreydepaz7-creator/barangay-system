@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Punong Barangay Login — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="auth-responsive.css">
+  <script src="/messagebox.js"></script>
+<script src="auth-validation.js"></script>
+</head>
+<body>
+<div class="auth-screen">
+
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Barangay 59-A Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="auth-right-inner">
+
+      <div class="step-indicator">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <button class="btn-back" onclick="location.href='login.html'">← Back to Staff Login</button>
+
+      <span class="role-badge pb" style="font-size:10.5px; letter-spacing:1.2px; text-transform:uppercase; margin-bottom:10px; display:inline-block;">
+        Administrator Access
+      </span>
+
+      <h1 class="auth-heading">Punong Barangay</h1>
+      <p class="auth-subheading">Enter your registered phone number to receive a one-time login code.</p>
+
+      <div class="auth-alert" id="loginAlert"></div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <div class="phone-wrap">
+          <div class="phone-prefix">
+            <span class="phone-prefix-flag">🇵🇭</span>
+            +63
+          </div>
+          <input class="phone-input" type="tel" id="phoneInput"
+            placeholder="9XXXXXXXXX" maxlength="10" inputmode="numeric">
+        </div>
+      </div>
+
+      <button class="btn-gold" onclick="sendOTP()" id="sendBtn">
+        Continue →
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showAlert(msg, type) {
+    const el = document.getElementById('loginAlert');
+    el.textContent = msg;
+    el.className = 'auth-alert show ' + type;
+  }
+
+  async function sendOTP() {
+    const raw   = document.getElementById('phoneInput').value.trim();
+    const phone = '0' + raw;
+
+    if (!BrgyAuthValidation.validatePhone('phoneInput', 'Phone number')) {
+      showAlert('Please enter a valid 10-digit phone number.', 'error');
+      return;
+    }
+
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Verifying...';
+
+    try {
+      const response = await fetch('/api/accounts/verify/punong', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ phone })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        sessionStorage.setItem('otp_phone', phone);
+        sessionStorage.setItem('otp_user', JSON.stringify(data.account));
+        showAlert('Verification code sent to your phone.', 'success');
+        setTimeout(() => { location.href = 'otp.html'; }, 900);
+      } else {
+        showAlert(data.message || 'Verification failed. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Verification error:', error);
+      showAlert('An error occurred. Please try again.', 'error');
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Continue →';
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendOTP();
+  });
+</script>
+</body>
+</html>

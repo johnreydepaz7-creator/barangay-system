@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrator — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="auth-responsive.css">
+  <script src="/messagebox.js"></script>
+<script src="auth-validation.js"></script>
+</head>
+<body>
+<div class="auth-screen">
+
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-right-inner">
+
+      <button class="btn-back" onclick="location.href='role-select.html'">← Back</button>
+
+      <div class="section-header" style="margin-bottom:6px;">
+        <div class="section-title">Administrator</div>
+        <span class="section-badge" id="pendingBadge" style="display:none;">
+          <span id="pendingCount">0</span> Pending
+        </span>
+      </div>
+      <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:28px;">
+        Manage barangay staff accounts and system access.
+      </p>
+
+      <button class="admin-menu-btn" onclick="location.href='admin-add.html'">
+        <div class="menu-icon">➕</div>
+        <div class="menu-label">
+          <div class="menu-title">Add Account</div>
+          <div class="menu-desc">Register a new staff account directly</div>
+        </div>
+        <span class="menu-arrow">›</span>
+      </button>
+
+      <button class="admin-menu-btn" onclick="location.href='admin-accounts.html'">
+        <div class="menu-icon">👥</div>
+        <div class="menu-label">
+          <div class="menu-title">Show Accounts</div>
+          <div class="menu-desc">View and manage all registered staff</div>
+        </div>
+        <span class="menu-arrow">›</span>
+      </button>
+
+      <button class="admin-menu-btn" onclick="location.href='admin-pending.html'">
+        <div class="menu-icon" id="pendingIcon">⏳</div>
+        <div class="menu-label">
+          <div class="menu-title">Pending Approvals</div>
+          <div class="menu-desc">Review registration requests</div>
+        </div>
+        <span id="pendingNotif" style="display:none;"></span>
+        <span class="menu-arrow">›</span>
+      </button>
+
+      <div class="auth-divider" style="margin-top:16px;"></div>
+      <button class="btn-secondary" onclick="location.href='../overview.html'">
+        Go to System
+      </button>
+
+    </div>
+  </div>
+
+</div>
+<script>
+  const user = JSON.parse(sessionStorage.getItem('current_user')||'null');
+  if (!user) { location.href='login.html'; }
+  const users = JSON.parse(localStorage.getItem('brgy_users')||'[]');
+  const pending = users.filter(u => u.status==='pending').length;
+  if (pending > 0) {
+    document.getElementById('pendingBadge').style.display='inline-block';
+    document.getElementById('pendingCount').textContent = pending;
+    const notif = document.getElementById('pendingNotif');
+    notif.style.display='flex';
+    notif.innerHTML = `<span class="notif-count">${pending}</span>`;
+  }
+</script>
+</body>
+</html>

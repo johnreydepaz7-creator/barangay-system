@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Recovery — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="auth-responsive.css">
+  <script src="/messagebox.js"></script>
+<script src="auth-validation.js"></script>
+</head>
+<body>
+<div class="auth-screen">
+
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <div class="auth-right" style="overflow-y:auto;">
+    <div class="auth-right-inner">
+
+      <!-- Step 1 -->
+      <div id="step1">
+        <button class="btn-back" onclick="location.href='login.html'">← Back to Login</button>
+        <h1 class="auth-heading" style="color:#c0263b;">🔐 Admin Recovery</h1>
+        <p class="auth-subheading">For official use during transition of barangay officials only.</p>
+        <div class="recovery-warning">
+          <strong>Important:</strong> Use this page only when reassigning the Punong Barangay during elections. Enter the Master Recovery Code from the sealed envelope stored at the barangay hall.
+        </div>
+        <div class="auth-alert" id="step1Alert"></div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Master Recovery Code</label>
+          <input class="form-input" type="text" id="recoveryInput"
+            placeholder="BRG59A-XXXX-XXXX-XXXX"
+            style="font-family:monospace; letter-spacing:2px; text-transform:uppercase;">
+        </div>
+        <button class="btn-primary" onclick="verifyRecovery()">Verify Code →</button>
+        <button class="btn-secondary" onclick="location.href='login.html'" style="margin-top:10px;">Cancel</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div id="step2" style="display:none;">
+        <h1 class="auth-heading">Assign New Punong Barangay</h1>
+        <p class="auth-subheading">Code verified. Enter the incoming Punong Barangay's details.</p>
+        <div class="auth-alert" id="step2Alert"></div>
+        <div class="form-row-3" style="margin-bottom:14px;">
+          <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" id="newLastName" placeholder=""></div>
+          <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" id="newFirstName" placeholder=""></div>
+          <div class="form-group"><label class="form-label">Middle Name</label><input class="form-input" type="text" id="newMiddleName" placeholder=""></div>
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Phone Number</label>
+          <div class="phone-wrap">
+            <div class="phone-prefix"><span class="phone-prefix-flag">🇵🇭</span>+63</div>
+            <input class="phone-input" type="tel" id="newPhone" placeholder="9XXXXXXXXX" maxlength="10" inputmode="numeric">
+          </div>
+        </div>
+        <button class="btn-gold" onclick="assignNewPB()">Confirm Transition</button>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="step3" style="display:none;">
+        <div style="text-align:center; margin-bottom:24px;">
+          <div style="font-size:48px; margin-bottom:12px;">✅</div>
+          <h1 class="auth-heading">Transition Complete</h1>
+          <p class="auth-subheading">New Punong Barangay account created successfully.</p>
+        </div>
+        <div style="background:var(--gold-pale); border:1.5px solid #e8d08a; border-radius:var(--radius); padding:16px; margin-bottom:16px;">
+          <p style="font-size:13px; color:#7a5f00; font-weight:600; margin-bottom:8px;">⚠️ Action Required</p>
+          <p style="font-size:13px; color:#9a7a20; line-height:1.6;">A new recovery code has been generated below. <strong>Print this page, seal it in an envelope, and store it at the barangay hall.</strong> The old code is now permanently invalid.</p>
+        </div>
+        <div class="recovery-code-box" id="newCodeDisplay">—</div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button class="btn-gold" onclick="window.print()" style="flex:1;">🖨 Print New Code</button>
+          <button class="btn-secondary" onclick="location.href='login.html'" style="flex:1;">Done</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<script>
+  function initCode() {
+    if (!localStorage.getItem('recovery_code')) {
+      const code = genCode();
+      localStorage.setItem('recovery_code', code);
+      console.log('%c INITIAL RECOVERY CODE — PRINT & SEAL: '+code, 'background:#c9a84c;color:#000;padding:6px 12px;font-size:14px;font-weight:bold;');
+    }
+  }
+  function genCode() {
+    const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const s=()=>Array.from({length:4},()=>c[Math.floor(Math.random()*c.length)]).join('');
+    return `BRG59A-${s()}-${s()}-${s()}`;
+  }
+  initCode();
+
+  function verifyRecovery(){
+    const entered=document.getElementById('recoveryInput').value.trim().toUpperCase();
+    const stored=localStorage.getItem('recovery_code');
+    const el=document.getElementById('step1Alert');
+    if(!BrgyAuthValidation.validateRecoveryCode('recoveryInput')){el.textContent='Please correct the highlighted fields.';el.className='auth-alert show error';return;}
+    if(entered!==stored){el.textContent='Invalid code. Check the sealed envelope.';el.className='auth-alert show error';return;}
+    document.getElementById('step1').style.display='none';
+    document.getElementById('step2').style.display='block';
+  }
+
+  function assignNewPB(){
+    const lastName=document.getElementById('newLastName').value.trim();
+    const firstName=document.getElementById('newFirstName').value.trim();
+    const middleName=document.getElementById('newMiddleName').value.trim();
+    const raw=document.getElementById('newPhone').value.trim();
+    const phone='0'+raw;
+    const el=document.getElementById('step2Alert');
+    const valid=[
+      BrgyAuthValidation.validateName('newLastName','Last name',true),
+      BrgyAuthValidation.validateName('newFirstName','First name',true),
+      BrgyAuthValidation.validateName('newMiddleName','Middle name',false),
+      BrgyAuthValidation.validatePhone('newPhone','Phone number')
+    ].every(Boolean);
+    if(!valid){el.textContent='Please correct the highlighted fields.';el.className='auth-alert show error';return;}
+    let users=JSON.parse(localStorage.getItem('brgy_users')||'[]');
+    users=users.map(u=>{if(u.role==='Punong Barangay')u.status='inactive';return u;});
+    users.push({id:Date.now(),lastName,firstName,middleName,role:'Punong Barangay',phone,status:'approved',createdAt:new Date().toLocaleDateString('en-PH'),addedBy:'Recovery System'});
+    localStorage.setItem('brgy_users',JSON.stringify(users));
+    const newCode=genCode();
+    localStorage.setItem('recovery_code',newCode);
+    document.getElementById('newCodeDisplay').textContent=newCode;
+    document.getElementById('step2').style.display='none';
+    document.getElementById('step3').style.display='block';
+  }
+</script>
+
+<style>
+@media print {
+  .auth-left, #step1, #step2, .btn-back { display:none!important; }
+  .auth-right { background:white; padding:40px; }
+  #step3 { display:block!important; }
+  .recovery-code-box { color:black; background:#fff8e0; border:2px dashed #c9a84c; }
+  .btn-gold, .btn-secondary { display:none!important; }
+}
+</style>
+</body>
+</html>

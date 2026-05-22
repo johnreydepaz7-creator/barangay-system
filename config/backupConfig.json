@@ -1,0 +1,11 @@
+{
+  "schedule": {
+    "frequency": "daily",
+    "time": "02:00"
+  },
+  "backupPath": "DYNAMIC_DOCUMENTS_BACKUP_DIR",
+  "maxBackups": 10,
+  "note": "For local PC use this resolves to Documents/Barangay Management System/Backups. On Render, set RENDER_DISK_MOUNT_PATH=/var/data or BACKUP_DIR=/var/data/backups when using a persistent disk.",
+  "lastPathUpdate": "2026-05-22T04:20:06.883Z",
+  "previousBackupPath": null
+}

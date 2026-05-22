@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Barangay 59-A</title>
+  <link rel="stylesheet" href="auth-base.css">
+  <link rel="stylesheet" href="auth-components.css">
+  <link rel="stylesheet" href="auth-responsive.css">
+  
+  <!-- Google APIs for Drive Integration -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js" async defer></script>
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="/messagebox.js"></script>
+<script src="auth-validation.js"></script>
+
+  <style>
+    .registration-loader {
+      width: 46px;
+      height: 46px;
+      margin: 0 auto;
+      border: 4px solid rgba(0, 0, 0, 0.12);
+      border-top-color: var(--primary, #2f6f4e);
+      border-radius: 50%;
+      animation: registrationSpin 0.9s linear infinite;
+    }
+
+    @keyframes registrationSpin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<div class="auth-screen">
+
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-accent"></div>
+    <div class="auth-left-inner">
+      <div class="auth-logo-ring">
+        <img src="images/barangay-logo.png" alt="Barangay 59-A Logo" class="auth-logo"
+             onerror="this.style.display='none';document.getElementById('lf').style.display='flex';">
+        <div class="auth-logo-fallback" id="lf">🏡</div>
+      </div>
+      <div class="auth-left-republic">Republic of the Philippines</div>
+      <div class="auth-left-name">Barangay 59-A,<br>Sampaguita Village</div>
+      <div class="auth-left-gold-line"></div>
+      <div class="auth-left-city">Tacloban City, Leyte</div>
+      <div class="auth-left-tag">Official Portal</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="auth-right-inner">
+
+      <div class="step-indicator">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <h1 class="auth-heading">Welcome back</h1>
+      <p class="auth-subheading">Enter your registered phone number to log in.</p>
+
+      <div class="auth-alert" id="loginAlert"></div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <div class="phone-wrap">
+          <div class="phone-prefix">
+            <span class="phone-prefix-flag">🇵🇭</span>
+            +63
+          </div>
+          <input class="phone-input" type="tel" id="phoneInput"
+            placeholder="9XXXXXXXXX" maxlength="10" inputmode="numeric">
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="sendOTP()" id="sendBtn">
+        Continue →
+      </button>
+
+      <div class="auth-divider">or</div>
+
+      <button class="btn-secondary" onclick="location.href='register.html'">
+        Register New Account
+      </button>
+
+
+
+      <div class="auth-divider" style="margin-top:24px;"></div>
+
+      <button id="punongBtn" class="btn-gold" onclick="handlePunongButtonClick()" style="border:none; cursor:pointer; width:100%;">
+        Punong Barangay Registration
+      </button>
+
+
+
+    </div>
+  </div>
+
+</div>
+
+<!-- PUNONG BARANGAY REGISTRATION MODAL -->
+<div id="punongModal" class="modal" style="display:none;">
+  <div class="modal-overlay" onclick="closePunongRegistration()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Punong Barangay Registration</h2>
+      <button class="modal-close" onclick="closePunongRegistration()">✕</button>
+    </div>
+
+    <!-- Step 1: Personal Information -->
+    <div id="punongForm" class="modal-body">
+      <p class="modal-subtitle">Register as Punong Barangay. Your account will be automatically activated.</p>
+
+      <div class="auth-alert" id="punongAlert"></div>
+
+      <div class="form-row-3" style="margin-bottom:14px;">
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" id="punongLastName" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" id="punongFirstName" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Middle Name</label>
+          <input class="form-input" type="text" id="punongMiddleName" placeholder="">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">Phone Number</label>
+        <div class="phone-wrap">
+          <div class="phone-prefix"><span class="phone-prefix-flag">🇵🇭</span>+63</div>
+          <input class="phone-input" type="tel" id="punongPhone" placeholder="9XXXXXXXXX" maxlength="10" inputmode="numeric">
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="proceedToGoogleDrive()" style="width:100%;">
+        Register Punong Barangay →
+      </button>
+    </div>
+
+    <!-- Registration Processing Step -->
+    <div id="punongGoogleStep" class="modal-body" style="display:none; text-align:center;">
+      <p class="modal-subtitle">Registering Account</p>
+      
+      <div class="auth-alert" id="punongGoogleAlert"></div>
+
+      <div style="margin: 30px 0; text-align: center;">
+        <div class="registration-loader" aria-hidden="true"></div>
+        <p style="color: var(--text-muted); margin: 18px 0 8px; line-height:1.5;">
+          Please wait while we finish setting up your Punong Barangay account.
+        </p>
+        <p id="googleDriveStatus" style="font-size: 12px; color: var(--text-light); margin-top: 12px;">
+          Creating account and preparing your login QR code...
+        </p>
+      </div>
+    </div>
+
+    <!-- Success Message with QR Code -->
+    <div id="ponongSuccess" class="modal-body" style="display:none; text-align:center;">
+      <div class="pending-notice">
+        <div class="pending-icon">✓</div>
+        <div class="pending-title">Registration Successful!</div>
+        <div class="pending-desc">
+          Your Punong Barangay account has been successfully registered and activated.
+        </div>
+      </div>
+
+      <!-- QR Code Display -->
+      <div style="margin: 20px 0; padding: 20px; background: var(--surface-2); border-radius: 12px;">
+        <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 12px 0;">
+          <strong>Login QR Code</strong><br>Scan this code to log in
+        </p>
+        <div id="punongQRCode" style="display: inline-block; padding: 10px; background: white; border-radius: 8px;"></div>
+        <div id="punongEncodedString" style="display:none !important;"></div>
+      </div>
+
+      <button class="btn-secondary" onclick="restartLogin()" style="margin-top:20px; width:100%;">
+        Restart Login
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-subtitle {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    max-width: 95%;
+  }
+}
+</style>
+
+<script>
+  // Check for logout reason on page load
+  function checkLogoutReason() {
+    const logoutReason = sessionStorage.getItem('logoutReason');
+    if (logoutReason) {
+      sessionStorage.removeItem('logoutReason');
+      
+      let message = logoutReason;
+      let type = 'info';
+      
+      if (logoutReason.includes('inactivity')) {
+        const savedMinutes = Number(sessionStorage.getItem('autoLogoutMinutes')) || 10;
+        const timeoutText = savedMinutes === 60
+          ? '1 hour'
+          : savedMinutes === 120
+            ? '2 hours'
+            : `${savedMinutes} minutes`;
+        sessionStorage.removeItem('autoLogoutMinutes');
+        message = `⏰ Your session expired due to inactivity (${timeoutText}).`;
+        type = 'warning';
+      } else if (logoutReason.includes('server')) {
+        message = '🔄 Server was restarted. Please log in again.';
+        type = 'warning';
+      } else if (logoutReason.includes('expired')) {
+        message = '⏰ Your session has expired. Please log in again.';
+        type = 'warning';
+      }
+      
+      showAlert(message, type);
+    }
+  }
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('loginAlert');
+    el.textContent = msg;
+    el.className = 'auth-alert show ' + type;
+  }
+
+  async function sendOTP() {
+    const raw   = document.getElementById('phoneInput').value.trim();
+    const phone = '0' + raw;
+
+    if (!BrgyAuthValidation.validatePhone('phoneInput', 'Phone number')) {
+      showAlert('Please enter a valid 10-digit phone number.', 'error');
+      return;
+    }
+
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+    const originalText = sendBtn.textContent;
+    sendBtn.textContent = 'Verifying...';
+
+    try {
+      const response = await fetch('/api/accounts/verify/staff', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ phone })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        sessionStorage.setItem('otp_phone', phone);
+        sessionStorage.setItem('otp_user', JSON.stringify(data.account));
+        showAlert('Verification code sent to your phone.', 'success');
+        
+        // All users must verify with OTP
+        setTimeout(() => { location.href = 'otp.html'; }, 900);
+      } else {
+        showAlert(data.message || 'Verification failed. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      showAlert('An error occurred. Please try again.', 'error');
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = originalText;
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendOTP();
+  });
+
+  // Punong Barangay Registration Functions
+  function openPunongRegistration() {
+    document.getElementById('punongModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePunongRegistration() {
+    document.getElementById('punongModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    resetPunongForm();
+  }
+
+  function resetPunongForm() {
+    document.getElementById('punongLastName').value = '';
+    document.getElementById('punongFirstName').value = '';
+    document.getElementById('punongMiddleName').value = '';
+    document.getElementById('punongPhone').value = '';
+    document.getElementById('punongAlert').textContent = '';
+    document.getElementById('punongGoogleAlert').textContent = '';
+    document.getElementById('punongForm').style.display = 'block';
+    document.getElementById('punongGoogleStep').style.display = 'none';
+    document.getElementById('ponongSuccess').style.display = 'none';
+    
+    // Reset Google Drive button and status
+    const btn = document.getElementById('googleDriveBtn');
+    const status = document.getElementById('googleDriveStatus');
+    if (btn) {
+      btn.textContent = '🔗 Connect Google Drive';
+      btn.style.background = '';
+      btn.disabled = false;
+    }
+    if (status) {
+      status.textContent = 'You can also skip this step and connect later.';
+    }
+    
+    pendingPunongData = null;
+  }
+
+  function showPunongAlert(msg, type) {
+    const el = document.getElementById('punongAlert');
+    el.textContent = msg;
+    el.className = 'auth-alert show ' + type;
+  }
+
+  // Base64 encode function
+  function encodeBase64(str) {
+    return btoa(str);
+  }
+
+  async function submitPunongRegistration() {
+    const lastName = document.getElementById('punongLastName').value.trim();
+    const firstName = document.getElementById('punongFirstName').value.trim();
+    const middleName = document.getElementById('punongMiddleName').value.trim();
+    const raw = document.getElementById('punongPhone').value.trim();
+    const phone = '0' + raw;
+
+    // Validation
+    const valid = [
+      BrgyAuthValidation.validateName('punongLastName', 'Last name', true),
+      BrgyAuthValidation.validateName('punongFirstName', 'First name', true),
+      BrgyAuthValidation.validateName('punongMiddleName', 'Middle name', false),
+      BrgyAuthValidation.validatePhone('punongPhone', 'Phone number')
+    ].every(Boolean);
+
+    if (!valid) {
+      showPunongAlert('Please correct the highlighted fields.', 'error');
+      return;
+    }
+
+    // Disable button during submission
+    const submitBtn = document.querySelector('[onclick="submitPunongRegistration()"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Registering...';
+
+    try {
+      const response = await fetch('/api/accounts/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lastName,
+          firstName,
+          middleName,
+          phone,
+          role: 'Punong Barangay'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Show loading message first
+        document.getElementById('punongForm').style.display = 'none';
+        
+        // Create a temporary loading message
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'punongLoading';
+        loadingDiv.style.cssText = 'text-align:center; padding:40px;';
+        loadingDiv.innerHTML = `
+          <div style="font-size:40px; margin-bottom:16px; animation: spin 1s linear infinite;">⏳</div>
+          <div style="font-size:18px; font-weight:600; color:var(--text-main); margin-bottom:8px;">Processing Registration...</div>
+          <div style="font-size:14px; color:var(--text-muted);">Please wait while we prepare your QR code</div>
+          <style>
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          </style>
+        `;
+        document.getElementById('punongModal').querySelector('.modal-content').appendChild(loadingDiv);
+
+        // Wait 2 seconds before showing success screen
+        setTimeout(() => {
+          // Remove loading message
+          const loading = document.getElementById('punongLoading');
+          if (loading) loading.remove();
+
+          // Store Punong data for QR code generation
+          const normalizedPhone = phone.startsWith('0') ? phone.substring(1) : phone;
+          const fullName = (firstName + ' ' + (middleName || '') + ' ' + lastName).trim();
+          const SECRET = 'l69xAAm3';
+          const combined = fullName + '|' + normalizedPhone + '|' + SECRET;
+          const encoded = encodeBase64(combined);
+
+          // Display success modal
+          document.getElementById('ponongSuccess').style.display = 'block';
+
+          // Generate QR code via server API after modal is fully visible
+          setTimeout(() => {
+            console.log('Starting server-side QR code generation...');
+            
+            fetch('/api/accounts/generate-qrcode', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ encoded: encoded })
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('✓ Server QR code response received');
+              
+              const qrcodeDiv = document.getElementById('punongQRCode');
+              if (qrcodeDiv && data.qrCodeImage) {
+                qrcodeDiv.innerHTML = `<img src="${data.qrCodeImage}" alt="QR Code" style="width:180px; height:180px; border-radius:8px;">`;
+                console.log('✓ QR Code image displayed');
+              } else {
+                console.error('✗ QR code div or image data missing');
+              }
+
+              // Encoded string is used internally for QR generation only and is not displayed.
+              const encodedDiv = document.getElementById('punongEncodedString');
+              if (encodedDiv) {
+                encodedDiv.textContent = '';
+                encodedDiv.style.display = 'none';
+              }
+            })
+            .catch(error => {
+              console.error('✗ QR code generation error:', error);
+              const qrcodeDiv = document.getElementById('punongQRCode');
+              if (qrcodeDiv) {
+                qrcodeDiv.innerHTML = '<div style="color:#c0263b; padding:20px; font-size:12px;">Error generating QR code. Try again.</div>';
+              }
+            });
+          }, 300);
+        }, 2000);
+      } else {
+        showPunongAlert(data.message || 'Registration failed. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      showPunongAlert('An error occurred. Please try again.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Register Punong Barangay';
+    }
+  }
+
+  function restartLogin() {
+    location.reload();
+  }
+
+  // Close modal when clicking outside
+  window.addEventListener('click', (e) => {
+    const modal = document.getElementById('punongModal');
+    if (e.target === modal) {
+      closePunongRegistration();
+    }
+  });
+
+  // Check and update Punong Barangay button status
+  async function checkPunongBarangayStatus() {
+    try {
+      const response = await fetch('/api/accounts/check/punong');
+      const data = await response.json();
+      
+      const punongBtn = document.getElementById('punongBtn');
+      
+      if (data.isRegistered) {
+        // Punong Barangay is registered - change to login button
+        punongBtn.textContent = 'Punong Barangay Login';
+        punongBtn.onclick = function() {
+          location.href = 'punong-login.html';
+        };
+      } else {
+        // Punong Barangay not registered - keep as registration button
+        punongBtn.textContent = 'Punong Barangay Registration';
+        punongBtn.onclick = function() {
+          openPunongRegistration();
+        };
+      }
+    } catch (error) {
+      console.error('Error checking Punong Barangay status:', error);
+      // Default to registration mode on error
+      const punongBtn = document.getElementById('punongBtn');
+      punongBtn.textContent = 'Punong Barangay Registration';
+      punongBtn.onclick = function() {
+        openPunongRegistration();
+      };
+    }
+  }
+
+  // Handle Punong Barangay button click based on registration status
+  function handlePunongButtonClick() {
+    // This will be overridden by checkPunongBarangayStatus()
+    // This is just a fallback
+    openPunongRegistration();
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // GOOGLE DRIVE INTEGRATION FOR PUNONG BARANGAY REGISTRATION
+  // ═══════════════════════════════════════════════════════════
+
+  const GDRIVE_CONFIG = {
+    CLIENT_ID:   '1787950280-6bi4i3o26ldtvn656de9um8u2takatih.apps.googleusercontent.com',
+    API_KEY:     'AIzaSyDiFgg5ieV_JUjisOPdwb1SaO2xnEo2n9Y',
+    SCOPES:      'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly',
+    ROOT_FOLDER: 'Barangay 59-A — Sampaguita Village',
+  };
+
+  const PunongGDrive = {
+    ready: false,
+    accessToken: null,
+    signedIn: false
+  };
+
+  // Stored registration data during two-step process
+  let pendingPunongData = null;
+
+  // Step 1: Register directly and show the QR code success screen.
+  // Google Drive connection was removed from the Punong Barangay registration flow.
+  function proceedToGoogleDrive() {
+    const lastName = document.getElementById('punongLastName').value.trim();
+    const firstName = document.getElementById('punongFirstName').value.trim();
+    const middleName = document.getElementById('punongMiddleName').value.trim();
+    const raw = document.getElementById('punongPhone').value.trim();
+
+    // Validation
+    const valid = [
+      BrgyAuthValidation.validateName('punongLastName', 'Last name', true),
+      BrgyAuthValidation.validateName('punongFirstName', 'First name', true),
+      BrgyAuthValidation.validateName('punongMiddleName', 'Middle name', false),
+      BrgyAuthValidation.validatePhone('punongPhone', 'Phone number')
+    ].every(Boolean);
+
+    if (!valid) {
+      showPunongAlert('Please correct the highlighted fields.', 'error');
+      return;
+    }
+
+    pendingPunongData = {
+      lastName,
+      firstName,
+      middleName,
+      phone: '0' + raw,
+      role: 'Punong Barangay'
+    };
+
+    // Show a clean processing screen while the account and QR code are being created.
+    document.getElementById('punongForm').style.display = 'none';
+    document.getElementById('punongGoogleStep').style.display = 'block';
+    document.getElementById('ponongSuccess').style.display = 'none';
+    document.getElementById('punongAlert').textContent = '';
+    document.getElementById('punongGoogleAlert').textContent = '';
+
+    setTimeout(() => {
+      submitPunongRegistrationWithDrive();
+    }, 300);
+  }
+
+  // Google Drive setup is no longer required during Punong Barangay registration.
+  function initGoogleDriveAPI() {
+    return;
+  }
+
+  // Initiate Google Drive authentication
+  function initiateGoogleDriveAuth() {
+    if (typeof google === 'undefined') {
+      BrgyMessageBox.alert('Google API unavailable. Check your connection.', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('googleDriveBtn');
+    const status = document.getElementById('googleDriveStatus');
+    
+    btn.disabled = true;
+    btn.textContent = 'Connecting...';
+    status.textContent = 'Opening Google authentication...';
+
+    google.accounts.oauth2.initTokenClient({
+      client_id: GDRIVE_CONFIG.CLIENT_ID,
+      scope: GDRIVE_CONFIG.SCOPES,
+      callback: (resp) => {
+        btn.disabled = false;
+        
+        if (resp.error) {
+          console.error(resp);
+          status.textContent = 'Registration is still being processed. Please wait...';
+          btn.textContent = '🔗 Connect Google Drive';
+          return;
+        }
+
+        PunongGDrive.accessToken = resp.access_token;
+        PunongGDrive.signedIn = true;
+        gapi.client.setToken({ access_token: resp.access_token });
+        sessionStorage.setItem('gdrive_token', resp.access_token);
+
+        btn.textContent = '✓ Connected';
+        btn.style.background = 'var(--green-700)';
+        status.textContent = '✓ Google Drive connected successfully!';
+        
+        // Auto-submit after successful connection
+        setTimeout(() => {
+          submitPunongRegistrationWithDrive();
+        }, 1500);
+      },
+    }).requestAccessToken({ prompt: 'consent' });
+  }
+
+  // Skip Google Drive connection (optional)
+  function skipGoogleDrive() {
+    if (!pendingPunongData) return;
+    
+    // Clear Google Drive token and submit normally
+    sessionStorage.removeItem('gdrive_token');
+    PunongGDrive.accessToken = null;
+    PunongGDrive.signedIn = false;
+    
+    submitPunongRegistrationWithDrive();
+  }
+
+  // Submit Punong registration with or without Google Drive
+  async function submitPunongRegistrationWithDrive() {
+    if (!pendingPunongData) return;
+
+    const submitBtn = document.querySelector('[onclick="proceedToGoogleDrive()"]') ||
+                      document.querySelector('[onclick="initiateGoogleDriveAuth()"]') ||
+                      document.querySelector('[onclick="skipGoogleDrive()"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registering...';
+    }
+
+    try {
+      // Include Google Drive token if available
+      const registrationData = {
+        ...pendingPunongData,
+        googleDriveToken: null
+      };
+
+      const response = await fetch('/api/accounts/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(registrationData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Show success message
+        document.getElementById('punongGoogleStep').style.display = 'none';
+        document.getElementById('ponongSuccess').style.display = 'block';
+        
+        const savedData = pendingPunongData;
+        pendingPunongData = null;
+
+        // Generate QR code after success screen is visible
+        setTimeout(() => {
+          if (savedData) {
+            const normalizedPhone = savedData.phone.startsWith('0') ? savedData.phone.substring(1) : savedData.phone;
+            const fullName = (savedData.firstName + ' ' + (savedData.middleName || '') + ' ' + savedData.lastName).trim();
+            const SECRET = 'l69xAAm3';
+            const combined = fullName + '|' + normalizedPhone + '|' + SECRET;
+            const encoded = encodeBase64(combined);
+
+            // Generate QR code via server API
+            fetch('/api/accounts/generate-qrcode', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ encoded: encoded })
+            })
+            .then(response => response.json())
+            .then(data => {
+              const qrcodeDiv = document.getElementById('punongQRCode');
+              if (qrcodeDiv && data.qrCodeImage) {
+                qrcodeDiv.innerHTML = `<img src="${data.qrCodeImage}" alt="QR Code" style="width:180px; height:180px; border-radius:8px;">`;
+              }
+
+              const encodedDiv = document.getElementById('punongEncodedString');
+              if (encodedDiv) {
+                encodedDiv.textContent = '';
+                encodedDiv.style.display = 'none';
+              }
+            })
+            .catch(error => console.error('QR code generation error:', error));
+          }
+        }, 300);
+      } else {
+        showPunongAlert(data.message || 'Registration failed. Please try again.', 'error');
+        // Reset to form step
+        document.getElementById('punongGoogleStep').style.display = 'none';
+        document.getElementById('punongForm').style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      showPunongAlert('An error occurred. Please try again.', 'error');
+      // Reset to form step
+      document.getElementById('punongGoogleStep').style.display = 'none';
+      document.getElementById('punongForm').style.display = 'block';
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        if (submitBtn.textContent === 'Registering...') {
+          submitBtn.textContent = 'Register Punong Barangay →';
+        }
+      }
+    }
+  }
+
+  // Check Punong Barangay status when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    checkLogoutReason();
+    checkPunongBarangayStatus();
+    initGoogleDriveAPI();
+  });
+
+  // Also check if page is already loaded (in case DOMContentLoaded fires before script)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      checkLogoutReason();
+      checkPunongBarangayStatus();
+      initGoogleDriveAPI();
+    });
+  } else {
+    checkLogoutReason();
+    checkPunongBarangayStatus();
+    initGoogleDriveAPI();
+  }
+</script>
+</body>
+</html>
